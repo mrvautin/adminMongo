@@ -1,0 +1,92 @@
+body {
+    padding-bottom: 20px;
+}
+@media (max-width: 980px) {
+    body {
+        padding-bottom: 0px;
+    }
+}
+
+.new_json, .edit_json { 
+    position: relative;
+    height: 350px;
+    width: 100%;
+}
+
+.index_json{
+    position: relative;
+    height: 200px;
+    width: 100%;
+}
+
+.no-pad-top{
+    margin-top: 0px;
+}
+
+.pad-bottom{
+    padding-bottom: 10px;
+}
+
+.no-side-pad{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.index-table{
+    margin-top: 25px;
+}
+
+.action_button{
+    margin-bottom: 20px;
+}
+
+.navbar{
+    margin-bottom: 0px;
+}
+
+.banner-heading{
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.db_link{
+    color: #2c3e50;
+}
+
+.doc_view{
+    max-height: 120px;
+    min-height: 120px;
+    overflow: auto
+}
+
+.new_doc_button{
+    padding-left: 15px;
+    padding-bottom: 20px;
+}
+
+.list-group-item-primary{
+    background-color: #2c3e50;
+    color: #ffffff;
+}
+
+#notify_message{
+    position: fixed;
+    display: none;
+    z-index: 9999;
+    padding-top: 10px;
+    height: 50px;
+    bottom: 0px; 
+    width: 100%; 
+    text-align: center;
+    font-size: 22px;
+    color: white;
+}
+
+.notify_message-success{
+    background-color: #18bc9c;
+}
+
+.notify_message-danger{
+    background-color: #e74c3c;
+}
+

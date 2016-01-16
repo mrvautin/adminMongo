@@ -1,0 +1,50 @@
+<div class="col-lg-12 no-side-pad">
+	<ol class="breadcrumb">
+		<li><a href="/">Home</a></li>
+		<li><a href="/{{conn_name}}">{{conn_name}}</a>&nbsp;(connection)</li>
+		<li><a href="/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;(database)</li>
+		<li><a href="/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;(collection)</li>
+	</ol>
+</div>
+<div class="col-lg-12 no-side-pad">
+	<div class="col-lg-12 no-side-pad">
+		<a href="/{{conn_name}}/{{db_name}}/{{coll_name}}/view" class="btn btn-warning btn-sm pull-left action_button">Back</a>
+		<button class="btn btn-success btn-sm pull-right action_button" id="coll_addindex">Add index</button>
+	</div>
+	<div class="col-lg-10 no-side-pad">
+		<div class="index_json" id="json">{}</div>
+	</div>
+	<div class="col-lg-2 no-side-pad">
+		<div class="text-center">
+			<h2>Options</h2>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="index_unique" checked> Unique?
+				</label>
+			</div>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="index_sparse" checked> Sparse?
+				</label>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-lg-12 no-side-pad">
+	<table class="table table-bordered index-table">
+		<th>Name</th>
+		<th>Key</th>
+		<th>Unique</th>
+		<th>Sparse</th>
+		<th>Action</th>
+		{{#each coll_indexes}}
+			<tr>
+				<td>{{this.name}}</td>
+				<td>{{{toJSON this.key}}}</td>
+				<td>{{niceBool this.unique}}</td>
+				<td>{{niceBool this.sparse}}</td>
+				<td><button class="btn btn-danger btn-sm" onclick="dropIndex('{{@index}}');">Delete index</button></td>
+			</tr>
+		{{/each}}
+	</table>
+</div>

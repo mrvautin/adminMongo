@@ -1,0 +1,41 @@
+<div class="row">
+	<div class="col-lg-2">
+		<h1>Connections</h1>
+		<ul class="list-group">
+			{{#each conn_list}}
+				<li class="list-group-item"><a href="/{{@key}}">{{@key}}</a></li>
+			{{/each}}
+		</ul>
+	</div>
+	<div class="col-lg-5">
+		<h1>Server status: {{conn_name}} (default)</h1>
+		<table class="table table-bordered">
+			<th>Stat</th>
+			<th>Value</th>
+			<tr><td>Host</td><td>{{conn_status.host}}</td></tr>
+			<tr><td>Version</td><td>{{conn_status.version}}</td></tr>
+			<tr><td>Process</td><td>{{conn_status.process}}</td></tr>
+			<tr><td>Uptime</td><td>{{conn_status.uptime}} seconds</td></tr>
+			<tr><td>localTime</td><td>{{conn_status.localTime}}</td></tr>
+			<tr><td>Connections</td><td>Current = {{conn_status.connections.current}} / Available = {{conn_status.connections.available}}</td></tr>
+			<tr><td colspan="2"><strong>Query counts</strong></td></tr>
+			<tr><td>Insert</td><td>{{conn_status.opcounters.insert}}</td></tr>
+			<tr><td>Query</td><td>{{conn_status.opcounters.query}}</td></tr>
+			<tr><td>Delete</td><td>{{conn_status.opcounters.delete}}</td></tr>
+			<tr><td>Update</td><td>{{conn_status.opcounters.update}}</td></tr>
+		</table>
+	</div>
+	<div class="col-lg-5">
+		<h1>Connection stats: {{conn_name}} (default)</h1>
+		<table class="table table-bordered">
+			<th>Stat</th>
+			<th>Value</th>
+			{{#each conn_stats}}
+				<tr>
+					<td>{{@key}}</td><td>{{this}}</td>
+				</tr>
+			{{/each}}
+		</table>
+	</div>
+</div>
+
