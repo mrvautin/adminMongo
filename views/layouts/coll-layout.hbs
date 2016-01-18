@@ -14,15 +14,14 @@
     <script src="/jquery/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     {{#if editor}}
-    <script src="/requirejs/requirejs.js"></script>
+    <script src="/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/editor.js"></script>
     {{/if}}
     <script src="/js/adminMongo.js"></script>
     <script src="/js/jquery.bootpag.min.js"></script>
     <script src="/js/pagination.js"></script>
-    <link rel="stylesheet" href="/css/github.min.css">
-    <script src="/highlightjs/highlight.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/github.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
   </head>
   <body>
       <nav class="navbar navbar-default navbar-static-top">
@@ -93,5 +92,7 @@
         <!-- Collection Name Modal -->
     </div>
     <div id="notify_message"></div>
+    
+
   </body>
 </html>

@@ -43,8 +43,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // front-end modules loaded from NPM
-app.use("/highlightjs", express.static(path.join(__dirname, 'node_modules/highlight.js/lib/')));
-app.use("/requirejs", express.static(path.join(__dirname, 'node_modules/requirejs/')));
+app.use("/ace", express.static(path.join(__dirname, 'node_modules/ace-builds/src-min/')));
 app.use("/font-awesome", express.static(path.join(__dirname, 'node_modules/font-awesome/')));
 app.use("/jquery", express.static(path.join(__dirname, 'node_modules/jquery/dist/')));
 app.use("/bootstrap", express.static(path.join(__dirname, 'node_modules/bootstrap/dist/')));

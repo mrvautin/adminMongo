@@ -26,6 +26,7 @@
     "administer"
   ],
   "dependencies": {
+    "ace-builds": "^1.2.2",
     "async": "^1.5.2",
     "body-parser": "~1.13.2",
     "bootstrap": "^3.3.6",
@@ -35,14 +36,12 @@
     "express-handlebars": "^2.0.1",
     "font-awesome": "^4.5.0",
     "hbs": "~3.1.0",
-    "highlight.js": "^9.1.0",
     "jquery": "^2.2.0",
     "mongo-uri": "^0.1.2",
     "mongodb": "^2.1.4",
     "mongojs": "^2.2.2",
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",
-    "requirejs": "^2.1.22",
     "serve-favicon": "~2.3.0"
   },
   "license": "MIT"
