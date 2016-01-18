@@ -73,7 +73,7 @@ nconf.add('app', { type: 'file', file: app_config });
 
 // set app defaults
 var app_host = '127.0.0.1';
-var app_port = 12345;
+var app_port = 1234;
 
 // get the app configs and override if present
 if(nconf.stores.app.get('app:host') != undefined){
@@ -82,10 +82,6 @@ if(nconf.stores.app.get('app:host') != undefined){
 if(nconf.stores.app.get('app:port') != undefined){
     app_port = nconf.stores.app.get('app:port');
 }
-
-nconf.stores.app.set('app:host', '127.0.0.1');
-nconf.stores.app.set('app:port', 4321);
-nconf.stores.app.save();
 
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
