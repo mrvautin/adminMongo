@@ -37,19 +37,60 @@ handlebars = handlebars.create({
 });
 
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.set('port', process.env.PORT || 1234);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// front-end modules loaded from NPM
+app.use("/highlightjs", express.static(path.join(__dirname, 'node_modules/highlight.js/lib/')));
+app.use("/requirejs", express.static(path.join(__dirname, 'node_modules/requirejs/')));
+app.use("/font-awesome", express.static(path.join(__dirname, 'node_modules/font-awesome/')));
+app.use("/jquery", express.static(path.join(__dirname, 'node_modules/jquery/dist/')));
+app.use("/bootstrap", express.static(path.join(__dirname, 'node_modules/bootstrap/dist/')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // setup nconf to read in the file
-nconf.file({ file: path.join(__dirname, 'config', 'config.json') });
+var fs = require('fs');
+var connection_config = path.join(__dirname, 'config', 'config.json');
+var app_config = path.join(__dirname, 'config', 'app.json');
+
+// if config files exist but are blank we write blank files for nconf
+if (fs.existsSync(app_config, "utf8")) {
+    if(fs.readFileSync(app_config, "utf8") == ""){
+        fs.writeFileSync(app_config, "{}", 'utf8');
+    }
+}
+if (fs.existsSync(connection_config, "utf8")) {
+    if(fs.readFileSync(connection_config, "utf8") == ""){
+        fs.writeFileSync(connection_config, "{}", 'utf8');
+    }
+}
+
+// setup the two conf. 'app' holds application config, and connections 
+// holds the mongoDB connections
+nconf.add('connections', { type: 'file', file: connection_config });
+nconf.add('app', { type: 'file', file: app_config });
+
+// set app defaults
+var app_host = '127.0.0.1';
+var app_port = 12345;
+
+// get the app configs and override if present
+if(nconf.stores.app.get('app:host') != undefined){
+    app_host = nconf.stores.app.get('app:host');
+}
+if(nconf.stores.app.get('app:port') != undefined){
+    app_port = nconf.stores.app.get('app:port');
+}
+
+nconf.stores.app.set('app:host', '127.0.0.1');
+nconf.stores.app.set('app:port', 4321);
+nconf.stores.app.save();
 
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
-    req.nconf = nconf;
+    req.nconf = nconf.stores.connections;
 	req.handlebars = handlebars;
 	next();
 });
@@ -87,9 +128,10 @@ app.use(function (err, req, res, next) {
     });
 });
 
+
 // lift the app
-app.listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
+app.listen(app_port, app_host, function () {
+    console.log('Express server listening on host: ' + app_host + ':' + app_port);
 });
 
 module.exports = app;

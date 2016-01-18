@@ -722,17 +722,19 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
 
 router.post('/add_config', function (req, res, next) {
     var nconf = req.nconf;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = nconf.get('connections');
     
     // check if name already exists
-    if(connection_list[req.body[0]] != undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Config error: ' + 'A connection by that name already exists');
-        return;
+    if(connection_list != undefined){
+        if(connection_list[req.body[0]] != undefined){
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
+            res.end('Config error: ' + 'A connection by that name already exists');
+            return;
+        }
     }
     
     // set the new config
-    nconf.set('connections:' + req.body[0], { connection_string:  req.body[1]});
+    nconf.set('connections:' + req.body[0], {"connection_string": req.body[1]});
 
     // save for ron
     nconf.save(function (err) {
@@ -749,17 +751,9 @@ router.post('/add_config', function (req, res, next) {
 
 router.post('/update_config', function (req, res, next) {
     var nconf = req.nconf;
-    var connection_list = req.nconf.get('connections');
-    
-    // check if name already exists
-    if(connection_list[req.body.conn_name] != undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Config error: ' + 'A connection by that name already exists');
-        return;
-    }
     
     // delete current config
-    delete nconf.stores.file.store.connections[req.body.curr_config];
+    delete nconf.store.connections[req.body.curr_config];
     
     // set the new
     nconf.set('connections:' + req.body.conn_name, { 'connection_string':  req.body.conn_string});
@@ -781,7 +775,7 @@ router.post('/drop_config', function (req, res, next) {
     var nconf = req.nconf;
     
     // delete current config
-    delete nconf.stores.file.store.connections[req.body.curr_config];
+    delete nconf.store.connections[req.body.curr_config];
 
     // save for ron
     nconf.save(function (err) {

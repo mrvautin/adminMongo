@@ -11,6 +11,18 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 3. Start application: `npm start`
 4. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
 
+#### Configuration
+
+adminMongo will listen on host: `localhost` and  port: `1234` by default. This can be overwritten by adding a config file in `/config/app.json` in the following format:
+```
+{
+    "app": {
+        "host": "10.0.0.1",
+        "port": 4321
+    }
+}
+```
+
 ## Usage
 
 ##### Create a connection
