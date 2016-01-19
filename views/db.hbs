@@ -9,7 +9,7 @@
 					<button class="btn btn-success btn-sm" id="coll_create">Create</button>
 				</span>
 			</div></br></br>
-			<label for="exampleInputEmail1">Delete collection</label>
+			<label for="del_coll_name">Delete collection</label>
 			<div class="input-group">
 				<select class="form-control input-sm" id="del_coll_name">
 					{{#each coll_list}}
@@ -31,17 +31,19 @@
 			</br>
 			<button class="btn btn-success btn-sm pull-right" id="user_create">Create user</button>
 			</br></br>
-			<label for="exampleInputEmail1">Delete user</label>
-			<div class="input-group">
-				<select class="form-control input-sm" id="del_user_name">
-					{{#each conn_users}}
-						<option>{{this.user}}</option>
-					{{/each}}
-				</select>
-				<span class="input-group-btn">
-					<button class="btn btn-danger btn-sm" id="user_delete">Delete</button>
-				</span>	
-			</div>
+            {{#if conn_users}}
+                <label for="del_user_name">Delete user</label>
+                <div class="input-group">
+                    <select class="form-control input-sm" id="del_user_name">
+                        {{#each conn_users}}
+                            <option>{{this.user}}</option>
+                        {{/each}}
+                    </select>
+                    <span class="input-group-btn">
+                        <button class="btn btn-danger btn-sm" id="user_delete">Delete</button>
+                    </span>	
+                </div>
+            {{/if}}
 		</div>
 	</div>
 	<div class="col-lg-6">

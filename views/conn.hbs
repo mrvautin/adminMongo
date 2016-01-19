@@ -4,14 +4,14 @@
 			<h3 class="no-pad-top">Database maintenance</h3>
 			<label for="new_db_name">Create new database</label>
 			<div class="input-group">
-				<input type="text" class="form-control" id="new_db_name" placeholder="database name">
+				<input type="text" class="form-control input-sm" id="new_db_name" placeholder="database name">
 				<span class="input-group-btn">
 					<button class="btn btn-success btn-sm" id="db_create">Create</button>
 				</span>
 			</div></br></br>
 			<label for="exampleInputEmail1">Delete database</label>
 			<div class="input-group">
-				<select class="form-control" id="del_db_name">
+				<select class="form-control input-sm" id="del_db_name">
 					{{#each db_list}}
 						<option>{{this}}</option>
 					{{/each}}
