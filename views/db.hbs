@@ -25,9 +25,9 @@
 			<label for="new_username">Username</label>
 			<input type="text" class="form-control input-sm" id="new_username" placeholder="Username">
 			<label for="new_pasword">User Password</label>
-			<input type="text" class="form-control input-sm" id="new_password" placeholder="Password">
+			<input type="password" class="form-control input-sm" id="new_password" placeholder="Password">
 			<label for="new_password_confirm">Confirm password</label>
-			<input type="text" class="form-control input-sm" id="new_password_confirm" placeholder="Confirm">
+			<input type="password" class="form-control input-sm" id="new_password_confirm" placeholder="Confirm">
 			</br>
 			<button class="btn btn-success btn-sm pull-right" id="user_create">Create user</button>
 			</br></br>
@@ -35,7 +35,7 @@
                 <label for="del_user_name">Delete user</label>
                 <div class="input-group">
                     <select class="form-control input-sm" id="del_user_name">
-                        {{#each conn_users}}
+                        {{#each conn_users.users}}
                             <option>{{this.user}}</option>
                         {{/each}}
                     </select>
