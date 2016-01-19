@@ -41,7 +41,7 @@ router.get('/:conn', function (req, res, next) {
     // connect to DB
     mongodb.connect(conn_string, function (err, mongo_db) {
         if(err){
-            console.error(err);
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db);
@@ -88,6 +88,7 @@ router.get('/:conn/:db/', function (req, res, next) {
     // connect to DB
     mongodb.connect(conn_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -135,6 +136,7 @@ router.get('/:conn/:db/:coll/view', function (req, res, next) {
     // connect to DB
     mongodb.connect(conn_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             //var db = mongojs(mongo_db);
@@ -180,6 +182,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
     // connect to DB
     mongodb.connect(conn_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -187,6 +190,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
                 db.collection(req.params.coll).getIndexes(function (err, coll_indexes) {
                     get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
                         if (collection_list.indexOf(req.params.coll) === -1) {
+                            console.error("No collection found");
                             render_error(res, req, "Collection does not exist", req.params.conn);
                         }else{
                             res.render('coll-indexes', {
@@ -223,12 +227,14 @@ router.get('/:conn/:db/:coll/users', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
             db.getCollectionNames(function (err, collection_list) {
                 db.runCommand({ usersInfo: 1 },function (err, conn_users) {
                     if (collection_list.indexOf(req.params.coll) === -1) {
+                        console.error("No collection found");
                         render_error(res, req, "Collection does not exist", req.params.conn);
                     }else{
                         res.render('coll-users', {
@@ -270,6 +276,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
     // connect to DB
     mongodb.connect(conn_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -277,6 +284,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
             db.getCollectionNames(function (err, collection_list) {
                 get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
                     if (collection_list.indexOf(req.params.coll) === -1) {
+                        console.error("No collection found");
                         render_error(res, req, "Collection does not exist", req.params.conn);
                     }else{
                         res.render('coll-new', {
@@ -322,6 +330,7 @@ router.get('/:conn/:db/:coll/edit/:id', function (req, res, next) {
     // connect to DB
     mongodb.connect(conn_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -329,8 +338,10 @@ router.get('/:conn/:db/:coll/edit/:id', function (req, res, next) {
                 get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
                     db.collection(req.params.coll).findOne({_id: mongojs.ObjectId(req.params.id)}, function(err, coll_doc) {
                         if (collection_list.indexOf(req.params.coll) === -1) {
+                            console.error("No collection found");
                             render_error(res, req, "Collection does not exist", req.params.conn);
                         }else if(coll_doc == undefined){
+                            console.error("No document found");
                             render_error(res, req, "Document not found", req.params.conn);
                         }else{
                             res.render('coll-edit', {
@@ -361,6 +372,7 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error("Error connecting to database: " + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -368,8 +380,8 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
             
             // Add a user
             db.addUser({"user": req.body.username, "pwd": req.body.user_password, "roles": []}, function (err, user_name) {
-                console.error(err);
                 if(err){
+                    console.error('Error creating user: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error creating user: ' + err);
                 }else{
@@ -389,6 +401,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -396,8 +409,8 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
             
             // Add a user
             db.removeUser(req.body.username, function (err, user_name) {
-                console.error(err);
                 if(err){
+                    console.error('Error deleting user: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting user: ' + err);
                 }else{
@@ -417,6 +430,7 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -425,6 +439,7 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
             // change a collection name
             db.collection(req.params.coll).rename(req.body.new_collection_name, {"dropTarget": false} , function (err, coll_name) {
                 if(err){
+                    console.error('Error renaming collection: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error renaming collection: ' + err);
                 }else{
@@ -444,6 +459,7 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -454,8 +470,8 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
             var sparse_bool = (req.body[2] === 'true');
             var options = {unique: unique_bool, background:true, sparse: sparse_bool};
             db.collection(req.params.coll).createIndex(JSON.stringify(req.body[0]), options, function (err, index) {
-                console.error(err);
                 if(err){
+                    console.error('Error creating index: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error creating index: ' + err);
                 }else{
@@ -475,6 +491,7 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -483,8 +500,8 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
             // adding a new index
             db.collection(req.params.coll).getIndexes(function (err, indexes) {
                 db.collection(req.params.coll).dropIndex(indexes[req.body.index].key, function (err, index) {
-                    console.error(err);
                     if(err){
+                        console.error('Error dropping Index: ' + err);
                         res.writeHead(400, { 'Content-Type': 'application/text' }); 
                         res.end('Error dropping Index: ' + err);
                     }else{
@@ -511,6 +528,7 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -519,6 +537,7 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
             // adding a new collection
             db.createCollection(req.body.collection_name, function (err, coll) {
                 if(err){
+                    console.error('Error creating collection: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error creating collection: ' + err);
                 }else{
@@ -544,6 +563,7 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
    
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -552,6 +572,7 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
             // delete a collection
             db.collection(req.body.collection_name).drop(function (err, coll) {
                 if(err){
+                    console.error('Error deleting collection: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting collection: ' + err);
                 }else{
@@ -585,8 +606,9 @@ router.post('/:conn/db_create', function (req, res, next) {
             // adding a new collection to create the DB
             db.collection("test").save({}, function (err, docs) {
                 if(err){
+                    console.error('Error creating database: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
-                    res.end('Error creating database');
+                    res.end('Error creating database: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
                     res.end('Database successfully created');
@@ -610,6 +632,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error deleting database: ' + err);
             res.writeHead(200, { 'Content-Type': 'application/text' }); 
             res.end('Error deleting database: ' + err);
         }else{
@@ -618,6 +641,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
             // delete a collection
             db.dropDatabase(function(err, result) {
                 if(err){
+                    console.error('Error deleting database: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting database: ' + err);
                 }else{
@@ -642,6 +666,7 @@ router.post('/:conn/:db/:coll/save', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
@@ -662,10 +687,12 @@ router.post('/:conn/:db/:coll/save', function (req, res, next) {
                 delete req.body['_id']; 
                 db.collection(req.params.coll).update({ '_id': mongojs.ObjectId(doc_id) },req.body, function (err, doc, lastErrorObject) {            
                     if(err){
+                        console.error("Error updating document: " + err);
                         res.writeHead(400, { 'Content-Type': 'application/text' }); 
                         res.end('Error updating document: ' + err);
                     }else{
                         if(doc['nModified'] == 0){
+                            console.error('Error updating document: Document ID is incorrect');
                             res.writeHead(400, { 'Content-Type': 'application/text' }); 
                             res.end('Error updating document: Document ID is incorrect');
                         }else{
@@ -677,8 +704,8 @@ router.post('/:conn/:db/:coll/save', function (req, res, next) {
             }else{
                 // adding a new doc
                 db.collection(req.params.coll).save(req.body, function (err, docs) {
-                    console.error(err);
                     if(err){
+                        console.error('Error inserting document: ' + err);
                         res.writeHead(400, { 'Content-Type': 'application/text' }); 
                         res.end('Error inserting document: ' + err);
                     }else{
@@ -704,14 +731,15 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
+            console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
 
             db.collection(req.params.coll).remove({"_id": db.ObjectId(req.body.doc_id)}, function(err, docs){
-                console.error(err);
                 if(err){
+                    console.error('Error deleting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting document: ' + err);
                 }else{
@@ -741,8 +769,8 @@ router.post('/add_config', function (req, res, next) {
 
     // save for ron
     nconf.save(function (err) {
-        console.error(err);
         if(err){
+            console.error('Config error: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Config error: ' + err);
         }else{
@@ -763,8 +791,8 @@ router.post('/update_config', function (req, res, next) {
 
     // save for ron
     nconf.save(function (err) {
-        console.error(err);
         if(err){
+            console.error('Config error: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Config error: ' + err);
         }else{
@@ -782,8 +810,8 @@ router.post('/drop_config', function (req, res, next) {
 
     // save for ron
     nconf.save(function (err) {
-        console.error(err);
         if(err){
+            console.error('Config error: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Config error: ' + err);
         }else{
@@ -825,7 +853,6 @@ router.get('/api/:conn/:db/:coll', function (req, res, next) {
         var limit = page_size;
 
         db.collection(req.params.coll).find({}).limit(limit).skip(skip, function (err, data) {
-            console.error(err);
             if (err) {
                 res.json(500, err);
             }
