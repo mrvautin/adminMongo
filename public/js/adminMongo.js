@@ -167,24 +167,28 @@ $(document).ready(function() {
     });
     
     $("#add_config").click(function() {
-        var data_obj = {};
-        data_obj[0] = $("#new_conf_conn_name").val();
-        data_obj[1] = $("#new_conf_conn_string").val();
+        if($("#new_conf_conn_name").val() != "" && $("#new_conf_conn_string").val() != ""){
+            var data_obj = {};
+            data_obj[0] = $("#new_conf_conn_name").val();
+            data_obj[1] = $("#new_conf_conn_string").val();
 
-        $.ajax({
-            method: "POST",
-            url: "/add_config",
-            data: data_obj
-        })
-        .success(function(msg) {
-            show_notification(msg,"success");
-            setInterval(function() {
-                location.reload();
-            }, 2500);
-        })
-        .error(function(msg) {
-            show_notification(msg.responseText,"danger");
-        });
+            $.ajax({
+                method: "POST",
+                url: "/add_config",
+                data: data_obj
+            })
+            .success(function(msg) {
+                show_notification(msg,"success");
+                setInterval(function() {
+                    location.reload();
+                }, 2500);
+            })
+            .error(function(msg) {
+                show_notification(msg.responseText,"danger");
+            });
+        }else{
+            show_notification("Please enter both a connection name and connection string","danger");
+        }
     });
     
     function redirect(url){
