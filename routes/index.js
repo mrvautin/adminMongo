@@ -53,7 +53,7 @@ router.get('/:conn', function (req, res, next) {
                                 conn_list: order_object(connection_list),
                                 conn_stats: clean_stats(conn_stats),
                                 conn_name: req.params.conn,
-                                conn_users: conn_users.users,
+                                conn_users: conn_users,
                                 sidebar_list: sidebar_list,
                                 db_list: db_list,
                                 db_name: conn_stats.db,
@@ -99,7 +99,7 @@ router.get('/:conn/:db/', function (req, res, next) {
                                 conn_name: req.params.conn,
                                 conn_list: order_object(connection_list),
                                 conn_stats: clean_stats(conn_stats),
-                                conn_users: conn_users.users,
+                                conn_users: conn_users,
                                 coll_list: collection_list.sort(),
                                 db_name: req.params.db,
                                 show_db_name: true,
@@ -361,7 +361,8 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            render_error(res, req, err, req.params.conn);
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
+            res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
             
@@ -369,7 +370,7 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
             db.addUser({"user": req.body.username, "pwd": req.body.user_password, "roles": []}, function (err, user_name) {
                 console.error(err);
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error creating user: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -388,7 +389,8 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            render_error(res, req, err, req.params.conn);
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
+            res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
             
@@ -396,7 +398,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
             db.removeUser(req.body.username, function (err, user_name) {
                 console.error(err);
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting user: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -415,14 +417,15 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            render_error(res, req, err, req.params.conn);
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
+            res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
     
             // change a collection name
             db.collection(req.params.coll).rename(req.body.new_collection_name, {"dropTarget": false} , function (err, coll_name) {
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error renaming collection: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -441,7 +444,7 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -472,7 +475,7 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -482,7 +485,7 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
                 db.collection(req.params.coll).dropIndex(indexes[req.body.index].key, function (err, index) {
                     console.error(err);
                     if(err){
-                        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                        res.writeHead(400, { 'Content-Type': 'application/text' }); 
                         res.end('Error dropping Index: ' + err);
                     }else{
                         res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -502,13 +505,13 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
         res.end('Invalid connection');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -516,7 +519,7 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
             // adding a new collection
             db.createCollection(req.body.collection_name, function (err, coll) {
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error creating collection: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -535,13 +538,13 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
         res.end('Invalid connection');
     }
    
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -549,7 +552,7 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
             // delete a collection
             db.collection(req.body.collection_name).drop(function (err, coll) {
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting collection: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -568,13 +571,13 @@ router.post('/:conn/db_create', function (req, res, next) {
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
         res.end('Invalid connection');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.body.db_name));
@@ -582,7 +585,7 @@ router.post('/:conn/db_create', function (req, res, next) {
             // adding a new collection to create the DB
             db.collection("test").save({}, function (err, docs) {
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error creating database');
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -601,7 +604,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
         res.end('Invalid connection');
     }
 
@@ -615,7 +618,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
             // delete a collection
             db.dropDatabase(function(err, result) {
                 if(err){
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
                     res.end('Error deleting database: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
@@ -633,13 +636,13 @@ router.post('/:conn/:db/:coll/save', function (req, res, next) {
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
         res.end('Invalid connection');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
-            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+            res.writeHead(400, { 'Content-Type': 'application/text' }); 
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
@@ -695,7 +698,7 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(200, { 'Content-Type': 'application/text' }); 
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
         res.end('Invalid connection');
     }
 
@@ -864,7 +867,6 @@ var get_db_list = function(uri, mongo_db, cb) {
         cb(null, null);
     }
 };
-
 
 // gets the Databases and collections
 var get_sidebar_list = function(mongo_db, db_name, cb) {
