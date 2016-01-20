@@ -6,11 +6,11 @@ $(document).ready(function() {
     editor.$blockScrolling = "Infinity";
     $("#submit_json").click(function() {
         try {
-            var json = $.parseJSON(editor.getValue());
             $.ajax({
                 method: "POST",
+                contentType: 'application/json',
                 url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/save",
-                data: json
+                data: editor.getValue()
             })
             .success(function(msg) {
                 show_notification(msg,"success");
