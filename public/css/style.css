@@ -32,6 +32,10 @@ body {
     padding-right: 0px;
 }
 
+.no-pad-left{
+    padding-left: 0px;
+}
+
 .index-table{
     margin-top: 25px;
 }

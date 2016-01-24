@@ -4,12 +4,13 @@ $(document).ready(function() {
     editor.session.setMode("ace/mode/json");
     editor.setFontSize(14);
     editor.$blockScrolling = "Infinity";
+    
     $("#submit_json").click(function() {
         try {
             $.ajax({
                 method: "POST",
                 contentType: 'application/json',
-                url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/save",
+                url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/" + $("#edit_request_type").val(),
                 data: editor.getValue()
             })
             .success(function(msg) {
