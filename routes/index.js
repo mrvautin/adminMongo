@@ -304,7 +304,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
     });
 });
 
-router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
+router.get('/:conn/:db/:coll/edit/:id', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.get('connections');
@@ -314,6 +314,11 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         render_error(res, req, "Invalid connection name", req.params.conn);
+        return;
+    }
+    
+    if(req.params.id.length != 12 && req.params.id.length != 24){
+        render_error(res, req, "Invalid document ID length", req.params.conn);
         return;
     }
     
@@ -329,10 +334,9 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
-            
             db.getCollectionNames(function (err, collection_list) {
                 get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
-                    db.collection(req.params.coll).findOne({_id: parse_doc_id(req.params.doc_id)}, function(err, coll_doc) {
+                    db.collection(req.params.coll).findOne({_id: mongojs.ObjectId(req.params.id)}, function(err, coll_doc) {
                         if (collection_list.indexOf(req.params.coll) === -1) {
                             console.error("No collection found");
                             render_error(res, req, "Collection does not exist", req.params.conn);
@@ -649,7 +653,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
     });
 });
 
-router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
+router.post('/:conn/:db/:coll/save', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
@@ -667,60 +671,49 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
+
+            // if there is an "_id" we will update, else insert
+            if(req.body._id != undefined){
+                // hold the _id before removing from object
+                var doc_id = req.body._id;
             
-            // adding a new doc
-            db.collection(req.params.coll).save(req.body, function (err, docs) {
-                if(err){
-                    console.error('Error inserting document: ' + err);
+                // if ID is not the correct length
+                if(doc_id.length !== 12 && doc_id.length !== 24){
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
-                    res.end('Error inserting document: ' + err);
-                }else{
-                    res.writeHead(200, { 'Content-Type': 'application/text' }); 
-                    res.end('Document successfully added');
+                    res.end('Error updating document: Document ID is incorrect length');
+                    return;
                 }
-            });
-        }
-    });
-});
-
-router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
-    var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
-    var mongodb = require('mongodb').MongoClient;
-    
-    // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Invalid connection');
-    }
-
-    mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
-        if(err){
-            console.error('Error connecting to database: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' }); 
-            res.end('Error connecting to database: ' + err);
-        }else{
-            var db = mongojs(mongo_db.db(req.params.db));
-
-            // remove the _id form the body object so we set in query
-            var doc_id = req.body['_id'];
-            delete req.body['_id'];
-            db.collection(req.params.coll).update({_id: parse_doc_id(doc_id)},req.body, function (err, doc, lastErrorObject) {   
-                if(err){
-                    console.error("Error updating document: " + err);
-                    res.writeHead(400, { 'Content-Type': 'application/text' }); 
-                    res.end('Error updating document: ' + err);
-                }else{
-                    if(doc['nModified'] == 0){
-                        console.error('Error updating document: Document ID is incorrect');
+                // remove the _id form the body object so we set in query
+                delete req.body['_id']; 
+                db.collection(req.params.coll).update({ '_id': mongojs.ObjectId(doc_id) },req.body, function (err, doc, lastErrorObject) {            
+                    if(err){
+                        console.error("Error updating document: " + err);
                         res.writeHead(400, { 'Content-Type': 'application/text' }); 
-                        res.end('Error updating document: Document ID is incorrect');
+                        res.end('Error updating document: ' + err);
+                    }else{
+                        if(doc['nModified'] == 0){
+                            console.error('Error updating document: Document ID is incorrect');
+                            res.writeHead(400, { 'Content-Type': 'application/text' }); 
+                            res.end('Error updating document: Document ID is incorrect');
+                        }else{
+                            res.writeHead(200, { 'Content-Type': 'application/text' }); 
+                            res.end('Document successfully updated');
+                        }
+                    }
+                });
+            }else{
+                // adding a new doc
+                db.collection(req.params.coll).save(req.body, function (err, docs) {
+                    if(err){
+                        console.error('Error inserting document: ' + err);
+                        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+                        res.end('Error inserting document: ' + err);
                     }else{
                         res.writeHead(200, { 'Content-Type': 'application/text' }); 
-                        res.end('Document successfully updated');
+                        res.end('Document successfully added');
                     }
-                }
-            });
+                });
+            }
         }
     });
 });
@@ -744,7 +737,7 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
 
-            db.collection(req.params.coll).remove({_id: parse_doc_id(req.body.doc_id)}, function(err, docs){
+            db.collection(req.params.coll).remove({"_id": db.ObjectId(req.body.doc_id)}, function(err, docs){
                 if(err){
                     console.error('Error deleting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
@@ -951,11 +944,6 @@ function order_object(unordered){
     return ordered;
 }
 
-// check if is int
-function isInt(value) {
-  return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
-}
-
 // render the error page
 function render_error(res, req, err, conn){
     var connection_list = req.nconf.get('connections');
@@ -972,24 +960,6 @@ function render_error(res, req, err, conn){
         connection_list: order_object(connection_list),
         layout: "layout"
     });
-}
-
-// Some MongoDB's are going to have _id fields which are not
-// MongoDB ObjectID's. In cases like this, we cannot cast all _id
-// as a ObjectID in the query. We can run a ObjectID.isValid() check
-// to determine whether it is an ObjectID (most likely), then we check
-// if we can parse it as an integer (second most likely), then we check
-// for a string. Is someone has a better way of doing this (I'm sure someone does)
-// please submit fix and submit a pull request.
-function parse_doc_id(value){
-    var ObjectID = require('mongodb').ObjectID;
-    if(ObjectID.isValid(value) == true){
-        return new ObjectID(value);
-    }else if (isInt(value) == true){
-       return parseInt(value);
-    }else{
-        return value;
-    }
 }
 
 // only want the first 9 stats
