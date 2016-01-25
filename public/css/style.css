@@ -19,6 +19,14 @@ body {
     width: 100%;
 }
 
+#doc_load_placeholder{
+    padding-top: 150px;
+}
+
+#doc_none_found{
+    padding-top: 150px;
+}
+
 .no-pad-top{
     margin-top: 0px;
 }
@@ -34,6 +42,9 @@ body {
 
 .no-pad-left{
     padding-left: 0px;
+}
+.no-pad-right{
+    padding-right: 0px;
 }
 
 .index-table{

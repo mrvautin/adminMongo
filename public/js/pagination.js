@@ -1,19 +1,39 @@
-$(document).ready(function() {
-    var page_num = getParam('page');
-    
+$(document).ready(function() {  
+    $('#doc_load_placeholder').show();
+      
+    var page_num = $('#page_num').val();
     var page_len = $('#docs_per_page').val();
     var coll_name = $('#coll_name').val();
     var conn_name = $('#conn_name').val();
     var db_name = $('#db_name').val();
     
-    $.getJSON('/api/' +  conn_name + '/' + db_name + '/' + coll_name + '?page='+page_num, function(data){
+    // optional search stuff
+    var key_val = $('#key_val').val();
+    var value_val = $('#value_val').val();
+    
+    // add search to the API URL if it exists
+    var api_url = '/api/' +  conn_name + '/' + db_name + '/' + coll_name + '/' + page_num;
+    var pager_href = '/' +  conn_name + '/' + db_name + '/' + coll_name + '/view/{{number}}';
+    if(key_val != "" && value_val != ""){
+        pager_href = '/' +  conn_name + '/' + db_name + '/' + coll_name + '/view/{{number}}/' + key_val + '/' + value_val;
+        api_url = '/api/' +  conn_name + '/' + db_name + '/' + coll_name + '/' + page_num + "/" + key_val + "/" + value_val;
+    }
+    
+    $.getJSON(api_url, function(data){
         data = data.data;
+        
+        // show message when non are found
+        if(data == ""){
+            $('#doc_none_found').removeClass('hidden');
+        }else{
+            $('#doc_none_found').addClass('hidden');
+        }
         
         $('#pager').bootpag({
             total: Math.ceil($('#coll_count').val() / page_len),
             page: page_num,
             maxVisible: 4,
-            href: "?page={{number}}",
+            href: pager_href,
             next: null,
             prev: null
         });
@@ -26,6 +46,8 @@ $(document).ready(function() {
             inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right pad-bottom"><a href="/'+ conn_name +"/" + db_name + "/" + coll_name + "/edit/" + data[i]._id+'" class="btn btn-success btn-sm">Edit</a></div>';
             $('#coll_docs').append(inner_html);
         };
+        
+        $('#doc_load_placeholder').hide();
         
         // hook up the syntax highlight and prettify the json
         $(".code-block").each(function (i, block) { 

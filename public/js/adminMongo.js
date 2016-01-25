@@ -17,6 +17,20 @@ $(document).ready(function() {
         }
     });
     
+    // reset the search URL to base page 1
+    $("#searchReset").click(function() {
+        window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
+    });
+    
+    // set the URL search parameters
+    $("#searchModalAction").click(function() {
+        if($("#search_key_value").val() != "" && $("#search_value_value").val() != ""){
+            window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1/" + $("#search_key_value").val() + "/" + $("#search_value_value").val();
+        }else{
+            show_notification("Please enter a key (field) and a value to search for","danger");
+        }
+    });
+    
     $("#coll_name_edit").click(function() {
         var data = $("#coll_name_newval").val();
         if(data != ""){
