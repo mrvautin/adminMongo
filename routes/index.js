@@ -413,7 +413,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
                     res.end('Error deleting user: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' }); 
-                    res.end('User successfully created');
+                    res.end('User successfully deleted');
                 }
             });
         }
