@@ -36,16 +36,25 @@ Note: The connection can be either local or remote hosted on VPS or MongoDB serv
 
 ##### Connection/Database admin
 
-After connecting to your newly created connection, you are able to see all database objects associated with your connection. Here you can create/delete collections, create/delete users and see various stats for your database.
+After opening your newly created connection, you are able to see all database objects associated with your connection. Here you can create/delete collections, create/delete users and see various stats for your database.
 
 ![adminMongo database screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_dbview.png "adminMongo database screen")
 *The connections/database screen*
 
 ##### Collections
 
-After selecting your collection from the "Database Objects" menu, you will be presented with the collections screen. Here you can see documents in pagination form, create new documents, delete, edit documents and view/add indexes to your collection.
+After selecting your collection from the "Database Objects" menu, you will be presented with the collections screen. Here you can see documents in pagination form, create new documents, search documents, delete, edit documents and view/add indexes to your collection.
 
 ![adminMongo collections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_collectionview.png "adminMongo collections screen")
+*The collections screen*
+
+##### Searching documents
+
+You can search documents using the `Search documents` button on the collections screen. You will need to enter the key (field name) and value. Eg: key = "_id" and value = "569ff81e0077663d78a114ce".
+
+> You can clear your search by clicking the `Reset` button on the collections screen.
+
+![adminMongo search documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_searchdocuments.png "adminMongo search documents")
 *The collections screen*
 
 ##### Documents
@@ -72,7 +81,7 @@ Indexes can be added from the collection screen. Please see the [official MongoD
 
 ## Future plans
 
-In coming versions search functionality and an improved database dashboard will be added. 
+In coming versions an improved database dashboard will be added. 
 
 ## License
 
