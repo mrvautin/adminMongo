@@ -80,6 +80,12 @@ router.get('/:conn/:db/', function (req, res, next) {
         return;
     }
     
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
+        return;
+    }
+    
     var conn_string = connection_list[req.params.conn].connection_string;
     
     // parse the connection string to get DB
@@ -128,6 +134,18 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
     var mongo_uri = require('mongo-uri');
    
     var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        render_error(res, req, "Invalid connection name", req.params.conn);
+        return;
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
+        return;
+    }
     
     // parse the connection string to get DB
     var uri = mongo_uri.parse(conn_string);
@@ -178,6 +196,18 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
 
     var conn_string = connection_list[req.params.conn].connection_string;
     
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        render_error(res, req, "Invalid connection name", req.params.conn);
+        return;
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
+        return;
+    }
+    
     // parse the connection string to get DB
     var uri = mongo_uri.parse(conn_string);
     
@@ -226,6 +256,12 @@ router.get('/:conn/:db/:coll/users', function (req, res, next) {
         render_error(res, req, "Invalid connection name", req.params.conn);
         return;
     }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
+        return;
+    }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -267,6 +303,12 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         render_error(res, req, "Invalid connection name", req.params.conn);
+        return;
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
         return;
     }
     
@@ -319,6 +361,12 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
         return;
     }
     
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
+        return;
+    }
+    
     var conn_string = connection_list[req.params.conn].connection_string;
     
     // parse the connection string to get DB
@@ -367,6 +415,18 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
+    }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -396,6 +456,18 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
+    }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -425,6 +497,18 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
+    }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -454,6 +538,18 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
+    }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -486,6 +582,18 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
+    }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -517,11 +625,17 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    
+        
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Invalid connection');
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
@@ -556,7 +670,13 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Invalid connection');
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
     }
    
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
@@ -659,7 +779,13 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Invalid connection');
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
@@ -693,7 +819,13 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Invalid connection');
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
@@ -735,7 +867,13 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' }); 
-        res.end('Invalid connection');
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(400, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
@@ -838,7 +976,14 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
     
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.json(500, "invalid connection name");
+        res.writeHead(500, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid connection name');
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        res.writeHead(500, { 'Content-Type': 'application/text' }); 
+        res.end('Invalid database name');
     }
     
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
