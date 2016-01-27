@@ -1073,16 +1073,16 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
         var adminDb = mongo_db.admin();
         adminDb.listDatabases(function (err, db_list) {
             async.forEachOf(order_object(db_list.databases), function (value, key, callback) {
-                var temp_db = mongojs(mongo_db.db(value.name));
-                temp_db.getCollectionNames(function(err, collections){
-                    // remove system.indexes
-                    var index = collections.indexOf("system.indexes");
-                    collections.splice(index, 1);
-                    if(value.name != "local"){
+                var skipped_dbs = ["null", "admin", "local"];
+                if(skipped_dbs.indexOf(value.name) === -1){
+                    var temp_db = mongojs(mongo_db.db(value.name));
+                    temp_db.getCollectionNames(function(err, collections){
                         db_obj[value.name] = collections.sort();
-                    }
+                        callback();
+                    });
+                }else{
                     callback();
-                });
+                }
             }, function (err) {
                 if (err) console.error(err.message);
                 cb(null, order_object(db_obj));
@@ -1091,9 +1091,6 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
     }else{
         var db = mongojs(mongo_db.db(db_name));
         db.getCollectionNames(function(err, collections){
-            // remove system.indexes
-            var index = collections.indexOf("system.indexes");
-            collections.splice(index, 1);
             db_obj[db_name] = collections;
             cb(null, db_obj);
         });
