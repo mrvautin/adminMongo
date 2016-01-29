@@ -81,7 +81,7 @@ Indexes can be added from the collection screen. Please see the [official MongoD
 
 ## Future plans
 
-In coming versions an improved database dashboard will be added. 
+Please make any suggestions.
 
 ## License
 
