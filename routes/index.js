@@ -30,12 +30,10 @@ router.get('/:conn', function (req, res, next) {
     // parse the connection string to get DB
     var uri = mongo_uri.parse(conn_string);
     
-    // pick view to render based on whether a DB has been specified in conn string
-    var view_to_render = "";
+    // If there is a DB in the connection string, we redirect to the DB level
     if(uri.database){
-        view_to_render = "db";
-    }else{
-        view_to_render = "conn";
+        res.redirect("/" +  req.params.conn + "/" + uri.database);
+        return;
     }
     
     // connect to DB
@@ -45,18 +43,17 @@ router.get('/:conn', function (req, res, next) {
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db);
-            db.stats(function (err, conn_stats) {
+            get_db_stats(mongo_db, uri.database, function(err, db_stats){
                 db.runCommand({ usersInfo: 1 },function (err, conn_users) {
                     get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
                         get_db_list(uri, mongo_db, function(err, db_list) {
-                            res.render(view_to_render, {
+                            res.render('conn', {
                                 conn_list: order_object(connection_list),
-                                conn_stats: clean_stats(conn_stats),
+                                db_stats: db_stats,
                                 conn_name: req.params.conn,
                                 conn_users: conn_users,
                                 sidebar_list: sidebar_list,
                                 db_list: db_list,
-                                db_name: conn_stats.db,
                                 helpers: helpers
                             });
                         });
@@ -98,16 +95,17 @@ router.get('/:conn/:db/', function (req, res, next) {
             render_error(res, req, err, req.params.conn);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
-            db.stats(function (err, conn_stats) {
+            get_db_stats(mongo_db, req.params.db, function(err, db_stats){
                 get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
                     db.runCommand({ usersInfo: 1 },function (err, conn_users) {
                         db.getCollectionNames(function (err, collection_list) {
+                            order_array(collection_list)
                             res.render('db', {
                                 conn_name: req.params.conn,
                                 conn_list: order_object(connection_list),
-                                conn_stats: clean_stats(conn_stats),
+                                db_stats: db_stats,
                                 conn_users: conn_users,
-                                coll_list: collection_list.sort(),
+                                coll_list: collection_list,
                                 db_name: req.params.db,
                                 show_db_name: true,
                                 sidebar_list: sidebar_list,
@@ -119,6 +117,11 @@ router.get('/:conn/:db/', function (req, res, next) {
             });
         }
     });
+});
+
+// redirect to page 1
+router.get('/:conn/:db/:coll/', function (req, res, next) {
+     res.redirect("/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
 });
 
 // redirect to page 1
@@ -1032,11 +1035,78 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
     });
 });
 
+// gets the db stats
+var get_db_stats = function(mongo_db, db_name, cb) {
+    var async = require('async');
+    var mongojs = require('mongojs');
+    var db_obj = {};
+    
+    // if at connection level we get db's, then get collections
+    if(db_name == null){
+        var adminDb = mongo_db.admin();
+        adminDb.listDatabases(function (err, db_list) {
+            if(err){
+                cb("User is not authorised", null);
+                return;
+            }
+            if(db_list != undefined){
+                async.forEachOf(order_object(db_list.databases), function (value, key, callback) {
+                    order_object(db_list.databases);
+                    var skipped_dbs = ["null", "admin", "local"];
+                    if(skipped_dbs.indexOf(value.name) === -1){
+                        var db_name = value.name;
+                        var temp_db = mongojs(mongo_db.db(value.name));
+                        temp_db.getCollectionNames(function(err, coll_list){
+                            var coll_obj = {};
+                            async.forEachOf(coll_list, function (value, key, callback) {
+                                temp_db.collection(value).stats(function(err, coll_stat){
+                                    coll_obj[value] = {Storage: coll_stat.size, Documents: coll_stat.count};
+                                    callback();
+                                });
+                            }, function (err) {
+                            if (err) console.error(err.message);
+                                // add the collection object to the DB object with the DB as key
+                                db_obj[db_name] = order_object(coll_obj);
+                                callback();
+                            });
+                        });
+                    }else{
+                        callback();
+                    }
+                }, function (err) {
+                    if (err) console.error(err.message);
+                    // wrap this whole thing up
+                    cb(null, order_object(db_obj));
+                });
+            }else{
+                // if doesnt have the access to get all DB's
+                cb(null, null);
+            }
+        });
+    // if at DB level, we just grab the collections below
+    }else{
+        var db = mongojs(mongo_db.db(db_name));
+        db.getCollectionNames(function(err, coll_list){
+            var coll_obj = {};
+            async.forEachOf(coll_list, function (value, key, callback) {
+                db.collection(value).stats(function(err, coll_stat){
+                    coll_obj[value] = {Storage: coll_stat.size, Documents: coll_stat.count};
+                    callback();
+                });
+            }, function (err) {
+                if (err) console.error(err.message);
+                db_obj[db_name] = order_object(coll_obj);
+                cb(null, db_obj);
+            });
+        });
+    }
+};
+
 // gets the Databases
 var get_db_list = function(uri, mongo_db, cb) {
     var async = require('async');
     var adminDb = mongo_db.admin();
-    var db_obj = [];
+    var db_arr = [];
     
     // if a DB is not specified in the Conn string we try get a list
     if(uri.database == undefined){ 
@@ -1046,12 +1116,13 @@ var get_db_list = function(uri, mongo_db, cb) {
                 async.forEachOf(db_list.databases, function (value, key, callback) {
                     var skipped_dbs = ["null", "admin", "local"];
                     if(skipped_dbs.indexOf(value.name) === -1){
-                        db_obj.push(value.name);
+                        db_arr.push(value.name);
                     }
                     callback();
                 }, function (err) {
                     if (err) console.error(err.message);
-                    cb(null, db_obj);
+                    order_array(db_arr);
+                    cb(null, db_arr);
                 });
             }else{
                 cb(null, null);
@@ -1072,12 +1143,13 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
     if(db_name == null){
         var adminDb = mongo_db.admin();
         adminDb.listDatabases(function (err, db_list) {
-            async.forEachOf(order_object(db_list.databases), function (value, key, callback) {
+            async.forEachOf(db_list.databases, function (value, key, callback) {
                 var skipped_dbs = ["null", "admin", "local"];
                 if(skipped_dbs.indexOf(value.name) === -1){
                     var temp_db = mongojs(mongo_db.db(value.name));
                     temp_db.getCollectionNames(function(err, collections){
-                        db_obj[value.name] = collections.sort();
+                        order_array(collections);
+                        db_obj[value.name] = collections;
                         callback();
                     });
                 }else{
@@ -1091,6 +1163,7 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
     }else{
         var db = mongojs(mongo_db.db(db_name));
         db.getCollectionNames(function(err, collections){
+            order_array(collections);
             db_obj[db_name] = collections;
             cb(null, db_obj);
         });
@@ -1101,16 +1174,27 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
 function order_object(unordered){
     if(unordered != undefined){
         var ordered = {};
-        Object.keys(unordered).sort().forEach(function(key) {
+        var keys = Object.keys(unordered);
+        order_array(keys);
+        keys.forEach(function(key) {
             ordered[key] = unordered[key];
         });
     }
     return ordered;
 }
 
-// check if is int
-function isInt(value) {
-  return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
+function order_array(array){
+    if(array){
+        array.sort(function(a,b) {
+            a = a.toLowerCase();
+            b = b.toLowerCase();
+            if( a == b) return 0;
+            if( a > b) return 1;
+            return -1;
+        });
+    }else{
+        return array;
+    }
 }
 
 // render the error page
@@ -1147,6 +1231,11 @@ function parse_doc_id(value){
     }else{
         return value;
     }
+}
+
+// check if is int
+function isInt(value) {
+  return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
 }
 
 // only want the first 9 stats

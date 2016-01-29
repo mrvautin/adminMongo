@@ -1,5 +1,5 @@
 <div class="col-lg-10">
-	<div class="col-lg-6">
+	<div class="col-lg-4">
 		<div class="col-lg-12">
 			<h3 class="no-pad-top">Collection maintenance</h3>
 			<label for="new_coll_name">Create collection</label>
@@ -8,7 +8,7 @@
 				<span class="input-group-btn">
 					<button class="btn btn-success btn-sm" id="coll_create">Create</button>
 				</span>
-			</div></br></br>
+			</div></br>
 			<label for="del_coll_name">Delete collection</label>
 			<div class="input-group">
 				<select class="form-control input-sm" id="del_coll_name">
@@ -46,11 +46,27 @@
             {{/if}}
 		</div>
 	</div>
-	<div class="col-lg-6">
+	<div class="col-lg-8">
 		<h3 class="no-pad-top">Database statistics</h3>
+        <div id="collection_chart"></div>
 		<ul class="list-group">
-			{{#each conn_stats}}
-                <li class="list-group-item"><strong>{{@key}}</strong>: {{this}}</li>
+			{{#each db_stats}}
+                <li class="list-group-item"><i class="fa fa-database"></i>&nbsp;&nbsp; <a href="/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
+                {{#each this}}  
+                    <li class="list-group-item coll_indent">
+                        <div class="row">
+                            <div class='col-lg-4 col-sm-12'>
+                                <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="/{{../../conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
+                            </div>
+                            <div class='col-lg-4 col-sm-6'>
+                                <i class="fa fa-hdd-o"></i>&nbsp; Storage: {{formatBytes this.Storage}}
+                            </div>
+                            <div class='col-lg-4 col-sm-6'>
+                                <i class="fa fa-file-text-o"></i>&nbsp; Documents: {{this.Documents}}
+                            </div>
+                        </div>
+                    </li>
+                {{/each}}
             {{/each}}
 		</ul>
 		<ul class="list-group">

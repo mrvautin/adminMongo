@@ -21,6 +21,9 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">adminMongo</a>
             </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/"><i class="fa fa-plug"></i>&nbsp; Connections</a></li>
+            </ul>
         </div>
     </nav>
     
@@ -39,12 +42,12 @@
                     <ul class="list-group">
                         <li class="list-group-item list-group-item-primary">Database Objects</li>
                         {{#if conn_name}}
-                            <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a class="db_link" href="/{{conn_name}}">{{conn_name}}</a></li>   
+                            <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="/{{conn_name}}">{{conn_name}}</a></li>   
                         {{/if}}
                         {{#each sidebar_list}}
-                            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp; <a class="db_link" href="/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
+                            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp; <a href="/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
                             {{#each this}}
-                                <li class="list-group-item">&nbsp;&nbsp;&nbsp;<i class="fa fa-file-text-o"></i>&nbsp;&nbsp;&nbsp;<a href="/{{../../conn_name}}/{{@../key}}/{{this}}/view">{{this}}</a></li>
+                                <li class="list-group-item coll_indent">&nbsp;&nbsp;&nbsp;<i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;<a href="/{{../../conn_name}}/{{@../key}}/{{this}}/view">{{this}}</a></li>
                             {{/each}}
                         {{/each}}
                     </ul>

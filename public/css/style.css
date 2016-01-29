@@ -13,6 +13,10 @@ body {
     width: 100%;
 }
 
+.coll_indent{
+    padding-left: 35px;
+}
+
 .index_json{
     position: relative;
     height: 200px;
