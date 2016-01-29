@@ -148,7 +148,11 @@ $(document).ready(function() {
         $.ajax({
             method: "POST",
             url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/user_create",
-            data: {"username": $("#new_username").val(), "user_password": $("#new_password").val()}
+                data: {
+                    "username": $("#new_username").val(),
+                    "user_password": $("#new_password").val(),
+                    "roles_text": $("#new_user_roles").val()
+                }
         })
         .success(function(msg) {
             show_notification(msg,"success");
