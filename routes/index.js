@@ -438,9 +438,10 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
-            
+            var roles = req.body.roles_text ? req.body.roles_text.split(/\s*,\s*/) : [];
+
             // Add a user
-            db.addUser({"user": req.body.username, "pwd": req.body.user_password, "roles": []}, function (err, user_name) {
+            db.addUser({"user": req.body.username, "pwd": req.body.user_password, "roles": roles}, function (err, user_name) {
                 if(err){
                     console.error('Error creating user: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' }); 
