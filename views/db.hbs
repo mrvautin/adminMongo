@@ -57,15 +57,19 @@
                 {{#each this}}  
                     <li class="list-group-item coll_indent">
                         <div class="row">
-                            <div class='col-lg-4 col-sm-12'>
+                            <div class='col-lg-3 col-sm-12'>
                                 <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="/{{../../conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
                             </div>
-                            <div class='col-lg-4 col-sm-6'>
+                            <div class='col-lg-3 col-sm-4'>
                                 <i class="fa fa-hdd-o"></i>&nbsp; Storage: {{formatBytes this.Storage}}
                             </div>
-                            <div class='col-lg-4 col-sm-6'>
+                            <div class='col-lg-3 col-sm-4'>
                                 <i class="fa fa-file-text-o"></i>&nbsp; Documents: {{this.Documents}}
                             </div>
+                            <div class='col-lg-3 col-sm-4'>
+                                <a class="pull-right" href="/{{../../conn_name}}/{{@../key}}/{{@key}}/export"><i class="fa fa-download"></i>&nbsp; Export</a>
+                            </div>
+                            
                         </div>
                     </li>
                 {{/each}}

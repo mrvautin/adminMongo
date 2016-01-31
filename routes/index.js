@@ -1036,6 +1036,36 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
     });
 });
 
+router.get('/:conn/:db/:coll/export', function (req, res, next) {
+    var mongojs = require('mongojs');
+    var connection_list = req.nconf.get('connections');
+    var mongodb = require('mongodb').MongoClient;
+    
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        render_error(res, req, "Invalid connection name", req.params.conn);
+        return;
+    }
+    
+    // Validate database name
+    if (req.params.db.indexOf(" ") > -1){
+        render_error(res, req, "Invalid database name", req.params.conn);
+        return;
+    }
+    
+    mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db){
+        var db = mongojs(mongo_db.db(req.params.db));
+        db.collection(req.params.coll).find({}, function (err, data) {
+            if(data != ""){
+                res.set({"Content-Disposition":"attachment; filename=" + req.params.coll + ".json"});
+                res.send(JSON.stringify(data, null, 2));
+            }else{
+                render_error(res, req, "Export error: Collection not found", req.params.conn);
+            }
+        });
+    });
+});
+
 // gets the db stats
 var get_db_stats = function(mongo_db, db_name, cb) {
     var async = require('async');

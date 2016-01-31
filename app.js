@@ -7,10 +7,30 @@ var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
 var handlebars = require('express-handlebars');
 var nconf = require('nconf');
+var basicAuth = require('basic-auth');
 
 var routes = require('./routes/index');
 
 var app = express();
+
+app.use(function (req, res, next) {
+    function unauthorized(res) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.send(401);
+    };
+
+    var auth = basicAuth(req);
+
+    if (!auth || !auth.name || !auth.pass) {
+        return unauthorized(res);
+    };
+
+    if (auth.name === "test" && auth.pass === "password") {
+        return next();
+    } else {
+        return unauthorized(res);
+    };
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
