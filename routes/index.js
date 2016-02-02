@@ -1036,7 +1036,7 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
     });
 });
 
-router.get('/:conn/:db/:coll/export', function (req, res, next) {
+router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
@@ -1053,9 +1053,15 @@ router.get('/:conn/:db/:coll/export', function (req, res, next) {
         return;
     }
     
+    // exclude _id from export
+    var exportID = {};
+    if(req.params.excludedID === "true"){
+        exportID = {"_id": 0};
+    }
+    
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db){
         var db = mongojs(mongo_db.db(req.params.db));
-        db.collection(req.params.coll).find({}, function (err, data) {
+        db.collection(req.params.coll).find({},exportID, function (err, data) {
             if(data != ""){
                 res.set({"Content-Disposition":"attachment; filename=" + req.params.coll + ".json"});
                 res.send(JSON.stringify(data, null, 2));

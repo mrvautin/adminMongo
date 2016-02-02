@@ -22,6 +22,18 @@ $(document).ready(function() {
         window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
     });
     
+    // redirect to export
+    $("#exportModalAction").click(function() {
+        var exportId = $("#exportExcludeID").is(":checked") ? "true" : "false";
+        window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $('#export_coll').val() + "/export/" + exportId;
+    });
+    
+    // sets the collection name to be used later to export entire collection
+    $(".exportLink").click(function() {  
+        $('#exportExcludeID').prop('checked', false);
+        $('#export_coll').val($(this).attr("id"));
+    });
+    
     // set the URL search parameters
     $("#searchModalAction").click(function() {
         if($("#search_key_value").val() != "" && $("#search_value_value").val() != ""){

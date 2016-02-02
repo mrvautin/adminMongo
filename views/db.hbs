@@ -67,9 +67,8 @@
                                 <i class="fa fa-file-text-o"></i>&nbsp; Documents: {{this.Documents}}
                             </div>
                             <div class='col-lg-3 col-sm-4'>
-                                <a class="pull-right" href="/{{../../conn_name}}/{{@../key}}/{{@key}}/export"><i class="fa fa-download"></i>&nbsp; Export</a>
+                                <a href="#" id="{{@key}}" class="exportLink pull-right" data-toggle="modal" data-target="#exportModal"><i class="fa fa-download"></i>&nbsp; Export</a>
                             </div>
-                            
                         </div>
                     </li>
                 {{/each}}

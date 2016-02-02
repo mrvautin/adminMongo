@@ -64,6 +64,32 @@
     </div>
     <input type="hidden" value="{{conn_name}}" id="conn_name">
     <input type="hidden" value="{{db_name}}" id="db_name">
+    <input type="hidden" value="" id="export_coll">
+    <!-- Export collection Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportCollectionLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="collectionNameLabel">Export collection</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="checkbox">
+                        <label>
+                            <input id="exportExcludeID" type="checkbox"> Exclude "_id" field?
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success btn-sm pull-right" id="exportModalAction">Export</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- Export collection Modal -->
     <div id="notify_message"></div>
   </body>
 </html>
