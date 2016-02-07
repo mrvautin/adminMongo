@@ -1,8 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+// the home route
 router.get('/', function (req, res, next) {
+    var connection_list = req.nconf.get('connections');
+    
+    if(connection_list){
+        // we have a connection and redirect to the first
+        var first_conn = Object.keys(connection_list)[0];
+        res.redirect('/' + first_conn);
+    }else{
+        // go to connection setup
+        res.redirect('/connection_list');
+    }
+});
+
+// show/manage connections
+router.get('/connection_list', function (req, res, next) {
     var connection_list = req.nconf.get('connections');
 
     res.render('connections', {
