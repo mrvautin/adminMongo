@@ -75,13 +75,13 @@ if (fs.existsSync(connection_config, "utf8")) {
     }
 }
 
-// setup the two conf. 'app' holds application config, and connections 
+// setup the two conf. 'app' holds application config, and connections
 // holds the mongoDB connections
 nconf.add('connections', { type: 'file', file: connection_config });
 nconf.add('app', { type: 'file', file: app_config });
 
 // set app defaults
-var app_host = '127.0.0.1';
+var app_host = '0.0.0.0';
 var app_port = 1234;
 
 // get the app configs and override if present
