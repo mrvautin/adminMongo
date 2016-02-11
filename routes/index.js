@@ -399,7 +399,8 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
 
             db.getCollectionNames(function (err, collection_list) {
                 get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
-                    db.collection(req.params.coll).findOne({_id: parse_doc_id(req.params.doc_id)}, function(err, coll_doc) {
+                    var id = parse_doc_id(req.params.doc_id, req.query.type);
+                    db.collection(req.params.coll).findOne({_id: id}, function(err, coll_doc) {
                         if (collection_list.indexOf(req.params.coll) === -1) {
                             console.error("No collection found");
                             render_error(res, req, "Collection does not exist", req.params.conn);
@@ -1273,24 +1274,19 @@ function render_error(res, req, err, conn){
 // Some MongoDB's are going to have _id fields which are not
 // MongoDB ObjectID's. In cases like this, we cannot cast all _id
 // as a ObjectID in the query. We can run a ObjectID.isValid() check
-// to determine whether it is an ObjectID (most likely), then we check
-// if we can parse it as an integer (second most likely), then we check
-// for a string. Is someone has a better way of doing this (I'm sure someone does)
-// please submit fix and submit a pull request.
-function parse_doc_id(value){
+// to determine whether it is an ObjectID.
+//
+// All params come as string type, so for other cases
+// we need to check the type directly from the field.
+function parse_doc_id(value, type){
     var ObjectID = require('mongodb').ObjectID;
     if(ObjectID.isValid(value) == true){
         return new ObjectID(value);
-    }else if (isInt(value) == true){
+    }else if (type === 'number'){
        return parseInt(value);
     }else{
         return value;
     }
-}
-
-// check if is int
-function isInt(value) {
-  return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
 }
 
 // only want the first 9 stats
