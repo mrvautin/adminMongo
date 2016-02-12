@@ -43,7 +43,7 @@ $(document).ready(function() {
         for (var i = 0; i < data.length; i++) {
             var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(data[i]) + '</code></pre></div>';
             inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">Delete</a></div>';
-            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right pad-bottom"><a href="/'+ conn_name +"/" + db_name + "/" + coll_name + "/edit/" + data[i]._id+'" class="btn btn-success btn-sm">Edit</a></div>';
+            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right pad-bottom"><a href="/'+ conn_name +"/" + db_name + "/" + coll_name + "/edit/" + data[i]._id+'?type=' + typeof data[i]._id + '" class="btn btn-success btn-sm">Edits</a></div>';
             $('#coll_docs').append(inner_html);
         };
         
