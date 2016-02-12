@@ -858,7 +858,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
             // remove the _id form the body object so we set in query
             var doc_id = req.body['_id'];
             delete req.body['_id'];
-            db.collection(req.params.coll).update({_id: parse_doc_id(doc_id)},req.body, function (err, doc, lastErrorObject) {
+            db.collection(req.params.coll).update({_id: parse_doc_id(doc_id, typeof doc_id)},req.body, function (err, doc, lastErrorObject) {
                 if(err){
                     console.error("Error updating document: " + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
@@ -1280,10 +1280,10 @@ function render_error(res, req, err, conn){
 // we need to check the type directly from the field.
 function parse_doc_id(value, type){
     var ObjectID = require('mongodb').ObjectID;
-    if(ObjectID.isValid(value) == true){
-        return new ObjectID(value);
-    }else if (type === 'number'){
+    if (type === 'number'){
        return parseInt(value);
+    }else if(ObjectID.isValid(value)){
+        return new ObjectID(value);
     }else{
         return value;
     }
