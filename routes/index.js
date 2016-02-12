@@ -194,6 +194,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                                 sidebar_list: sidebar_list,
                                 docs_per_page: 5,
                                 helpers: helpers,
+                                paginate: true,
                                 layout: "coll-layout"
                             });
                         }
