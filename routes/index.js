@@ -970,7 +970,12 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
         // build the search query if the variables are present
         var query_obj = {};
         var key_val = req.params.search_key;
-        var value_val = req.params.search_value;
+        var value_val = req.params.search_value;        
+
+        if(req.params.search_value === "true"){
+            value_val = true;
+        }
+        
         if(key_val != undefined && value_val != undefined){
             if(key_val == "_id"){
                 query_obj[key_val] = parse_doc_id(value_val);
@@ -978,7 +983,7 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
                 query_obj[key_val] = value_val;
             }
         }
-
+        
         var skip = 0;
         if(page > 1){
             skip = (page - 1) * page_size
@@ -989,12 +994,12 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
         db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, data) {
             if (err) {
                 res.json(500, err);
-            }
+            }            
             else {
                 res.json({
                     data: data
                 });
-            }
+            }            
         });
     });
 });
