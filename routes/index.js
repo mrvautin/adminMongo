@@ -21,8 +21,7 @@ router.get('/connection_list', function (req, res, next) {
 
     res.render('connections', {
         message: "",
-        connection_list: order_object(connection_list),
-        layout: "layout"
+        connection_list: order_object(connection_list)
     });
 });
 
@@ -194,8 +193,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                                 sidebar_list: sidebar_list,
                                 docs_per_page: 5,
                                 helpers: helpers,
-                                paginate: true,
-                                layout: "coll-layout"
+                                paginate: true
                             });
                         }
                     });
@@ -252,59 +250,10 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
                                 coll_list: collection_list.sort(),
                                 sidebar_list: sidebar_list,
                                 helpers: helpers,
-                                layout: "coll-layout",
                                 editor: true
                             });
                         }
                     });
-                });
-            });
-        }
-    });
-});
-
-router.get('/:conn/:db/:coll/users', function (req, res, next) {
-    var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
-    var mongodb = require('mongodb').MongoClient;
-
-    // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
-        return;
-    }
-
-    // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
-        return;
-    }
-
-    mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
-        if(err){
-            console.error("Error connecting to database: " + err);
-            render_error(res, req, err, req.params.conn);
-        }else{
-            var db = mongojs(mongo_db.db(req.params.db));
-            db.getCollectionNames(function (err, collection_list) {
-                db.runCommand({ usersInfo: 1 },function (err, conn_users) {
-                    if (collection_list.indexOf(req.params.coll) === -1) {
-                        console.error("No collection found");
-                        render_error(res, req, "Collection does not exist", req.params.conn);
-                    }else{
-                        res.render('coll-users', {
-                            conn_list: order_object(connection_list),
-                            conn_name: req.params.conn,
-                            db_name: req.params.db,
-                            conn_users: conn_users,
-                            coll_name: req.params.coll,
-                            coll_list: collection_list.sort(),
-                            helpers: helpers,
-                            editor: true,
-                            layout: "coll-layout"
-                        });
-                    }
                 });
             });
         }
@@ -356,8 +305,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
                             sidebar_list: sidebar_list,
                             db_name: req.params.db,
                             helpers: helpers,
-                            editor: true,
-                            layout: "coll-layout"
+                            editor: true
                         });
                     }
                 });
@@ -418,8 +366,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                                 coll_list: collection_list.sort(),
                                 coll_doc: coll_doc,
                                 helpers: helpers,
-                                editor: true,
-                                layout: "coll-layout"
+                                editor: true
                             });
                         }
                     });
@@ -1267,8 +1214,7 @@ function render_error(res, req, err, conn){
         message: err,
         conn: conn,
         conn_string: conn_string,
-        connection_list: order_object(connection_list),
-        layout: "layout"
+        connection_list: order_object(connection_list)
     });
 }
 
