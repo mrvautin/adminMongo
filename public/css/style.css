@@ -68,6 +68,11 @@ body {
     margin-bottom: 15px;
 }
 
+.list-group-item a {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 .db_link{
     color: #2c3e50;
 }
@@ -108,4 +113,3 @@ body {
 .notify_message-danger{
     background-color: #e74c3c;
 }
-

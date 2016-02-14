@@ -1,41 +1,43 @@
-<h2 class="text-center">MongoDB Connections</h2>
-{{#if message}}<h3 class="text-danger">Connection: {{conn}} - {{message}}</h3>{{/if}}
 <div class="col-lg-12">
+    <h2 class="text-center">MongoDB Connections</h2>
+    {{#if message}}<h3 class="text-danger">Connection: {{conn}} - {{message}}</h3>{{/if}}
     <div class="col-lg-12">
-        <table class="table">
-            <thead>
+        <div class="col-lg-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="col-md-2 text-center">Connection name</th>
+                        <th class="col-md-6 text-center">Connection string</th>
+                        <th class="col-md-4 text-center">Action</th>
+                    </tr>
+                </thead>
+                {{#each connection_list}}
+                    <tr>
+                        <input type="hidden" id="curr_conf_conn_name_{{@index}}" value="{{@key}}">
+                        <td><input type="text" class="form-control input-sm" id="conf_conn_name_{{@index}}" name="conf_conn_name" value="{{@key}}"></td>
+                        <td><input type="text" class="form-control input-sm" id="conf_conn_string_{{@index}}" name="conf_conn_string" value="{{this.connection_string}}"></td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button class="btn btn-danger btn-sm pull-left" id="update_config"  onclick="dropConfig('{{@index}}');">Delete</button>
+                                <a href="/{{@key}}" class="btn btn-primary btn-sm">Connect</a>
+                                <button class="btn btn-success btn-sm pull-right" id="update_config"  onclick="updateConfig('{{@index}}');">Update</button>
+                            </div>
+                        </td>
+                    </tr>
+                {{/each}}
+                <tr><td>&nbsp;</td></tr>
                 <tr>
-                    <th class="col-md-2 text-center">Connection name</th>
-                    <th class="col-md-6 text-center">Connection string</th>
-                    <th class="col-md-4 text-center">Action</th>
-                </tr>
-            </thead>
-            {{#each connection_list}}
-                <tr>
-                    <input type="hidden" id="curr_conf_conn_name_{{@index}}" value="{{@key}}">
-                    <td><input type="text" class="form-control input-sm" id="conf_conn_name_{{@index}}" name="conf_conn_name" value="{{@key}}"></td>
-                    <td><input type="text" class="form-control input-sm" id="conf_conn_string_{{@index}}" name="conf_conn_string" value="{{this.connection_string}}"></td>
+                    <td>
+                        <input type="text" class="form-control input-sm" id="new_conf_conn_name" name="new_conf_conn_name" placeholder="A name for connection">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control input-sm" id="new_conf_conn_string" name="new_conf_conn_string" placeholder="Connection string: mongodb://<user>:<password>@127.0.0.1:<port>/<db>">
+                    </td>
                     <td class="text-center">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <button class="btn btn-danger btn-sm pull-left" id="update_config"  onclick="dropConfig('{{@index}}');">Delete</button>
-                            <a href="/{{@key}}" class="btn btn-primary btn-sm">Connect</a>
-                            <button class="btn btn-success btn-sm pull-right" id="update_config"  onclick="updateConfig('{{@index}}');">Update</button>
-                        </div>
+                        <button class="btn btn-success btn-sm" id="add_config">Add connection</button>
                     </td>
                 </tr>
-            {{/each}}
-            <tr><td>&nbsp;</td></tr>
-            <tr>
-                <td>
-                    <input type="text" class="form-control input-sm" id="new_conf_conn_name" name="new_conf_conn_name" placeholder="A name for connection">
-                </td>
-                <td>
-                    <input type="text" class="form-control input-sm" id="new_conf_conn_string" name="new_conf_conn_string" placeholder="Connection string: mongodb://<user>:<password>@127.0.0.1:<port>/<db>">
-                </td>
-                <td class="text-center">
-                    <button class="btn btn-success btn-sm" id="add_config">Add connection</button>
-                </td>
-            </tr>
-        </table>
+            </table>
+        </div>
     </div>
 </div>

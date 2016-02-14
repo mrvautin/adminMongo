@@ -1,31 +1,31 @@
-<div class="col-lg-12">
+<div class="col-lg-10">
 	<ol class="breadcrumb">
 		<li><a href="/">Home</a></li>
 		<li><a href="/{{conn_name}}">{{conn_name}}</a>&nbsp;(connection)</li>
 		<li><a href="/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;(database)</li>
 		<li><a href="/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;(collection)</li>
 	</ol>
-</div>
-<div class="col-lg-12">
-    <div class="col-lg-4 no-pad-left">
-	   <div class="action_button pull-left"><a class="btn btn-success btn-sm" href="/{{conn_name}}/{{db_name}}/{{coll_name}}/new">New document</a></div>
-    </div>
-    <div class="col-lg-4 text-center">
-        <div class="btn-group" role="group" aria-label="...">
-            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#seachModal">Search documents</button>
-            <button type="button" class="btn btn-danger btn-sm" id="searchReset">Reset</button>
+    <div class="col-lg-12 no-side-pad">
+        <div class="col-sm-12 col-md-12 col-lg-4 text-center">
+            <div class="action_button"><a class="btn btn-success btn-sm" href="/{{conn_name}}/{{db_name}}/{{coll_name}}/new">New document</a></div>
         </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 text-center">
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-warning btn-sm action_button" data-toggle="modal" data-target="#seachModal">Search documents</button>
+                <button type="button" class="btn btn-danger btn-sm action_button" id="searchReset">Reset</button>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 text-center">
+            <div class="action_buttont"><a class="btn btn-info btn-sm" href="/{{conn_name}}/{{db_name}}/{{coll_name}}/indexes">Manage indexes</a></div>
+        </div>
+        <div id="doc_load_placeholder" class="col-lg-12"><h3 class="text-center">Finding docs <i class="fa fa-spinner fa-spin"></i></h3></div>
+        <div id="doc_none_found" class="col-lg-12 hidden"><h3 class="text-center">No documents found</h3></div>
+        <div id="coll_docs"></div>
     </div>
-    <div class="col-lg-4 no-pad-right">
-	   <div class="action_button pull-right"><a class="btn btn-info btn-sm" href="/{{conn_name}}/{{db_name}}/{{coll_name}}/indexes">Manage indexes</a></div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="pager" class="text-center pagination-sm"></div>
     </div>
-    <div id="doc_load_placeholder" class="col-lg-12"><h3 class="text-center">Finding docs <i class="fa fa-spinner fa-spin"></i></h3></div>
-    <div id="doc_none_found" class="col-lg-12 hidden"><h3 class="text-center">No documents found</h3></div>
-	<div id="coll_docs"></div>
+    <input type="hidden" id="page_num" value="{{page_num}}">
+    <input type="hidden" id="key_val" value="{{key_val}}">
+    <input type="hidden" id="value_val" value="{{value_val}}">
 </div>
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	<div id="pager" class="text-center pagination-sm"></div>
-</div>
-<input type="hidden" id="page_num" value="{{page_num}}">
-<input type="hidden" id="key_val" value="{{key_val}}">
-<input type="hidden" id="value_val" value="{{value_val}}">
