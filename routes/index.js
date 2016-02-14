@@ -1011,6 +1011,8 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
 
         if(req.params.search_value === "true"){
             value_val = true;
+        }else if(req.params.search_value === "false"){
+            value_val = false;
         }
         
         if(key_val != undefined && value_val != undefined){
