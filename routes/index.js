@@ -922,7 +922,7 @@ router.post('/drop_config', function (req, res, next) {
     // delete current config
     delete nconf.store.connections[req.body.curr_config];
 
-    // save for ron
+    // save config
     nconf.save(function (err) {
         if(err){
             console.error('Config error: ' + err);
@@ -991,13 +991,18 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
 
         var limit = page_size;
 
-        db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, data) {
+        db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, result) {
             if (err) {
                 res.json(500, err);
             }            
             else {
-                res.json({
-                    data: data
+                // get total num docs in query
+                db.collection(req.params.coll).count(query_obj, function (err, doc_count) {
+                    var return_data = {
+                        data: result,
+                        total_docs: doc_count
+                    }
+                    res.json(200, return_data);
                 });
             }            
         });
