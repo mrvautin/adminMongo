@@ -972,10 +972,12 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
         var key_val = req.params.search_key;
         var value_val = req.params.search_value;        
 
-        if(req.params.search_value === "true"){
-            value_val = true;
-        }else if(req.params.search_value === "false"){
-            value_val = false;
+        if(value_val){
+            if(value_val.toLowerCase() === "true"){
+                value_val = true;
+            }else if(value_val.toLowerCase() === "false"){
+                value_val = false;
+            }
         }
         
         if(key_val != undefined && value_val != undefined){
