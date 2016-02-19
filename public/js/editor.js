@@ -3,7 +3,7 @@ $(document).ready(function() {
     editor.setTheme("ace/theme/github");
     editor.session.setMode("ace/mode/json");
     editor.setFontSize(14);
-    editor.$blockScrolling = "Infinity";
+    editor.$blockScrolling = Infinity;
     
     $("#submit_json").click(function() {
         try {
