@@ -25,6 +25,17 @@ $(document).ready(function() {
         }
     });
     
+    // enable/disable submit button if errors
+    editor.getSession().on("changeAnnotation", function(){
+        var annot = editor.getSession().getAnnotations();
+        if(annot.length > 0){
+            $("#submit_json").prop('disabled', true);
+        }else{
+            $("#submit_json").prop('disabled', false);
+        }
+    });
+
+    
     // prettify the json
     var jsonString = editor.getValue();
     var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
