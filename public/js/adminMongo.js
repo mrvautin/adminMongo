@@ -1,4 +1,9 @@
-$(document).ready(function() {    
+$(document).ready(function() {  
+    // paginate if value is set
+    if($("#to_paginate").val() == "true"){
+        paginate();
+    }
+      
     $("#coll_create").click(function() {
         if($("#new_coll_name").val() != ""){
             $.ajax({
@@ -17,9 +22,28 @@ $(document).ready(function() {
         }
     });
     
-    // reset the search URL to base page 1
+    // To reset we call paginate() with no query object
     $("#searchReset").click(function() {
+        localStorage.removeItem('searchQuery');
         window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
+    });
+    
+    $("#queryDocumentsAction").click(function() {
+        var editor = ace.edit("json");
+        var editor_val = editor.getValue();
+
+        if(editor_val != ""){
+            // set the query in localStorage
+            localStorage.setItem('searchQuery',editor_val);
+            
+            // go to page 1 to remove any issues being on page X from another query/view
+            window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
+            
+            // close the queryDocuments
+            $('#queryDocuments').modal('hide');
+        }else{
+            show_notification("Please enter a query","danger");
+        }
     });
     
     // redirect to export
@@ -35,9 +59,22 @@ $(document).ready(function() {
     });
     
     // set the URL search parameters
-    $("#searchModalAction").click(function() {
-        if($("#search_key_value").val() != "" && $("#search_value_value").val() != ""){
-            window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1/" + $("#search_key_value").val() + "/" + $("#search_value_value").val();
+    $("#searchModalAction").click(function() { 	
+        var key_name = $("#search_key_value").val();
+        var val = $("#search_value_value").val();
+        if(key_name != "" && val != ""){
+            // build the simply key/value query object and call paginate();
+            var qry_obj = {};
+            qry_obj[key_name] = val; 
+            
+            // set the object to local storage to be used if page changes
+            localStorage.setItem('searchQuery',JSON.stringify(qry_obj));
+            
+            // go to page 1 to remove any issues being on page X from another query/view
+            window.location.href = "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
+            
+            // close the searchModal
+            $('#searchModal').modal('hide');
         }else{
             show_notification("Please enter a key (field) and a value to search for","danger");
         }
@@ -177,6 +214,15 @@ $(document).ready(function() {
         });
     });
     
+    $("#btnqueryDocuments").click(function() {
+        var editor = ace.edit("json");
+        if(localStorage.getItem('searchQuery')){
+            editor.setValue(localStorage.getItem('searchQuery'));
+        }else{
+            editor.setValue("{}");
+        }
+    });
+    
     $("#user_delete").click(function() {
         if(confirm("WARNING: Are you sure you want to delete this user?") == true) {
             $.ajax({
@@ -223,6 +269,73 @@ $(document).ready(function() {
     
     function redirect(url){
         window.location = url;
+    }
+    
+    function paginate(){
+        $('#doc_load_placeholder').show();
+        
+        var page_num = $('#page_num').val();
+        var page_len = $('#docs_per_page').val();
+        var coll_name = $('#coll_name').val();
+        var conn_name = $('#conn_name').val();
+        var db_name = $('#db_name').val();
+        
+        // optional search stuff
+        var key_val = $('#key_val').val();
+        var value_val = $('#value_val').val();
+        
+        // get the query (if any)
+        var query_string = localStorage.getItem('searchQuery');
+        
+        // add search to the API URL if it exists
+        var api_url = '/api/' +  conn_name + '/' + db_name + '/' + coll_name + '/' + page_num;
+        var pager_href = '/' +  conn_name + '/' + db_name + '/' + coll_name + '/view/{{number}}';
+        
+        $.ajax({
+            type: "POST",
+            dataType: 'json',
+            url: api_url,
+            data: {"query" : query_string}
+        })
+        .done(function(response) {
+            // show message when none are found
+            if(response.data == ""){
+                $('#doc_none_found').removeClass('hidden');
+            }else{
+                $('#doc_none_found').addClass('hidden');
+            }
+            
+            var total_docs = Math.ceil(response.total_docs / page_len);
+            
+            $('#pager').bootpag({
+                total: total_docs,
+                page: page_num,
+                maxVisible: 5,
+                href: pager_href
+            });
+            
+            //clear the div first
+            $('#coll_docs').empty();
+            for (var i = 0; i < response.data.length; i++) {
+                var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
+                inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">Delete</a></div>';
+                inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="/'+ conn_name +"/" + db_name + "/" + coll_name + "/edit/" + response.data[i]._id+'?type=' + typeof response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
+                $('#coll_docs').append(inner_html);
+            };
+            
+            $('#doc_load_placeholder').hide();
+            
+            // hook up the syntax highlight and prettify the json
+            $(".code-block").each(function (i, block) { 
+                var jsonString = this.textContent;
+                var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
+                $(this).html(jsonPretty);
+                hljs.highlightBlock(block);
+            });
+        })
+        .fail(function() {
+            show_notification("Error getting data from Query API","danger");
+        });
     }
 });
 

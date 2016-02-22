@@ -30,8 +30,10 @@ $(document).ready(function() {
         var annot = editor.getSession().getAnnotations();
         if(annot.length > 0){
             $("#submit_json").prop('disabled', true);
+            $("#queryDocumentsAction").prop('disabled', true);
         }else{
             $("#submit_json").prop('disabled', false);
+            $("#queryDocumentsAction").prop('disabled', false);
         }
     });
 

@@ -193,7 +193,8 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                                 sidebar_list: sidebar_list,
                                 docs_per_page: 5,
                                 helpers: helpers,
-                                paginate: true
+                                paginate: true,
+                                editor: true
                             });
                         }
                     });
@@ -936,7 +937,8 @@ router.post('/drop_config', function (req, res, next) {
 });
 
 // pagination API
-router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (req, res, next) {
+//router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (req, res, next) {
+router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
@@ -955,7 +957,7 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if (err) {
-            res.json(500, err);
+            res.status(500).json(err);
         }
 
         var db = mongojs(mongo_db.db(req.params.db));
@@ -966,47 +968,29 @@ router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (r
         if(req.params.page != undefined){
             page = parseInt(req.params.page);
         }
-
-        // build the search query if the variables are present
-        var query_obj = {};
-        var key_val = req.params.search_key;
-        var value_val = req.params.search_value;        
-
-        if(value_val){
-            if(value_val.toLowerCase() === "true"){
-                value_val = true;
-            }else if(value_val.toLowerCase() === "false"){
-                value_val = false;
-            }
-        }
-        
-        if(key_val != undefined && value_val != undefined){
-            if(key_val == "_id"){
-                query_obj[key_val] = parse_doc_id(value_val);
-            }else{
-                query_obj[key_val] = value_val;
-            }
-        }
-        
+         
         var skip = 0;
         if(page > 1){
             skip = (page - 1) * page_size
         }
 
         var limit = page_size;
+        var query_obj = {};
+        if(req.body.query){
+            query_obj = JSON.parse(req.body.query);
+        }
 
         db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, result) {
             if (err) {
-                res.json(500, err);
-            }            
-            else {
+                res.status(500).json(err);
+            }else{
                 // get total num docs in query
                 db.collection(req.params.coll).count(query_obj, function (err, doc_count) {
                     var return_data = {
                         data: result,
                         total_docs: doc_count
                     }
-                    res.json(200, return_data);
+                    res.status(200).json(return_data);
                 });
             }            
         });
