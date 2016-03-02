@@ -196,7 +196,7 @@ $(document).ready(function() {
 
         $.ajax({
             method: "POST",
-            url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/user_create",
+            url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/na/user_create",
                 data: {
                     "username": $("#new_username").val(),
                     "user_password": $("#new_password").val(),
@@ -227,7 +227,7 @@ $(document).ready(function() {
         if(confirm("WARNING: Are you sure you want to delete this user?") == true) {
             $.ajax({
                 method: "POST",
-                url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/user_delete",
+                url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/na/user_delete",
                 data: {"username": $("#del_user_name option:selected" ).text()}
             })
             .success(function(msg) {
