@@ -59,7 +59,19 @@ app.use("/bootstrap", express.static(path.join(__dirname, 'node_modules/bootstra
 app.use(express.static(path.join(__dirname, 'public')));
 
 // setup nconf to read in the file
+
+// create config dir and blank files if they dont exist
 var fs = require('fs');
+if (!fs.existsSync("config")){
+    fs.mkdirSync("config");
+}
+if (!fs.existsSync("config/config.json")){
+    fs.writeFileSync("config/config.json", "{}");
+}
+if (!fs.existsSync("config/app.json")){
+    fs.writeFileSync("config/app.json", "{}");
+}
+
 var connection_config = path.join(__dirname, 'config', 'config.json');
 var app_config = path.join(__dirname, 'config', 'app.json');
 
