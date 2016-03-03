@@ -3,15 +3,19 @@ $(document).ready(function() {
     editor.setTheme("ace/theme/github");
     editor.session.setMode("ace/mode/json");
     editor.setFontSize(14);
+    editor.getSession().setUseWorker(false);
     editor.$blockScrolling = Infinity;
     
     $("#submit_json").click(function() {
         try {
+            // convert BSON string to EJSON
+            var ejson = toEJSON.serializeString(editor.getValue());
+            
             $.ajax({
                 method: "POST",
                 contentType: 'application/json',
                 url: "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/" + $("#edit_request_type").val(),
-                data: editor.getValue()
+                data: JSON.stringify({ "objectData": ejson})
             })
             .success(function(msg) {
                 show_notification(msg,"success");
@@ -24,22 +28,4 @@ $(document).ready(function() {
             show_notification(err,"danger");
         }
     });
-    
-    // enable/disable submit button if errors
-    editor.getSession().on("changeAnnotation", function(){
-        var annot = editor.getSession().getAnnotations();
-        if(annot.length > 0){
-            $("#submit_json").prop('disabled', true);
-            $("#queryDocumentsAction").prop('disabled', true);
-        }else{
-            $("#submit_json").prop('disabled', false);
-            $("#queryDocumentsAction").prop('disabled', false);
-        }
-    });
-
-    
-    // prettify the json
-    var jsonString = editor.getValue();
-    var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-    editor.setValue(jsonPretty);
 });

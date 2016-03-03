@@ -39,6 +39,7 @@
     "jquery": "^2.2.0",
     "mongo-uri": "^0.1.2",
     "mongodb": "^2.1.4",
+    "mongodb-extended-json": "^1.6.2",
     "mongojs": "^2.2.2",
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",

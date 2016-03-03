@@ -321,6 +321,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
+    var bsonify = require('./bsonify');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -365,7 +366,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                                 sidebar_list: sidebar_list,
                                 coll_name: req.params.coll,
                                 coll_list: collection_list.sort(),
-                                coll_doc: coll_doc,
+                                coll_doc: bsonify.stringify(coll_doc, null, '    '),
                                 helpers: helpers,
                                 editor: true
                             });
@@ -743,6 +744,7 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var ejson = require('mongodb-extended-json');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -763,9 +765,18 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
+            
+            try {
+                var eJsonData = ejson.parse(req.body.objectData);
+            }catch (e) {
+                console.error("Syntax error: " + e);
+                res.writeHead(400, { 'Content-Type': 'application/text' });
+                res.end('Syntax error. Please check the syntax');
+                return;
+            }
 
             // adding a new doc
-            db.collection(req.params.coll).save(req.body, function (err, docs) {
+            db.collection(req.params.coll).save(eJsonData, function (err, docs) {
                 if(err){
                     console.error('Error inserting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
@@ -783,6 +794,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var ejson = require('mongodb-extended-json');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -803,11 +815,17 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
+            
+            try {
+                var eJsonData = ejson.parse(req.body.objectData);
+            }catch (e) {
+                console.error("Syntax error: " + e);
+                res.writeHead(400, { 'Content-Type': 'application/text' });
+                res.end('Syntax error. Please check the syntax');
+                return;
+            }
 
-            // remove the _id form the body object so we set in query
-            var doc_id = req.body['_id'];
-            delete req.body['_id'];
-            db.collection(req.params.coll).update({_id: parse_doc_id(doc_id, typeof doc_id)},req.body, function (err, doc, lastErrorObject) {
+            db.collection(req.params.coll).save(eJsonData, function (err, doc, lastErrorObject) {
                 if(err){
                     console.error("Error updating document: " + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
@@ -816,7 +834,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
                     if(doc['nModified'] == 0){
                         console.error('Error updating document: Document ID is incorrect');
                         res.writeHead(400, { 'Content-Type': 'application/text' });
-                        res.end('Error updating document: Document ID is incorrect');
+                        res.end('Error updating document: Syntax error');
                     }else{
                         res.writeHead(200, { 'Content-Type': 'application/text' });
                         res.end('Document successfully updated');
@@ -937,7 +955,6 @@ router.post('/drop_config', function (req, res, next) {
 });
 
 // pagination API
-//router.get('/api/:conn/:db/:coll/:page/:search_key?/:search_value?', function (req, res, next) {
 router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');

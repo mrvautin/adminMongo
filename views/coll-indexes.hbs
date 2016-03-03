@@ -36,7 +36,7 @@
 		{{#each coll_indexes}}
 			<tr>
 				<td>{{this.name}}</td>
-				<td>{{{toJSON this.key}}}</td>
+				<td>{{this.key}}</td>
 				<td>{{niceBool this.unique}}</td>
 				<td>{{niceBool this.sparse}}</td>
 				<td><button class="btn btn-danger btn-sm" onclick="dropIndex('{{@index}}');">Delete index</button></td>
