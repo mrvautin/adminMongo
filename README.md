@@ -11,6 +11,22 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 3. Start application: `npm start`
 4. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
 
+### Features
+
+* Manage from a connection level for easy access to multiple databases
+* Create/Delete databases
+* Create/Delete/Edit collection
+* Create/Delete/Edit documents
+* Create/Delete indexes
+* Query documents
+* Collection statistics
+* Export collections in JSON format
+
+
+### Limitations
+
+* Documents need to have an "_id" value which is a string, integer, or MongoDB ObjectId. Documents using Composite ID indexing is currently not supported.
+
 #### Configuration
 
 adminMongo will listen on host: `localhost` and  port: `1234` by default. This can be overwritten by adding a config file in `/config/app.json` in the following format:
