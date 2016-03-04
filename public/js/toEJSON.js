@@ -74,13 +74,15 @@ var toEJSON = (function () {
 
     var serializeString = function (bsonString) {
         
-        bsonString = serialize_BinData(bsonString);
-        bsonString = serialize_Date(bsonString);
-        bsonString = serialize_ISODate(bsonString);
-        bsonString = serialize_Timestamp(bsonString);
-        bsonString = serialize_Regex(bsonString);
-        bsonString = serialize_ObjectId(bsonString);
-        bsonString = serialize_DBRef(bsonString);
+        if(bsonString){
+            bsonString = serialize_BinData(bsonString);
+            bsonString = serialize_Date(bsonString);
+            bsonString = serialize_ISODate(bsonString);
+            bsonString = serialize_Timestamp(bsonString);
+            bsonString = serialize_Regex(bsonString);
+            bsonString = serialize_ObjectId(bsonString);
+            bsonString = serialize_DBRef(bsonString);
+        }
 
         var eJsonString = bsonString;
         return eJsonString;
