@@ -350,27 +350,29 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
 
             db.getCollectionNames(function (err, collection_list) {
                 get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
-                    var id = parse_doc_id(req.params.doc_id, req.query.type);
-                    db.collection(req.params.coll).findOne({_id: id}, function(err, coll_doc) {
-                        if (collection_list.indexOf(req.params.coll) === -1) {
-                            console.error("No collection found");
-                            render_error(res, req, "Collection does not exist", req.params.conn);
-                        }else if(coll_doc == undefined){
+                    get_id_type(db, req.params.coll, req.params.doc_id, function(err, doc_id_type, doc) {
+                        if(doc == undefined){
                             console.error("No document found");
                             render_error(res, req, "Document not found", req.params.conn);
-                        }else{
-                            res.render('coll-edit', {
-                                conn_list: order_object(connection_list),
-                                conn_name: req.params.conn,
-                                db_name: req.params.db,
-                                sidebar_list: sidebar_list,
-                                coll_name: req.params.coll,
-                                coll_list: collection_list.sort(),
-                                coll_doc: bsonify.stringify(coll_doc, null, '    '),
-                                helpers: helpers,
-                                editor: true
-                            });
+                            return;
                         }
+                        if(err){
+                            console.error("No document found");
+                            render_error(res, req, "Document not found", req.params.conn);
+                            return;
+                        }
+ 
+                        res.render('coll-edit', {
+                            conn_list: order_object(connection_list),
+                            conn_name: req.params.conn,
+                            db_name: req.params.db,
+                            sidebar_list: sidebar_list,
+                            coll_name: req.params.coll,
+                            coll_list: collection_list.sort(),
+                            coll_doc: bsonify.stringify(doc, null, '    '),
+                            helpers: helpers,
+                            editor: true
+                        });
                     });
                 });
             });
@@ -869,15 +871,22 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
-
-            db.collection(req.params.coll).remove({_id: parse_doc_id(req.body.doc_id)}, function(err, docs){
-                if(err){
+            get_id_type(db, req.params.coll, req.body.doc_id, function(err, doc_id_type, doc) {
+                if(doc){
+                    db.collection(req.params.coll).remove({_id: doc_id_type}, function(err, docs){
+                        if(err){
+                            console.error('Error deleting document: ' + err);
+                            res.writeHead(400, { 'Content-Type': 'application/text' });
+                            res.end('Error deleting document: ' + err);
+                        }else{
+                            res.writeHead(200, { 'Content-Type': 'application/text' });
+                            res.end('Document successfully deleted');
+                        }
+                    });
+                }else{
                     console.error('Error deleting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error deleting document: ' + err);
-                }else{
-                    res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Document successfully deleted');
+                    res.end('Cannot find document by Id');
                 }
             });
         }
@@ -959,6 +968,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var ejson = require('mongodb-extended-json');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -992,9 +1002,14 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
         }
 
         var limit = page_size;
+        
         var query_obj = {};
-        if(req.body.query){
-            query_obj = JSON.parse(req.body.query);
+        if(req.body.query){     
+            try {
+                query_obj = ejson.parse(req.body.query);
+            }catch (e) {
+                query_obj = {}
+            }
         }
 
         db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, result) {
@@ -1152,6 +1167,50 @@ var get_db_list = function(uri, mongo_db, cb) {
     }
 };
 
+// Normally you would know how your ID's are stored in your DB. As the _id value which is used to handle 
+// all document viewing in adminMongo is a parameter we dont know if it is an ObjectId, string or integer. We can check if 
+// the _id string is a valid MongoDb ObjectId but this does not guarantee it is stored as an ObjectId in the DB. Its most likely
+// the value will be an ObjectId (hopefully) so we try that first then go from there
+var get_id_type = function(mongojs, collection, doc_id, cb) {
+    
+    var ObjectID = require('mongodb').ObjectID;
+    // if a valid ObjectId we try that, then then try as a string
+    if(ObjectID.isValid(doc_id)){
+        mongojs.collection(collection).findOne({_id: mongojs.ObjectId(doc_id)}, function(err, doc) {
+            if(doc){
+                // doc_id is an ObjectId
+                cb(null, mongojs.ObjectId(doc_id), doc); 
+            }else{
+                mongojs.collection(collection).findOne({_id: doc_id}, function(err, doc) {
+                    if(doc){
+                        // doc_id is string
+                        cb(null, doc_id, doc); 
+                    }else{
+                        cb("Document not found", null, null);
+                    }
+                });
+            }
+        });
+    }else{
+        // if the value is not a valid ObjectId value we try as an integer then as a last resort, a string.
+        mongojs.collection(collection).findOne({_id: parseInt(doc_id)}, function(err, doc) {
+            if(doc){
+                // doc_id is integer
+                cb(null, parseInt(doc_id), doc); 
+            }else{
+                mongojs.collection(collection).findOne({_id: doc_id}, function(err, doc) {
+                    if(doc){
+                        // doc_id is string
+                        cb(null, doc_id, doc); 
+                    }else{
+                        cb("Document not found", null, null);
+                    }
+                });
+            }
+        });
+    }
+}
+
 // gets the Databases and collections
 var get_sidebar_list = function(mongo_db, db_name, cb) {
     var mongojs = require('mongojs');
@@ -1231,24 +1290,6 @@ function render_error(res, req, err, conn){
         conn_string: conn_string,
         connection_list: order_object(connection_list)
     });
-}
-
-// Some MongoDB's are going to have _id fields which are not
-// MongoDB ObjectID's. In cases like this, we cannot cast all _id
-// as a ObjectID in the query. We can run a ObjectID.isValid() check
-// to determine whether it is an ObjectID.
-//
-// All params come as string type, so for other cases
-// we need to check the type directly from the field.
-function parse_doc_id(value, type){
-    var ObjectID = require('mongodb').ObjectID;
-    if (type === 'number'){
-       return parseInt(value);
-    }else if(ObjectID.isValid(value)){
-        return new ObjectID(value);
-    }else{
-        return value;
-    }
 }
 
 // only want the first 9 stats

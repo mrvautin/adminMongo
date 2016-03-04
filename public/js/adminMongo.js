@@ -280,12 +280,9 @@ $(document).ready(function() {
         var conn_name = $('#conn_name').val();
         var db_name = $('#db_name').val();
         
-        // optional search stuff
-        var key_val = $('#key_val').val();
-        var value_val = $('#value_val').val();
-        
         // get the query (if any)
         var query_string = localStorage.getItem('searchQuery');
+        query_string = toEJSON.serializeString(query_string);
         
         // add search to the API URL if it exists
         var api_url = '/api/' +  conn_name + '/' + db_name + '/' + coll_name + '/' + page_num;
@@ -319,7 +316,7 @@ $(document).ready(function() {
             for (var i = 0; i < response.data.length; i++) {
                 var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
                 inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">Delete</a></div>';
-                inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="/'+ conn_name +"/" + db_name + "/" + coll_name + "/edit/" + response.data[i]._id+'?type=' + typeof response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
+                inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
                 $('#coll_docs').append(inner_html);
             };
             
