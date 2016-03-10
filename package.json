@@ -45,5 +45,8 @@
     "nconf": "^0.8.2",
     "serve-favicon": "~2.3.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^1.9.1"
+  }
 }
