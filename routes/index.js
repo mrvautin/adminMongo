@@ -4,8 +4,8 @@ var router = express.Router();
 // the home route
 router.get('/', function (req, res, next) {
     var connection_list = req.nconf.get('connections');
-    
-    if(connection_list){
+
+	if(connection_list){
         // we have a connection and redirect to the first
         var first_conn = Object.keys(connection_list)[0];
         res.redirect('/' + first_conn);
@@ -361,7 +361,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                             render_error(res, req, "Document not found", req.params.conn);
                             return;
                         }
- 
+
                         res.render('coll-edit', {
                             conn_list: order_object(connection_list),
                             conn_name: req.params.conn,
@@ -767,7 +767,7 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
-            
+
             try {
                 var eJsonData = ejson.parse(req.body.objectData);
             }catch (e) {
@@ -817,7 +817,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
             res.end('Error connecting to database: ' + err);
         }else{
             var db = mongojs(mongo_db.db(req.params.db));
-            
+
             try {
                 var eJsonData = ejson.parse(req.body.objectData);
             }catch (e) {
@@ -995,16 +995,16 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
         if(req.params.page != undefined){
             page = parseInt(req.params.page);
         }
-         
+
         var skip = 0;
         if(page > 1){
             skip = (page - 1) * page_size
         }
 
         var limit = page_size;
-        
+
         var query_obj = {};
-        if(req.body.query){     
+        if(req.body.query){
             try {
                 query_obj = ejson.parse(req.body.query);
             }catch (e) {
@@ -1024,7 +1024,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
                     }
                     res.status(200).json(return_data);
                 });
-            }            
+            }
         });
     });
 });
@@ -1167,24 +1167,24 @@ var get_db_list = function(uri, mongo_db, cb) {
     }
 };
 
-// Normally you would know how your ID's are stored in your DB. As the _id value which is used to handle 
-// all document viewing in adminMongo is a parameter we dont know if it is an ObjectId, string or integer. We can check if 
+// Normally you would know how your ID's are stored in your DB. As the _id value which is used to handle
+// all document viewing in adminMongo is a parameter we dont know if it is an ObjectId, string or integer. We can check if
 // the _id string is a valid MongoDb ObjectId but this does not guarantee it is stored as an ObjectId in the DB. Its most likely
 // the value will be an ObjectId (hopefully) so we try that first then go from there
 var get_id_type = function(mongojs, collection, doc_id, cb) {
-    
+
     var ObjectID = require('mongodb').ObjectID;
     // if a valid ObjectId we try that, then then try as a string
     if(ObjectID.isValid(doc_id)){
         mongojs.collection(collection).findOne({_id: mongojs.ObjectId(doc_id)}, function(err, doc) {
             if(doc){
                 // doc_id is an ObjectId
-                cb(null, mongojs.ObjectId(doc_id), doc); 
+                cb(null, mongojs.ObjectId(doc_id), doc);
             }else{
                 mongojs.collection(collection).findOne({_id: doc_id}, function(err, doc) {
                     if(doc){
                         // doc_id is string
-                        cb(null, doc_id, doc); 
+                        cb(null, doc_id, doc);
                     }else{
                         cb("Document not found", null, null);
                     }
@@ -1196,12 +1196,12 @@ var get_id_type = function(mongojs, collection, doc_id, cb) {
         mongojs.collection(collection).findOne({_id: parseInt(doc_id)}, function(err, doc) {
             if(doc){
                 // doc_id is integer
-                cb(null, parseInt(doc_id), doc); 
+                cb(null, parseInt(doc_id), doc);
             }else{
                 mongojs.collection(collection).findOne({_id: doc_id}, function(err, doc) {
                     if(doc){
                         // doc_id is string
-                        cb(null, doc_id, doc); 
+                        cb(null, doc_id, doc);
                     }else{
                         cb("Document not found", null, null);
                     }
