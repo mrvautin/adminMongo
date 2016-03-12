@@ -60,7 +60,8 @@ $(document).ready(function() {
     
     // set the URL search parameters
     $("#searchModalAction").click(function() { 	
-        var key_name = $("#search_key_value").val();
+        //var key_name = $("#search_key_value").val();
+        var key_name = $( "#search_key_fields option:selected" ).text();
         var val = $("#search_value_value").val();
         if(key_name != "" && val != ""){
             // build the simply key/value query object and call paginate();
@@ -319,6 +320,13 @@ $(document).ready(function() {
                 inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
                 $('#coll_docs').append(inner_html);
             };
+
+            //Bind the DropDown Select For Fields
+            var option = '';
+            for (var i=0;i<response.fields.length;i++){
+               option += '<option value="'+ response.fields[i] + '">' + response.fields[i] + '</option>';
+            }
+            $('#search_key_fields').append(option);
             
             $('#doc_load_placeholder').hide();
             
