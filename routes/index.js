@@ -995,16 +995,16 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
         if(req.params.page != undefined){
             page = parseInt(req.params.page);
         }
-
+         
         var skip = 0;
         if(page > 1){
             skip = (page - 1) * page_size
         }
 
         var limit = page_size;
-
+        
         var query_obj = {};
-        if(req.body.query){
+        if(req.body.query){     
             try {
                 query_obj = ejson.parse(req.body.query);
             }catch (e) {
@@ -1012,19 +1012,41 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
             }
         }
 
+        console.log("query_obj" , query_obj);
+
         db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, result) {
             if (err) {
                 res.status(500).json(err);
             }else{
-                // get total num docs in query
-                db.collection(req.params.coll).count(query_obj, function (err, doc_count) {
-                    var return_data = {
-                        data: result,
-                        total_docs: doc_count
-                    }
-                    res.status(200).json(return_data);
-                });
-            }
+                
+                db.collection(req.params.coll).find({}).limit(limit).skip(skip, function (err, resulForFields) {
+                    //get field names/keys of the Documents in collection                
+                    var fields = [];
+                    for (var i = 0; i < resulForFields.length; i++) {
+                        var doc = resulForFields[i];
+
+                        for (key in doc){
+                           if(key == "__v") continue;
+                           fields.push(key);
+                        }
+                    };
+
+                    fields = fields.filter(function(item, pos) {
+                        return fields.indexOf(item) == pos;
+                    });
+                    
+                    // get total num docs in query
+                    db.collection(req.params.coll).count(query_obj, function (err, doc_count) {
+                        var return_data = {
+                            data: result,
+                            fields : fields,
+                            total_docs: doc_count
+                        }
+                        res.status(200).json(return_data);
+                    });
+
+                });                
+            }            
         });
     });
 });
