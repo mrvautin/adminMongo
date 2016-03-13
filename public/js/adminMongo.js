@@ -59,9 +59,12 @@ $(document).ready(function() {
     });
     
     // set the URL search parameters
-    $("#searchModalAction").click(function() { 	
-        //var key_name = $("#search_key_value").val();
-        var key_name = $( "#search_key_fields option:selected" ).text();
+    $("#searchModalAction").click(function() {
+        var key_name = $("#search_key_fields option:selected").text();
+
+        if (key_name === "_id") {
+            key_name = "id";
+        }
         var val = $("#search_value_value").val();
         if(key_name != "" && val != ""){
             // build the simply key/value query object and call paginate();

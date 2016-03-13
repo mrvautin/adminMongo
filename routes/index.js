@@ -1011,19 +1011,17 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
                 query_obj = {}
             }
         }
-
-        console.log("query_obj" , query_obj);
-
+        
         db.collection(req.params.coll).find(query_obj).limit(limit).skip(skip, function (err, result) {
             if (err) {
                 res.status(500).json(err);
             }else{
                 
-                db.collection(req.params.coll).find({}).limit(limit).skip(skip, function (err, resulForFields) {
+                db.collection(req.params.coll).find({}).limit(limit).skip(skip, function (err, simpleSearchFields) {
                     //get field names/keys of the Documents in collection                
                     var fields = [];
-                    for (var i = 0; i < resulForFields.length; i++) {
-                        var doc = resulForFields[i];
+                    for (var i = 0; i < simpleSearchFields.length; i++) {
+                        var doc = simpleSearchFields[i];
 
                         for (key in doc){
                            if(key == "__v") continue;
