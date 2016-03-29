@@ -106,7 +106,7 @@ if(nconf.stores.app.get('app:port') != undefined){
 
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
-    req.nconf = nconf.stores.connections;
+    req.nconf = nconf.stores;
 	req.handlebars = handlebars;
 	next();
 });

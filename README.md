@@ -29,15 +29,20 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 
 #### Configuration
 
-adminMongo will listen on host: `localhost` and  port: `1234` by default. This can be overwritten by adding a config file in `/config/app.json` in the following format:
+adminMongo will listen on host: `localhost` and  port: `1234` by default. 
+This can be overwritten by adding a config file in `/config/app.json`. The config file can also override the default 5 docs per page.
+The config file options are:
 ```
 {
     "app": {
         "host": "10.0.0.1",
-        "port": 4321
+        "port": 4321,
+        "docs_per_page": 15
     }
 }
 ```
+
+**Note: Any changes to the config file requires a restart of the application**
 
 ## Usage
 

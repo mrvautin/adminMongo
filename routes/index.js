@@ -3,7 +3,7 @@ var router = express.Router();
 
 // the home route
 router.get('/', function (req, res, next) {
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
 
 	if(connection_list){
         // we have a connection and redirect to the first
@@ -17,7 +17,7 @@ router.get('/', function (req, res, next) {
 
 // show/manage connections
 router.get('/connection_list', function (req, res, next) {
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
 
     res.render('connections', {
         message: "",
@@ -28,7 +28,7 @@ router.get('/connection_list', function (req, res, next) {
 router.get('/:conn', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
 
@@ -80,7 +80,7 @@ router.get('/:conn', function (req, res, next) {
 router.get('/:conn/:db/', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
 
@@ -145,9 +145,10 @@ router.get('/:conn/:db/:coll/view/', function (req, res, next) {
 router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
+    var docs_per_page = req.nconf.app.get('app:docs_per_page') != undefined ? req.nconf.app.get('app:docs_per_page') : 5;
 
     var conn_string = connection_list[req.params.conn].connection_string;
 
@@ -191,7 +192,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                                 key_val: req.params.key_val,
                                 value_val: req.params.value_val,
                                 sidebar_list: sidebar_list,
-                                docs_per_page: 5,
+                                docs_per_page: docs_per_page,
                                 helpers: helpers,
                                 paginate: true,
                                 editor: true
@@ -207,7 +208,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
 router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
 
@@ -264,7 +265,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
 router.get('/:conn/:db/:coll/new', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
 
@@ -318,7 +319,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
 router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var mongojs = require('mongojs');
     var helpers = req.handlebars.helpers;
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongo-uri');
     var bsonify = require('./bsonify');
@@ -383,7 +384,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
 // create a user
 router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -425,7 +426,7 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
 // delete a user
 router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -466,7 +467,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
 // rename a collection
 router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -507,7 +508,7 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
 // create a new collection index
 router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -551,7 +552,7 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
 // create a new collection index
 router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -594,7 +595,7 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
 // create a new collection
 router.post('/:conn/:db/coll_create', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -635,7 +636,7 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
 // delete a collection
 router.post('/:conn/:db/coll_delete', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -676,7 +677,7 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
 // create a new database
 router.post('/:conn/db_create', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -710,7 +711,7 @@ router.post('/:conn/db_create', function (req, res, next) {
 // delete a database
 router.post('/:conn/db_delete', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -744,7 +745,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
 
 router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var ejson = require('mongodb-extended-json');
 
@@ -794,7 +795,7 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
 
 router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var ejson = require('mongodb-extended-json');
 
@@ -849,7 +850,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
 
 router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -966,10 +967,11 @@ router.post('/drop_config', function (req, res, next) {
 // pagination API
 router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var ejson = require('mongodb-extended-json');
-
+    var docs_per_page = req.nconf.app.get('app:docs_per_page') != undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+   
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(500, { 'Content-Type': 'application/text' });
@@ -989,7 +991,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
 
         var db = mongojs(mongo_db.db(req.params.db));
 
-        var page_size = 5;
+        var page_size = docs_per_page;
         var page = 1;
 
         if(req.params.page != undefined){
@@ -1031,7 +1033,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
 
 router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
     var mongojs = require('mongojs');
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
 
     // Check for existance of connection
@@ -1277,7 +1279,7 @@ function order_array(array){
 
 // render the error page
 function render_error(res, req, err, conn){
-    var connection_list = req.nconf.get('connections');
+    var connection_list = req.nconf.connections.get('connections');
 
     var conn_string = "";
     if(connection_list[conn] != undefined){
