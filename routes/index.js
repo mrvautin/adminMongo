@@ -895,8 +895,8 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
 });
 
 router.post('/add_config', function (req, res, next) {
-    var nconf = req.nconf;
-    var connection_list = nconf.get('connections');
+    var nconf = req.nconf.connections;
+    var connection_list = req.nconf.connections.get('connections');
 
     // check if name already exists
     if(connection_list != undefined){
