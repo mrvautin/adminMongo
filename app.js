@@ -94,7 +94,7 @@ nconf.add('app', { type: 'file', file: app_config });
 
 // set app defaults
 var app_host = '0.0.0.0';
-var app_port = 1234;
+var app_port = process.env.PORT || 1234;
 
 // get the app configs and override if present
 if(nconf.stores.app.get('app:host') != undefined){
