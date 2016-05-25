@@ -37,12 +37,19 @@ The config file options are:
     "app": {
         "host": "10.0.0.1",
         "port": 4321,
-        "docs_per_page": 15
+        "docs_per_page": 15,
+        "password": "secureadminpassword"
     }
 }
 ```
 
 **Note: Any changes to the config file requires a restart of the application**
+
+#### Authentication
+
+By default `adminMongo` is not password protected. You can add password authentication by adding a `password` value to the `/config/app.json` file 
+(See the Configuration section). Once added you will need to restart `adminMongo` and all routes will be protected until the correct password is added. You
+will then be authenticated for the life of the session (60 mins by default) or if the "Logout" link is clicked.
 
 ## Usage
 

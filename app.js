@@ -7,7 +7,9 @@ var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
 var handlebars = require('express-handlebars');
 var nconf = require('nconf');
+var session = require('express-session');
 
+// routes
 var routes = require('./routes/index');
 
 var app = express();
@@ -50,6 +52,17 @@ app.use(logger('dev'));
 app.use(bodyParser.json({limit: '16mb'}));
 app.use(bodyParser.urlencoded({extended: false }));
 app.use(cookieParser());
+
+// setup session
+app.use(session({
+    secret: '858SGTUyX8w1L6JNm1m93Cvm8uX1QX2D',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { 
+        secure: false,
+        maxAge  : new Date(Date.now() + (60 * 1000 * 60))
+    }
+}))
 
 // front-end modules loaded from NPM
 app.use("/ace", express.static(path.join(__dirname, 'node_modules/ace-builds/src-min/')));

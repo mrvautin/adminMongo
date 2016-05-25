@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+// runs on all routes and checks password if one is setup
+router.all("/*", checkLogin, function(req, res, next) {
+    next(); 
+});
+
 // the home route
 router.get('/', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
@@ -12,6 +17,46 @@ router.get('/', function (req, res, next) {
     }else{
         // go to connection setup
         res.redirect('/connection_list');
+    }
+});
+
+// login page
+router.get('/login', function (req, res, next) {
+    var passwordConf = req.nconf.app.get('app');
+    
+    // if password is set then render the login page, else continue 
+    if(passwordConf && passwordConf.hasOwnProperty("password")){
+        res.render('login', {
+            message: ""
+        });
+    }else{
+        res.redirect('/');
+    }
+});
+
+// logout
+router.get('/logout', function (req, res, next) {
+    req.session.loggedIn = null;
+    res.redirect('/');
+});
+
+// login page
+router.post('/login_action', function (req, res, next) {
+    var passwordConf = req.nconf.app.get('app');
+
+    if(passwordConf && passwordConf.hasOwnProperty("password")){
+        if(req.body.inputPassword == passwordConf.password){
+            // password is ok, go to home
+            req.session.loggedIn = true;
+            res.redirect('/');
+        }else{
+            // password is wrong. Show login form with a message
+            res.render('login', {
+                message: "Password is incorrect"
+            });
+        }
+    }else{
+        res.redirect('/');
     }
 });
 
@@ -67,7 +112,8 @@ router.get('/:conn', function (req, res, next) {
                                 conn_users: conn_users,
                                 sidebar_list: sidebar_list,
                                 db_list: db_list,
-                                helpers: helpers
+                                helpers: helpers,
+                                session: req.session
                             });
                         });
                     });
@@ -122,7 +168,8 @@ router.get('/:conn/:db/', function (req, res, next) {
                                 db_name: req.params.db,
                                 show_db_name: true,
                                 sidebar_list: sidebar_list,
-                                helpers: helpers
+                                helpers: helpers,
+                                session: req.session
                             });
                         });
                     });
@@ -195,7 +242,8 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                                 docs_per_page: docs_per_page,
                                 helpers: helpers,
                                 paginate: true,
-                                editor: true
+                                editor: true,
+                                session: req.session
                             });
                         }
                     });
@@ -252,7 +300,8 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
                                 coll_list: collection_list.sort(),
                                 sidebar_list: sidebar_list,
                                 helpers: helpers,
-                                editor: true
+                                editor: true,
+                                session: req.session
                             });
                         }
                     });
@@ -307,7 +356,8 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
                             sidebar_list: sidebar_list,
                             db_name: req.params.db,
                             helpers: helpers,
-                            editor: true
+                            editor: true,
+                            session: req.session
                         });
                     }
                 });
@@ -372,7 +422,8 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                             coll_list: collection_list.sort(),
                             coll_doc: bsonify.stringify(doc, null, '    '),
                             helpers: helpers,
-                            editor: true
+                            editor: true,
+                            session: req.session
                         });
                     });
                 });
@@ -1325,6 +1376,29 @@ function clean_stats(array){
         i++;
     }
     return accum;
+}
+
+// checks for the password in the /config/app.json file if it's set
+function checkLogin(req, res, next) {
+    var passwordConf = req.nconf.app.get('app');
+
+    // only check for login if a password is specified in the /config/app.json file
+    if(passwordConf && passwordConf.hasOwnProperty("password")){
+        // dont require login session for login route
+        if(req.path == "/login" || req.path == "/logout" || req.path == "/login_action"){
+            next();
+        }else{
+            // if the session exists we continue, else renter login page
+            if (req.session.loggedIn) {
+                next(); // allow the next route to run
+            } else {
+                res.redirect("/login");
+            }
+        }
+    }else{
+        // no password is set so we continue
+        next();
+    }
 }
 
 module.exports = router;
