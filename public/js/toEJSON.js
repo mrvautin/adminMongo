@@ -7,7 +7,7 @@ var toEJSON = (function () {
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var bson_data = bson_value[1].split(',');
                 var ejson = '{ "$binary": ' + bson_data[1] + ',  "$type": "' + bson_data[0] + '" }';
-                bsonString = bsonString.replace(/(BinData\s?\([^)]+\))/g, ejson);
+                bsonString = bsonString.replace(bson_full[i], ejson);
             }
         }
         return bsonString;
@@ -19,7 +19,7 @@ var toEJSON = (function () {
             for (var i = 0; i < bson_full.length; i++) {
                 var dte = new Date();
                 var ejson = '{ "$date": "' + dte.toISOString() + '" }';
-                bsonString = bsonString.replace(/(new Date\s?)\(.?\)/g, ejson);
+                bsonString = bsonString.replace(bson_full[i], ejson);
             }
         }
         return bsonString;
@@ -31,7 +31,7 @@ var toEJSON = (function () {
             for (var i = 0; i < bson_full.length; i++) {
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var ejson = '{ "$date": ' + bson_value[1] + ' }';
-                bsonString = bsonString.replace(/(ISODate\s?\([^)]+\))/g, ejson);
+                bsonString = bsonString.replace(bson_full[i], ejson);
             }
         }
         return bsonString;
@@ -44,7 +44,7 @@ var toEJSON = (function () {
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var bson_data = bson_value[1].split(',');
                 var ejson = '{ "$timestamp": { "$t": ' + bson_data[0] + ',  "$i": ' + bson_data[1] + '}}';
-                bsonString = bsonString.replace(/(Timestamp\s?\([^)]+\))/g, ejson);
+                bsonString = bsonString.replace(bson_full[i], ejson);
             }
         }
         return bsonString;
@@ -61,9 +61,10 @@ var toEJSON = (function () {
             for (var i = 0; i < bson_full.length; i++) {
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var ejson = '{ "$oid": ' + bson_value[1] + '}';
-                bsonString = bsonString.replace(/(ObjectId\s?\([^)]+\))/g, ejson);
+                bsonString = bsonString.replace(bson_full[i], ejson);
             }
         }
+        
         return bsonString;
     };
 
