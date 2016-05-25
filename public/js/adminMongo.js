@@ -266,82 +266,82 @@ $(document).ready(function() {
             show_notification("Please enter both a connection name and connection string","danger");
         }
     });
-    
-    function redirect(url){
-        window.location = url;
-    }
-    
-    function paginate(){
-        $('#doc_load_placeholder').show();
-        
-        var page_num = $('#page_num').val();
-        var page_len = $('#docs_per_page').val();
-        var coll_name = $('#coll_name').val();
-        var conn_name = $('#conn_name').val();
-        var db_name = $('#db_name').val();
-        
-        // get the query (if any)
-        var query_string = localStorage.getItem('searchQuery');
-        query_string = toEJSON.serializeString(query_string);
-        
-        // add search to the API URL if it exists
-        var api_url = '/api/' +  conn_name + '/' + db_name + '/' + coll_name + '/' + page_num;
-        var pager_href = '/' +  conn_name + '/' + db_name + '/' + coll_name + '/view/{{number}}';
-        
-        $.ajax({
-            type: "POST",
-            dataType: 'json',
-            url: api_url,
-            data: {"query" : query_string}
-        })
-        .done(function(response) {
-            // show message when none are found
-            if(response.data == ""){
-                $('#doc_none_found').removeClass('hidden');
-            }else{
-                $('#doc_none_found').addClass('hidden');
-            }
-            
-            var total_docs = Math.ceil(response.total_docs / page_len);
-            
-            $('#pager').bootpag({
-                total: total_docs,
-                page: page_num,
-                maxVisible: 5,
-                href: pager_href
-            });
-            
-            //clear the div first
-            $('#coll_docs').empty();
-            for (var i = 0; i < response.data.length; i++) {
-                var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
-                inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">Delete</a></div>';
-                inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
-                $('#coll_docs').append(inner_html);
-            };
-
-            //Bind the DropDown Select For Fields
-            var option = '';
-            for (var i=0;i<response.fields.length;i++){
-               option += '<option value="'+ response.fields[i] + '">' + response.fields[i] + '</option>';
-            }
-            $('#search_key_fields').append(option);
-            
-            $('#doc_load_placeholder').hide();
-            
-            // hook up the syntax highlight and prettify the json
-            $(".code-block").each(function (i, block) { 
-                var jsonString = this.textContent;
-                var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
-                $(this).html(jsonPretty);
-                hljs.highlightBlock(block);
-            });
-        })
-        .fail(function() {
-            show_notification("Error getting data from Query API","danger");
-        });
-    }
 });
+
+function redirect(url){
+    window.location = url;
+} 
+
+function paginate(){
+    $('#doc_load_placeholder').show();
+    
+    var page_num = $('#page_num').val();
+    var page_len = $('#docs_per_page').val();
+    var coll_name = $('#coll_name').val();
+    var conn_name = $('#conn_name').val();
+    var db_name = $('#db_name').val();
+    
+    // get the query (if any)
+    var query_string = localStorage.getItem('searchQuery');
+    query_string = toEJSON.serializeString(query_string);
+    
+    // add search to the API URL if it exists
+    var api_url = '/api/' +  conn_name + '/' + db_name + '/' + coll_name + '/' + page_num;
+    var pager_href = '/' +  conn_name + '/' + db_name + '/' + coll_name + '/view/{{number}}';
+    
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: api_url,
+        data: {"query" : query_string}
+    })
+    .done(function(response) {
+        // show message when none are found
+        if(response.data == ""){
+            $('#doc_none_found').removeClass('hidden');
+        }else{
+            $('#doc_none_found').addClass('hidden');
+        }
+        
+        var total_docs = Math.ceil(response.total_docs / page_len);
+        
+        $('#pager').bootpag({
+            total: total_docs,
+            page: page_num,
+            maxVisible: 5,
+            href: pager_href
+        });
+        
+        //clear the div first
+        $('#coll_docs').empty();
+        for (var i = 0; i < response.data.length; i++) {
+            var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
+            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">Delete</a></div>';
+            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
+            $('#coll_docs').append(inner_html);
+        };
+
+        //Bind the DropDown Select For Fields
+        var option = '';
+        for (var i=0;i<response.fields.length;i++){
+            option += '<option value="'+ response.fields[i] + '">' + response.fields[i] + '</option>';
+        }
+        $('#search_key_fields').append(option);
+        
+        $('#doc_load_placeholder').hide();
+        
+        // hook up the syntax highlight and prettify the json
+        $(".code-block").each(function (i, block) { 
+            var jsonString = this.textContent;
+            var jsonPretty = JSON.stringify(JSON.parse(jsonString),null,2);
+            $(this).html(jsonPretty);
+            hljs.highlightBlock(block);
+        });
+    })
+    .fail(function() {
+        show_notification("Error getting data from Query API","danger");
+    });
+}
 
 function deleteDoc(doc_id){
     if(confirm("WARNING: Are you sure you want to delete this document?") == true) {
@@ -351,7 +351,8 @@ function deleteDoc(doc_id){
             data: {"doc_id": doc_id}
         })
         .success(function(msg) {
-            show_notification(msg,"success", true);
+            show_notification(msg,"success");
+            paginate();
         })
         .error(function(msg) {
             show_notification(msg.responseText,"danger");
