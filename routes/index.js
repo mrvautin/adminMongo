@@ -1048,7 +1048,7 @@ router.post('/add_config', function (req, res, next) {
 });
 
 router.post('/update_config', function (req, res, next) {
-    var nconf = req.nconf;
+    var nconf = req.nconf.connections;
 
     // delete current config
     delete nconf.store.connections[req.body.curr_config];
@@ -1070,7 +1070,7 @@ router.post('/update_config', function (req, res, next) {
 });
 
 router.post('/drop_config', function (req, res, next) {
-    var nconf = req.nconf;
+    var nconf = req.nconf.connections;
 
     // delete current config
     delete nconf.store.connections[req.body.curr_config];
