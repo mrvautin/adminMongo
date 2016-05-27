@@ -26,6 +26,7 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 ### Limitations
 
 * Documents need to have an "_id" value which is a string, integer, or MongoDB ObjectId. Documents using Composite ID indexing is currently not supported.
+* Connection strings with multiple hosts for replica sets are currently not supported.
 
 #### Configuration
 

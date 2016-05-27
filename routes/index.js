@@ -75,7 +75,7 @@ router.get('/:conn', function (req, res, next) {
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    var mongo_uri = require('mongo-uri');
+    var mongo_uri = require('mongodb-uri');
 
     // if no connection found
     if(connection_list == undefined || Object.keys(connection_list).length == 0){
@@ -100,10 +100,10 @@ router.get('/:conn', function (req, res, next) {
             console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
-            var db = mongojs(mongo_db);
-            get_db_stats(mongo_db, uri.database, function(err, db_stats){
+            var db = mongojs(conn_string);
+            get_db_stats(mongo_db, uri.database, conn_string, function(err, db_stats){
                 db.runCommand({ usersInfo: 1 },function (err, conn_users) {
-                    get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
+                    get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                         get_db_list(uri, mongo_db, function(err, db_list) {
                             res.render('conn', {
                                 conn_list: order_object(connection_list),
@@ -128,7 +128,7 @@ router.get('/:conn/:db/', function (req, res, next) {
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    var mongo_uri = require('mongo-uri');
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -153,9 +153,10 @@ router.get('/:conn/:db/', function (req, res, next) {
             console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
-            get_db_stats(mongo_db, req.params.db, function(err, db_stats){
-                get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
+            get_db_stats(mongo_db, req.params.db, conn_string, function(err, db_stats){
+                get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                     db.runCommand({ usersInfo: 1 },function (err, conn_users) {
                         db.getCollectionNames(function (err, collection_list) {
                             order_array(collection_list)
@@ -194,7 +195,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    var mongo_uri = require('mongo-uri');
+    var mongo_uri = require('mongodb-uri');
     var docs_per_page = req.nconf.app.get('app:docs_per_page') != undefined ? req.nconf.app.get('app:docs_per_page') : 5;
 
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -220,10 +221,10 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
             console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
-            //var db = mongojs(mongo_db);
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
             db.getCollectionNames(function (err, collection_list) {
-                get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
+                get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                     db.collection(req.params.coll).count(function (err, coll_count) {
                         if (collection_list.indexOf(req.params.coll) === -1) {
                             render_error(res, req, "Collection does not exist", req.params.conn);
@@ -258,7 +259,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    var mongo_uri = require('mongo-uri');
+    var mongo_uri = require('mongodb-uri');
 
     var conn_string = connection_list[req.params.conn].connection_string;
 
@@ -283,10 +284,11 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
             console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
             db.getCollectionNames(function (err, collection_list) {
                 db.collection(req.params.coll).getIndexes(function (err, coll_indexes) {
-                    get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
+                    get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                         if (collection_list.indexOf(req.params.coll) === -1) {
                             console.error("No collection found");
                             render_error(res, req, "Collection does not exist", req.params.conn);
@@ -316,7 +318,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    var mongo_uri = require('mongo-uri');
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -341,10 +343,10 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
             console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
-
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
             db.getCollectionNames(function (err, collection_list) {
-                get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
+                get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                     if (collection_list.indexOf(req.params.coll) === -1) {
                         console.error("No collection found");
                         render_error(res, req, "Collection does not exist", req.params.conn);
@@ -371,7 +373,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
-    var mongo_uri = require('mongo-uri');
+    var mongo_uri = require('mongodb-uri');
     var bsonify = require('./bsonify');
 
     // Check for existance of connection
@@ -397,10 +399,10 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
             console.error("Error connecting to database: " + err);
             render_error(res, req, err, req.params.conn);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
-
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
             db.getCollectionNames(function (err, collection_list) {
-                get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
+                get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                     get_id_type(db, req.params.coll, req.params.doc_id, function(err, doc_id_type, doc) {
                         if(doc == undefined){
                             console.error("No document found");
@@ -437,6 +439,7 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -449,6 +452,11 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -456,7 +464,8 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
             var roles = req.body.roles_text ? req.body.roles_text.split(/\s*,\s*/) : [];
 
             // Add a user
@@ -479,6 +488,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -491,6 +501,11 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -498,7 +513,8 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             // Add a user
             db.removeUser(req.body.username, function (err, user_name) {
@@ -508,7 +524,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
                     res.end('Error deleting user: ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('User successfully created');
+                    res.end('User successfully deleted');
                 }
             });
         }
@@ -520,6 +536,7 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -532,6 +549,11 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -539,7 +561,8 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             // change a collection name
             db.collection(req.params.coll).rename(req.body.new_collection_name, {"dropTarget": false} , function (err, coll_name) {
@@ -561,6 +584,7 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -573,6 +597,11 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -580,7 +609,8 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             // adding a new collection
             var unique_bool = (req.body[1] === 'true');
@@ -605,6 +635,7 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -617,6 +648,11 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -624,7 +660,8 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             // adding a new index
             db.collection(req.params.coll).getIndexes(function (err, indexes) {
@@ -648,6 +685,7 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -660,6 +698,11 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -667,7 +710,8 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             // adding a new collection
             db.createCollection(req.body.collection_name, function (err, coll) {
@@ -689,6 +733,7 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -701,6 +746,11 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -708,7 +758,8 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             // delete a collection
             db.collection(req.body.collection_name).drop(function (err, coll) {
@@ -742,7 +793,7 @@ router.post('/:conn/db_create', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.body.db_name));
+            var db = mongojs(connection_list[req.params.conn].connection_string);
 
             // adding a new collection to create the DB
             db.collection("test").save({}, function (err, docs) {
@@ -777,7 +828,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
             res.writeHead(200, { 'Content-Type': 'application/text' });
             res.end('Error deleting database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.body.db_name));
+            var db = mongojs(connection_list[req.params.conn].connection_string);
 
             // delete a collection
             db.dropDatabase(function(err, result) {
@@ -799,6 +850,7 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var ejson = require('mongodb-extended-json');
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -811,6 +863,11 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -818,7 +875,8 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             try {
                 var eJsonData = ejson.parse(req.body.objectData);
@@ -849,6 +907,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var ejson = require('mongodb-extended-json');
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -861,6 +920,11 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -868,7 +932,8 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
 
             try {
                 var eJsonData = ejson.parse(req.body.objectData);
@@ -903,6 +968,7 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+        var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -915,6 +981,11 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
         res.writeHead(400, { 'Content-Type': 'application/text' });
         res.end('Invalid database name');
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
@@ -922,7 +993,9 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
             res.writeHead(400, { 'Content-Type': 'application/text' });
             res.end('Error connecting to database: ' + err);
         }else{
-            var db = mongojs(mongo_db.db(req.params.db));
+            uri.database = req.params.db;
+            var db = mongojs(toUriString(uri));
+            
             get_id_type(db, req.params.coll, req.body.doc_id, function(err, doc_id_type, doc) {
                 if(doc){
                     db.collection(req.params.coll).remove({_id: doc_id_type}, function(err, docs){
@@ -1021,6 +1094,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var ejson = require('mongodb-extended-json');
+    var mongo_uri = require('mongodb-uri');
     var docs_per_page = req.nconf.app.get('app:docs_per_page') != undefined ? req.nconf.app.get('app:docs_per_page') : 5;
    
     // Check for existance of connection
@@ -1039,8 +1113,10 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
         if (err) {
             res.status(500).json(err);
         }
-
-        var db = mongojs(mongo_db.db(req.params.db));
+        
+        var uri = mongo_uri.parse(connection_list[req.params.conn].connection_string);
+        uri.database = req.params.db;
+        var db = mongojs(toUriString(uri));
 
         var page_size = docs_per_page;
         var page = 1;
@@ -1106,6 +1182,7 @@ router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
     var mongojs = require('mongojs');
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
+    var mongo_uri = require('mongodb-uri');
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
@@ -1124,9 +1201,15 @@ router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
     if(req.params.excludedID === "true"){
         exportID = {"_id": 0};
     }
+    
+    var conn_string = connection_list[req.params.conn].connection_string;
+    
+    // parse the connection string to get DB
+    var uri = mongo_uri.parse(conn_string);
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db){
-        var db = mongojs(mongo_db.db(req.params.db));
+        uri.database = req.params.db;
+        var db = mongojs(toUriString(uri));
         db.collection(req.params.coll).find({},exportID, function (err, data) {
             if(data != ""){
                 res.set({"Content-Disposition":"attachment; filename=" + req.params.coll + ".json"});
@@ -1139,9 +1222,10 @@ router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
 });
 
 // gets the db stats
-var get_db_stats = function(mongo_db, db_name, cb) {
+var get_db_stats = function(mongo_db, db_name, conn_string, cb) {
     var async = require('async');
     var mongojs = require('mongojs');
+    var mongo_uri = require('mongodb-uri');
     var db_obj = {};
 
     // if at connection level we get db's, then get collections
@@ -1157,8 +1241,9 @@ var get_db_stats = function(mongo_db, db_name, cb) {
                     order_object(db_list.databases);
                     var skipped_dbs = ["null", "admin", "local"];
                     if(skipped_dbs.indexOf(value.name) === -1){
-                        var db_name = value.name;
-                        var temp_db = mongojs(mongo_db.db(value.name));
+                        var temp_uri = mongo_uri.parse(conn_string);
+                        temp_uri.database = value.name;
+                        var temp_db = mongojs(toUriString(temp_uri));
                         temp_db.getCollectionNames(function(err, coll_list){
                             var coll_obj = {};
                             async.forEachOf(coll_list, function (value, key, callback) {
@@ -1169,7 +1254,7 @@ var get_db_stats = function(mongo_db, db_name, cb) {
                             }, function (err) {
                             if (err) console.error(err.message);
                                 // add the collection object to the DB object with the DB as key
-                                db_obj[db_name] = order_object(coll_obj);
+                                db_obj[value.name] = order_object(coll_obj);
                                 callback();
                             });
                         });
@@ -1188,7 +1273,9 @@ var get_db_stats = function(mongo_db, db_name, cb) {
         });
     // if at DB level, we just grab the collections below
     }else{
-        var db = mongojs(mongo_db.db(db_name));
+        var temp_uri = mongo_uri.parse(conn_string);
+        temp_uri.database = db_name;
+        var db = mongojs(toUriString(temp_uri));
         db.getCollectionNames(function(err, coll_list){
             var coll_obj = {};
             async.forEachOf(coll_list, function (value, key, callback) {
@@ -1285,9 +1372,10 @@ var get_id_type = function(mongojs, collection, doc_id, cb) {
 }
 
 // gets the Databases and collections
-var get_sidebar_list = function(mongo_db, db_name, cb) {
+var get_sidebar_list = function(mongo_db, db_name, conn_string, cb) {
     var mongojs = require('mongojs');
     var async = require('async');
+    var mongo_uri = require('mongodb-uri');
     var db_obj = {};
 
     // if no DB is specified, we get all DBs and collections
@@ -1297,7 +1385,9 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
             async.forEachOf(db_list.databases, function (value, key, callback) {
                 var skipped_dbs = ["null", "admin", "local"];
                 if(skipped_dbs.indexOf(value.name) === -1){
-                    var temp_db = mongojs(mongo_db.db(value.name));
+                    var temp_uri = mongo_uri.parse(conn_string);
+                    temp_uri.database = value.name;
+                    var temp_db = mongojs(toUriString(temp_uri));
                     temp_db.getCollectionNames(function(err, collections){
                         order_array(collections);
                         db_obj[value.name] = collections;
@@ -1312,7 +1402,9 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
             });
         });
     }else{
-        var db = mongojs(mongo_db.db(db_name));
+        var temp_uri = mongo_uri.parse(conn_string);
+        temp_uri.database = db_name;
+        var db = mongojs(toUriString(temp_uri));
         db.getCollectionNames(function(err, collections){
             order_array(collections);
             db_obj[db_name] = collections;
@@ -1320,6 +1412,37 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
         });
     }
 };
+
+function toUriString(uri){
+    var auth_part = "";
+    var db_part = "";
+    var opts_part = "";
+    var hosts_part = uri.hosts[0].host + ":" + uri.hosts[0].port;
+    
+    if(uri.username && uri.password){
+        auth_part = "/" + uri.username + ":" + uri.password;
+    }
+    
+    if(uri.database){
+        db_part = "/" + uri.database;
+    }
+    
+    if(uri.options){
+        opts_part = "?" + toQueryString(uri.options);
+    }
+
+    return uri.scheme + "://" + hosts_part + auth_part + db_part + opts_part;
+}
+
+function toQueryString(obj) {
+    var parts = [];
+    for (var i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            parts.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]));
+        }
+    }
+    return parts.join("&");
+}
 
 // order the object by alpha key
 function order_object(unordered){
