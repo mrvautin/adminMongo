@@ -1420,7 +1420,7 @@ function toUriString(uri){
     var hosts_part = uri.hosts[0].host + ":" + uri.hosts[0].port;
     
     if(uri.username && uri.password){
-        auth_part = "/" + uri.username + ":" + uri.password;
+        auth_part = uri.username + ":" + uri.password + "@";
     }
     
     if(uri.database){
@@ -1430,8 +1430,8 @@ function toUriString(uri){
     if(uri.options){
         opts_part = "?" + toQueryString(uri.options);
     }
-
-    return uri.scheme + "://" + hosts_part + auth_part + db_part + opts_part;
+    
+    return uri.scheme + "://" + auth_part + hosts_part + db_part + opts_part;
 }
 
 function toQueryString(obj) {
