@@ -11,6 +11,9 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 3. Start application: `npm start`
 4. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
 
+## Deploy on Heroku
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 ### Features
 
 * Manage from a connection level for easy access to multiple databases
