@@ -27,7 +27,8 @@ router.get('/login', function (req, res, next) {
     // if password is set then render the login page, else continue 
     if(passwordConf && passwordConf.hasOwnProperty("password")){
         res.render('login', {
-            message: ""
+            message: "",
+            helpers: req.handlebars.helpers
         });
     }else{
         res.redirect('/');
@@ -52,7 +53,8 @@ router.post('/login_action', function (req, res, next) {
         }else{
             // password is wrong. Show login form with a message
             res.render('login', {
-                message: "Password is incorrect"
+                message: "Password is incorrect",
+                helpers: req.handlebars.helpers
             });
         }
     }else{
@@ -66,13 +68,13 @@ router.get('/connection_list', function (req, res, next) {
 
     res.render('connections', {
         message: "",
-        connection_list: order_object(connection_list)
+        connection_list: order_object(connection_list),
+        helpers: req.handlebars.helpers,
     });
 });
 
 router.get('/:conn', function (req, res, next) {
     var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongodb-uri');
@@ -112,7 +114,7 @@ router.get('/:conn', function (req, res, next) {
                                 conn_users: conn_users,
                                 sidebar_list: sidebar_list,
                                 db_list: db_list,
-                                helpers: helpers,
+                                helpers: req.handlebars.helpers,
                                 session: req.session
                             });
                         });
@@ -125,7 +127,6 @@ router.get('/:conn', function (req, res, next) {
 
 router.get('/:conn/:db/', function (req, res, next) {
     var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongodb-uri');
@@ -169,7 +170,7 @@ router.get('/:conn/:db/', function (req, res, next) {
                                 db_name: req.params.db,
                                 show_db_name: true,
                                 sidebar_list: sidebar_list,
-                                helpers: helpers,
+                                helpers: req.handlebars.helpers,
                                 session: req.session
                             });
                         });
@@ -192,7 +193,6 @@ router.get('/:conn/:db/:coll/view/', function (req, res, next) {
 
 router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (req, res, next) {
     var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongodb-uri');
@@ -241,7 +241,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                                 value_val: req.params.value_val,
                                 sidebar_list: sidebar_list,
                                 docs_per_page: docs_per_page,
-                                helpers: helpers,
+                                helpers: req.handlebars.helpers,
                                 paginate: true,
                                 editor: true,
                                 session: req.session
@@ -256,7 +256,6 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
 
 router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
     var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongodb-uri');
@@ -301,7 +300,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
                                 coll_name: req.params.coll,
                                 coll_list: collection_list.sort(),
                                 sidebar_list: sidebar_list,
-                                helpers: helpers,
+                                helpers: req.handlebars.helpers,
                                 editor: true,
                                 session: req.session
                             });
@@ -315,7 +314,6 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
 
 router.get('/:conn/:db/:coll/new', function (req, res, next) {
     var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongodb-uri');
@@ -357,7 +355,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
                             coll_name: req.params.coll,
                             sidebar_list: sidebar_list,
                             db_name: req.params.db,
-                            helpers: helpers,
+                            helpers: req.handlebars.helpers,
                             editor: true,
                             session: req.session
                         });
@@ -370,7 +368,6 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
 
 router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var mongojs = require('mongojs');
-    var helpers = req.handlebars.helpers;
     var connection_list = req.nconf.connections.get('connections');
     var mongodb = require('mongodb').MongoClient;
     var mongo_uri = require('mongodb-uri');
@@ -423,7 +420,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                             coll_name: req.params.coll,
                             coll_list: collection_list.sort(),
                             coll_doc: bsonify.stringify(doc, null, '    '),
-                            helpers: helpers,
+                            helpers: req.handlebars.helpers,
                             editor: true,
                             session: req.session
                         });
@@ -1484,7 +1481,8 @@ function render_error(res, req, err, conn){
         message: err,
         conn: conn,
         conn_string: conn_string,
-        connection_list: order_object(connection_list)
+        connection_list: order_object(connection_list),
+        helpers: req.handlebars.helpers
     });
 }
 

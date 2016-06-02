@@ -1,15 +1,15 @@
 <div class="col-lg-10">
 	<div class="col-lg-4">
 		<div class="col-lg-12">
-			<h3 class="no-pad-top">Collection maintenance</h3>
+			<h3 class="no-pad-top">{{__ "Collection maintenance"}}</h3>
 			<label for="new_coll_name">Create collection</label>
 			<div class="input-group">
-				<input type="text" class="form-control input-sm" id="new_coll_name" placeholder="collection Name">
+				<input type="text" class="form-control input-sm" id="new_coll_name" placeholder="{{__ "collection Name"}}">
 				<span class="input-group-btn">
-					<button class="btn btn-success btn-sm" id="coll_create">Create</button>
+					<button class="btn btn-success btn-sm" id="coll_create">{{__ "Create"}}</button>
 				</span>
 			</div></br>
-			<label for="del_coll_name">Delete collection</label>
+			<label for="del_coll_name">{{__ "Delete collection"}}</label>
 			<div class="input-group">
 				<select class="form-control input-sm" id="del_coll_name">
 					{{#each coll_list}}
@@ -17,24 +17,24 @@
 					{{/each}}
 				</select>
 				<span class="input-group-btn">
-					<button class="btn btn-danger btn-sm" id="coll_delete">Delete</button>
+					<button class="btn btn-danger btn-sm" id="coll_delete">{{__ "Delete"}}</button>
 				</span>	
 			</div>
 			<hr>
-			<h3>Create User</h3>
-			<label for="new_username">Username</label>
-			<input type="text" class="form-control input-sm" id="new_username" placeholder="Username"><br/>
-			<label for="new_pasword">User Password</label>
-			<input type="password" class="form-control input-sm" id="new_password" placeholder="Password"><br/>
-			<label for="new_password_confirm">Confirm password</label>
-			<input type="password" class="form-control input-sm" id="new_password_confirm" placeholder="Confirm"><br/>
-            <label for="new_user_roles">Roles</label>
-            <input type="text" class="form-control input-sm" id="new_user_roles" placeholder="Optional: comma separated user roles"><br/>
+			<h3>{{__ "Create User"}}</h3>
+			<label for="new_username">{{__ "Username"}}</label>
+			<input type="text" class="form-control input-sm" id="new_username" placeholder="{{__ "Username"}}"><br/>
+			<label for="new_pasword">{{__ "User Password"}}</label>
+			<input type="password" class="form-control input-sm" id="new_password" placeholder="{{__ "Password"}}"><br/>
+			<label for="new_password_confirm">{{__ "Confirm password"}}</label>
+			<input type="password" class="form-control input-sm" id="new_password_confirm" placeholder="{{__ "Confirm"}}"><br/>
+            <label for="new_user_roles">{{__ "Roles"}}</label>
+            <input type="text" class="form-control input-sm" id="new_user_roles" placeholder="{{__ "Optional: comma separated user roles"}}"><br/>
 			</br>
-			<button class="btn btn-success btn-sm pull-right" id="user_create">Create user</button>
+			<button class="btn btn-success btn-sm pull-right" id="user_create">{{__ "Create user"}}</button>
 			</br></br>
             {{#if conn_users}}
-                <label for="del_user_name">Delete user</label>
+                <label for="del_user_name">{{__ "Delete user"}}</label>
                 <div class="input-group">
                     <select class="form-control input-sm" id="del_user_name">
                         {{#each conn_users.users}}
@@ -42,14 +42,14 @@
                         {{/each}}
                     </select>
                     <span class="input-group-btn">
-                        <button class="btn btn-danger btn-sm" id="user_delete">Delete</button>
+                        <button class="btn btn-danger btn-sm" id="user_delete">{{__ "Delete"}}</button>
                     </span>	
                 </div>
             {{/if}}
 		</div>
 	</div>
 	<div class="col-lg-8">
-		<h3 class="no-pad-top">Database statistics</h3>
+		<h3 class="no-pad-top">{{__ "Database statistics"}}</h3>
         <div id="collection_chart"></div>
 		<ul class="list-group">
 			{{#each db_stats}}
@@ -61,13 +61,13 @@
                                 <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="/{{../../conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
                             </div>
                             <div class='col-lg-3 col-sm-4'>
-                                <i class="fa fa-hdd-o"></i>&nbsp; Storage: {{formatBytes this.Storage}}
+                                <i class="fa fa-hdd-o"></i>&nbsp; {{__ "Storage"}}: {{formatBytes this.Storage}}
                             </div>
                             <div class='col-lg-3 col-sm-4'>
-                                <i class="fa fa-file-text-o"></i>&nbsp; Documents: {{this.Documents}}
+                                <i class="fa fa-file-text-o"></i>&nbsp; {{__ "Documents"}}: {{this.Documents}}
                             </div>
                             <div class='col-lg-3 col-sm-4'>
-                                <a href="#" id="{{@key}}" class="exportLink pull-right" data-toggle="modal" data-target="#exportModal"><i class="fa fa-download"></i>&nbsp; Export</a>
+                                <a href="#" id="{{@key}}" class="exportLink pull-right" data-toggle="modal" data-target="#exportModal"><i class="fa fa-download"></i>&nbsp; {{__ "Export"}}</a>
                             </div>
                         </div>
                     </li>

@@ -3,10 +3,10 @@
     <div class="col-lg-4 col-lg-offset-4">
         {{#if message}}<h4 class="text-danger text-center">{{message}}</h4>{{/if}}
         <form class="form-signin" method="post" action="/login_action">
-            <h2 class="form-signin-heading text-center">Please enter password</h2>
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required><br/>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            <h2 class="form-signin-heading text-center">{{__ "Please enter password"}}</h2>
+            <label for="inputPassword" class="sr-only">{{__ "Password"}}</label>
+            <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="{{__ "Password"}}"" required><br/>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">{{__ "Sign in"}}</button>
         </form>
     </div>
 </div>

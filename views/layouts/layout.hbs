@@ -32,10 +32,10 @@
                 <a class="navbar-brand" href="/">adminMongo</a>
             </div>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="/connection_list"><i class="fa fa-plug"></i>&nbsp; Connections</a></li>
+                <li><a href="/connection_list"><i class="fa fa-plug"></i>&nbsp; {{__ "Connections"}}</a></li>
                 
                 {{#if session.loggedIn}}
-                    <li><a href="/logout"><i class="fa fa-sign-out"></i>&nbsp; Logout</a></li>
+                    <li><a href="/logout"><i class="fa fa-sign-out"></i>&nbsp; {__ "Logout"}}</a></li>
                 {{/if}}
             </ul>
         </div>
@@ -44,27 +44,27 @@
         <div class="row">
             {{#if conn_name}}
 				<h2 class="text-center banner-heading">
-					Database:
+					{{__ "Database"}}:
 					{{#if db_name}}
 						<a href="/{{conn_name}}/{{db_name}}">{{db_name}}</a>
 					{{else}}
-						<span class="text-warning"><i>Not selected</i></span>
+						<span class="text-warning"><i>{{__ "Not selected"}}</i></span>
 					{{/if}}
-					/ Collection -
+					/ {{__ "Collection"}} -
 					{{#if coll_name}}
 						<span class="text-info">{{coll_name}}</span>
 						<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#collectioName">
 							<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 						</button>
 					{{else}}
-						<span class="text-warning"><i>Not selected</i></span>
+						<span class="text-warning"><i>{{__ "Not selected"}}</i></span>
 					{{/if}}
 				</h2>
             {{/if}}
             {{#if sidebar_list}}
                 <div id="sidebar" class="col-lg-2">
                     <ul class="list-group">
-                        <li class="list-group-item list-group-item-primary">Database Objects</li>
+                        <li class="list-group-item list-group-item-primary">{{__ "Database Objects"}}</li>
                         {{#if conn_name}}
                             <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="/{{conn_name}}">{{conn_name}}</a></li>
                         {{/if}}
@@ -76,7 +76,7 @@
                         {{/each}}
                     </ul>
                     <ul class="list-group">
-                        <li class="list-group-item list-group-item-primary">Connections</li>
+                        <li class="list-group-item list-group-item-primary">{{__ "Connections"}}</li>
                         {{#each conn_list}}
                             <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="/{{@key}}">{{@key}}</a></li>
                         {{/each}}
@@ -98,14 +98,14 @@
                     <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="collectionNameLabel">Edit Collection name</h4>
+                    <h4 class="modal-title" id="collectionNameLabel">{{__ "Edit Collection name"}}</h4>
                 </div>
                 <div class="modal-body">
                     <input type="text" class="form-control" id="coll_name_newval" value="{{coll_name}}">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success btn-sm" id="coll_name_edit">Save changes</button>
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{__ "Close"}}</button>
+                    <button type="button" class="btn btn-success btn-sm" id="coll_name_edit">{{__ "Save changes"}}</button>
                 </div>
                 </div>
             </div>
@@ -117,22 +117,22 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="collectionNameLabel">Search for documents</h4>
-                    <p>BSON types are not supported</p>
+                    <h4 class="modal-title" id="collectionNameLabel">{{__ "Search for documents"}}</h4>
+                    <p>{{__ "BSON types are not supported"}}</p>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="recipient-name" class="control-label">Key (Field):</label>
+                        <label for="recipient-name" class="control-label">{{__ "Key (Field)"}}:</label>
                         <select class="form-control" id="search_key_fields"></select>
                     </div>
                     <div class="form-group">
-                        <label for="message-text" class="control-label">Value</label>
-                        <input type="text" class="form-control" id="search_value_value" placeholder="Value">
+                        <label for="message-text" class="control-label">{{__ "Value"}}</label>
+                        <input type="text" class="form-control" id="search_value_value" placeholder="{{__ "Value"}}">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success btn-sm pull-right" id="searchModalAction">Search</button>
+                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">{{__ "Close"}}</button>
+                    <button type="button" class="btn btn-success btn-sm pull-right" id="searchModalAction">{{__ "Search"}}</button>
                 </div>
                 </div>
             </div>
@@ -144,15 +144,15 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="collectionNameLabel">Query documents</h4>
-                        <p>Queries need to be BSON types or Extended JSON formatted</p>
+                        <h4 class="modal-title" id="collectionNameLabel">{{__ "Query documents"}}</h4>
+                        <p>{{__ "Queries need to be BSON types or Extended JSON formatted"}}</p>
                     </div>
                     <div class="modal-body">
                         <div class="edit_json" id="json">{}</div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success btn-sm pull-right" id="queryDocumentsAction">Send query</button>
+                        <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">{{__ "Close"}}</button>
+                        <button type="button" class="btn btn-success btn-sm pull-right" id="queryDocumentsAction">{{__ "Send query"}}</button>
                     </div>
                 </div>
             </div>
@@ -164,20 +164,20 @@
                 <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="collectionNameLabel">Export collection</h4>
+                    <h4 class="modal-title" id="collectionNameLabel">{{__ "Export collection"}}</h4>
                 </div>
                 <div class="modal-body">
                     <form>
                         <div class="checkbox">
                             <label>
-                                <input id="exportExcludeID" type="checkbox"> Exclude "_id" field?
+                                <input id="exportExcludeID" type="checkbox"> {{__ "Exclude"}} "_id" {{__ "field"}}?
                             </label>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success btn-sm pull-right" id="exportModalAction">Export</button>
+                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">{{__ "Close"}}</button>
+                    <button type="button" class="btn btn-success btn-sm pull-right" id="exportModalAction">{{__ "Export"}}</button>
                 </div>
                 </div>
             </div>

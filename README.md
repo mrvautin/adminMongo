@@ -26,12 +26,12 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 * Export collections in JSON format
 
 
-### Limitations
+### Current limitations
 
 * Documents need to have an "_id" value which is a string, integer, or MongoDB ObjectId. Documents using Composite ID indexing is currently not supported.
 * Connection strings with multiple hosts for replica sets are currently not supported.
 
-#### Configuration
+### Configuration
 
 adminMongo will listen on host: `localhost` and  port: `1234` by default. 
 This can be overwritten by adding a config file in `/config/app.json`. The config file can also override the default 5 docs per page.
@@ -42,14 +42,22 @@ The config file options are:
         "host": "10.0.0.1",
         "port": 4321,
         "docs_per_page": 15,
-        "password": "secureadminpassword"
+        "password": "secureadminpassword",
+        "locale": "de"
     }
 }
 ```
 
 **Note: Any changes to the config file requires a restart of the application**
 
-#### Authentication
+### Language locale
+
+** Looking for people to translate into other languages. If you can help, grab the `/locale/en.js` file, translate to your language and submit a pull request. **
+
+The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. To override the detected locale
+a setting can be added to the `app.json` file. See Configuration section for a "German" example.
+
+### Authentication
 
 By default `adminMongo` is not password protected. You can add password authentication by adding a `password` value to the `/config/app.json` file 
 (See the Configuration section). Once added you will need to restart `adminMongo` and all routes will be protected until the correct password is added. You
@@ -57,7 +65,7 @@ will then be authenticated for the life of the session (60 mins by default) or i
 
 ## Usage
 
-##### Create a connection
+### Create a connection
 
 After visiting [http://127.0.0.1:1234](http://127.0.0.1:1234) you will be presented with a connection screen. You need to give your connection a unique name as a reference when using adminMongo and a MongoDB formatted connection string. The format of a MongoDB connection string can form: `mongodb://<user>:<password>@127.0.0.1:<port>/<db>` where specifying to the `<db>` level is optional. For more information on MongoDB connection strings, see the [official MongoDB documentation](http://docs.mongodb.org/manual/reference/connection-string/).
 
@@ -66,21 +74,21 @@ Note: The connection can be either local or remote hosted on VPS or MongoDB serv
 ![adminMongo connections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_connections.png "adminMongo connections screen")
 *The Connection setup screen*
 
-##### Connection/Database admin
+### Connection/Database admin
 
 After opening your newly created connection, you are able to see all database objects associated with your connection. Here you can create/delete collections, create/delete users and see various stats for your database.
 
 ![adminMongo database screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_dbview.png "adminMongo database screen")
 *The connections/database screen*
 
-##### Collections
+### Collections
 
 After selecting your collection from the "Database Objects" menu, you will be presented with the collections screen. Here you can see documents in pagination form, create new documents, search documents, delete, edit documents and view/add indexes to your collection.
 
 ![adminMongo collections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_collectionview.png "adminMongo collections screen")
 *The collections screen*
 
-##### Searching documents
+### Searching documents
 
 You can search documents using the `Search documents` button on the collections screen. You will need to enter the key (field name) and value. Eg: key = "_id" and value = "569ff81e0077663d78a114ce".
 
@@ -89,14 +97,14 @@ You can search documents using the `Search documents` button on the collections 
 ![adminMongo search documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_searchdocuments.png "adminMongo search documents")
 *The collections screen*
 
-##### Documents
+### Documents
 
 Adding and editing documents is done using a JSON syntax highlighting control.
 
 ![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_docedit.png "adminMongo documents")
 *Editing a document*
 
-##### Indexes
+### Indexes
 
 Indexes can be added from the collection screen. Please see the [official MongoDB documentation](https://docs.mongodb.org/manual/indexes/) on adding indexes.
 

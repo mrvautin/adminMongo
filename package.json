@@ -37,6 +37,8 @@
     "express-session": "^1.13.0",
     "font-awesome": "^4.5.0",
     "hbs": "~3.1.0",
+    "i18n-2": "^0.6.3",
+    "install": "^0.8.1",
     "jquery": "^2.2.0",
     "mongodb": "^2.1.4",
     "mongodb-extended-json": "^1.6.2",
@@ -44,6 +46,7 @@
     "mongojs": "^2.2.2",
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",
+    "npm": "^3.9.3",
     "serve-favicon": "~2.3.0"
   },
   "license": "MIT"

@@ -14,6 +14,11 @@ var routes = require('./routes/index');
 
 var app = express();
 
+// setup the translation
+var i18n = new (require('i18n-2'))({
+    locales: ['en']
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: 'layout.hbs' }));
@@ -22,6 +27,9 @@ app.set('view engine', 'hbs');
 // helpers for the handlebars templating platform
 handlebars = handlebars.create({
     helpers: {
+        __ : function(value) {
+            return i18n.__(value);
+        },
         toJSON : function(object) {
             return JSON.stringify(object);
         },
@@ -116,6 +124,10 @@ if(nconf.stores.app.get('app:host') != undefined){
 if(nconf.stores.app.get('app:port') != undefined){
     app_port = nconf.stores.app.get('app:port');
 }
+if(nconf.stores.app.get('app:locale') != undefined){
+    i18n.setLocale(nconf.stores.app.get('app:locale'));
+}
+
 
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
