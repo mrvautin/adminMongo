@@ -16,7 +16,7 @@ var app = express();
 
 // setup the translation
 var i18n = new (require('i18n-2'))({
-    locales: ['en']
+    locales: ['en', 'de']
 });
 
 // view engine setup
@@ -133,6 +133,7 @@ if(nconf.stores.app.get('app:locale') != undefined){
 app.use(function (req, res, next) {
     req.nconf = nconf.stores;
 	req.handlebars = handlebars;
+    req.i18n = i18n;
 	next();
 });
 

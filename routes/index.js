@@ -133,13 +133,13 @@ router.get('/:conn/:db/', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
@@ -202,13 +202,13 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
@@ -264,13 +264,13 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
@@ -320,13 +320,13 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
@@ -375,13 +375,13 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
@@ -403,12 +403,12 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                     get_id_type(db, req.params.coll, req.params.doc_id, function(err, doc_id_type, doc) {
                         if(doc == undefined){
                             console.error("No document found");
-                            render_error(res, req, "Document not found", req.params.conn);
+                            render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
                             return;
                         }
                         if(err){
                             console.error("No document found");
-                            render_error(res, req, "Document not found", req.params.conn);
+                            render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
                             return;
                         }
 
@@ -441,13 +441,13 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -459,7 +459,7 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
         if(err){
             console.error("Error connecting to database: " + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -470,10 +470,10 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
                 if(err){
                     console.error('Error creating user: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error creating user: ' + err);
+                    res.end(req.i18n.__('Error creating user') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('User successfully created');
+                    res.end(req.i18n.__('User successfully created'));
                 }
             });
         }
@@ -490,13 +490,13 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -508,7 +508,7 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -518,10 +518,10 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
                 if(err){
                     console.error('Error deleting user: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error deleting user: ' + err);
+                    res.end(req.i18n.__('Error deleting user') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('User successfully deleted');
+                    res.end(req.i18n.__('User successfully deleted'));
                 }
             });
         }
@@ -538,13 +538,13 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -556,7 +556,7 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -566,10 +566,10 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
                 if(err){
                     console.error('Error renaming collection: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error renaming collection: ' + err);
+                    res.end(req.i18n.__('Error renaming collection') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Collection successfully renamed');
+                    res.end(req.i18n.__('Collection successfully renamed'));
                 }
             });
         }
@@ -586,13 +586,13 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -604,7 +604,7 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -617,10 +617,10 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
                 if(err){
                     console.error('Error creating index: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error creating index: ' + err);
+                    res.end(req.i18n.__('Error creating index') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Index successfully created');
+                    res.end(req.i18n.__('Index successfully created'));
                 }
             });
         }
@@ -637,13 +637,13 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -655,7 +655,7 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -666,10 +666,10 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
                     if(err){
                         console.error('Error dropping Index: ' + err);
                         res.writeHead(400, { 'Content-Type': 'application/text' });
-                        res.end('Error dropping Index: ' + err);
+                        res.end(req.i18n.__('Error dropping Index') + ': ' + err);
                     }else{
                         res.writeHead(200, { 'Content-Type': 'application/text' });
-                        res.end('Index successfully dropped');
+                        res.end(req.i18n.__('Index successfully dropped'));
                     }
                 });
             });
@@ -687,13 +687,13 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -705,7 +705,7 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -715,10 +715,10 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
                 if(err){
                     console.error('Error creating collection: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error creating collection: ' + err);
+                    res.end(req.i18n.__('Error creating collection') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Collection successfully created');
+                    res.end(req.i18n.__('Collection successfully created'));
                 }
             });
         }
@@ -735,13 +735,13 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -753,7 +753,7 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -763,10 +763,10 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
                 if(err){
                     console.error('Error deleting collection: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error deleting collection: ' + err);
+                    res.end(req.i18n.__('Error deleting collection') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Collection successfully deleted');
+                    res.end(req.i18n.__('Collection successfully deleted'));
                 }
             });
         }
@@ -782,13 +782,13 @@ router.post('/:conn/db_create', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection');
+        res.end(req.i18n.__('Invalid connection'));
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             var db = mongojs(connection_list[req.params.conn].connection_string);
 
@@ -797,10 +797,10 @@ router.post('/:conn/db_create', function (req, res, next) {
                 if(err){
                     console.error('Error creating database: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error creating database: ' + err);
+                    res.end(req.i18n.__('Error creating database') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Database successfully created');
+                    res.end(req.i18n.__('Database successfully created'));
                 }
             });
         }
@@ -816,14 +816,14 @@ router.post('/:conn/db_delete', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection');
+        res.end(req.i18n.__('Invalid connection'));
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
         if(err){
             console.error('Error deleting database: ' + err);
             res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end('Error deleting database: ' + err);
+            res.end(req.i18n.__('Error deleting database') + ': ' + err);
         }else{
             var db = mongojs(connection_list[req.params.conn].connection_string);
 
@@ -832,10 +832,10 @@ router.post('/:conn/db_delete', function (req, res, next) {
                 if(err){
                     console.error('Error deleting database: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error deleting database: ' + err);
+                    res.end(req.i18n.__('Error deleting database') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Database successfully deleted');
+                    res.end(req.i18n.__('Database successfully deleted'));
                 }
             });
         }
@@ -852,13 +852,13 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -870,7 +870,7 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -880,7 +880,7 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
             }catch (e) {
                 console.error("Syntax error: " + e);
                 res.writeHead(400, { 'Content-Type': 'application/text' });
-                res.end('Syntax error. Please check the syntax');
+                res.end(req.i18n.__('Syntax error. Please check the syntax'));
                 return;
             }
 
@@ -889,10 +889,10 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
                 if(err){
                     console.error('Error inserting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error inserting document: ' + err);
+                    res.end(req.i18n.__('Error inserting document') + ': ' + err);
                 }else{
                     res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end('Document successfully added');
+                    res.end(req.i18n.__('Document successfully added'));
                 }
             });
         }
@@ -909,13 +909,13 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -927,7 +927,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -937,7 +937,7 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
             }catch (e) {
                 console.error("Syntax error: " + e);
                 res.writeHead(400, { 'Content-Type': 'application/text' });
-                res.end('Syntax error. Please check the syntax');
+                res.end(req.i18n.__('Syntax error. Please check the syntax'));
                 return;
             }
 
@@ -945,15 +945,15 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
                 if(err){
                     console.error("Error updating document: " + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Error updating document: ' + err);
+                    res.end(req.i18n.__('Error updating document') + ': ' + err);
                 }else{
                     if(doc['nModified'] == 0){
                         console.error('Error updating document: Document ID is incorrect');
                         res.writeHead(400, { 'Content-Type': 'application/text' });
-                        res.end('Error updating document: Syntax error');
+                        res.end(req.i18n.__('Error updating document: Syntax error'));
                     }else{
                         res.writeHead(200, { 'Content-Type': 'application/text' });
-                        res.end('Document successfully updated');
+                        res.end(req.i18n.__('Document successfully updated'));
                     }
                 }
             });
@@ -970,13 +970,13 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
     
     var conn_string = connection_list[req.params.conn].connection_string;
@@ -988,7 +988,7 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
         if(err){
             console.error('Error connecting to database: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Error connecting to database: ' + err);
+            res.end(req.i18n.__('Error connecting to database') + ': ' + err);
         }else{
             uri.database = req.params.db;
             var db = mongojs(toUriString(uri));
@@ -999,16 +999,16 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
                         if(err){
                             console.error('Error deleting document: ' + err);
                             res.writeHead(400, { 'Content-Type': 'application/text' });
-                            res.end('Error deleting document: ' + err);
+                            res.end(req.i18n.__('Error deleting document') + ': ' + err);
                         }else{
                             res.writeHead(200, { 'Content-Type': 'application/text' });
-                            res.end('Document successfully deleted');
+                            res.end(req.i18n.__('Document successfully deleted'));
                         }
                     });
                 }else{
                     console.error('Error deleting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end('Cannot find document by Id');
+                    res.end(req.i18n.__('Cannot find document by Id'));
                 }
             });
         }
@@ -1023,7 +1023,7 @@ router.post('/add_config', function (req, res, next) {
     if(connection_list != undefined){
         if(connection_list[req.body[0]] != undefined){
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Config error: ' + 'A connection by that name already exists');
+            res.end(req.i18n.__('Config error: A connection by that name already exists'));
             return;
         }
     }
@@ -1036,10 +1036,10 @@ router.post('/add_config', function (req, res, next) {
         if(err){
             console.error('Config error: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Config error: ' + err);
+            res.end(req.i18n.__('Config error') +': ' + err);
         }else{
             res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end('Config successfully added');
+            res.end(req.i18n.__('Config successfully added'));
         }
     });
 });
@@ -1058,10 +1058,10 @@ router.post('/update_config', function (req, res, next) {
         if(err){
             console.error('Config error: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Config error: ' + err);
+            res.end(req.i18n.__('Config error') + ': ' + err);
         }else{
             res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end('Config successfully updated');
+            res.end(req.i18n.__('Config successfully updated'));
         }
     });
 });
@@ -1077,10 +1077,10 @@ router.post('/drop_config', function (req, res, next) {
         if(err){
             console.error('Config error: ' + err);
             res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end('Config error: ' + err);
+            res.end(req.i18n.__('Config error') + ': ' + err);
         }else{
             res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end('Config successfully deleted');
+            res.end(req.i18n.__('Config successfully deleted'));
         }
     });
 });
@@ -1097,13 +1097,13 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
         res.writeHead(500, { 'Content-Type': 'application/text' });
-        res.end('Invalid connection name');
+        res.end(req.i18n.__('Invalid connection name'));
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
         res.writeHead(500, { 'Content-Type': 'application/text' });
-        res.end('Invalid database name');
+        res.end(req.i18n.__('Invalid database name'));
     }
 
     mongodb.connect(connection_list[req.params.conn].connection_string, function (err, mongo_db) {
@@ -1183,13 +1183,13 @@ router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        render_error(res, req, "Invalid connection name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        render_error(res, req, "Invalid database name", req.params.conn);
+        render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
@@ -1212,7 +1212,7 @@ router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
                 res.set({"Content-Disposition":"attachment; filename=" + req.params.coll + ".json"});
                 res.send(JSON.stringify(data, null, 2));
             }else{
-                render_error(res, req, "Export error: Collection not found", req.params.conn);
+                render_error(res, req, req.i18n.__("Export error: Collection not found"), req.params.conn);
             }
         });
     });
