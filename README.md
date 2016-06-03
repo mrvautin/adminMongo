@@ -52,7 +52,7 @@ The config file options are:
 
 ### Language locale
 
-** Looking for people to translate into other languages. If you can help, grab the `/locale/en.js` file, translate to your language and submit a pull request. **
+**Looking for people to translate into other languages. If you can help, grab the `/locale/en.js` file, translate to your language and submit a pull request.**
 
 The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. To override the detected locale
 a setting can be added to the `app.json` file. See Configuration section for a "German" example.
