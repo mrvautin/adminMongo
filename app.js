@@ -65,11 +65,7 @@ app.use(cookieParser());
 app.use(session({
     secret: '858SGTUyX8w1L6JNm1m93Cvm8uX1QX2D',
     resave: true,
-    saveUninitialized: true,
-    cookie: { 
-        secure: false,
-        maxAge  : new Date(Date.now() + (60 * 1000 * 60))
-    }
+    saveUninitialized: true
 }))
 
 // front-end modules loaded from NPM
