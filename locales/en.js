@@ -63,5 +63,9 @@
 	"Finding docs": "Finding docs",
 	"No documents found": "No documents found",
 	"Save document": "Save document",
-	"database name": "database name"
+	"database name": "database name",
+	"Please enter password": "Please enter password",
+	"Password": "Password",
+	"Sign in": "Sign in",
+	"Logout": "Logout"
 }
