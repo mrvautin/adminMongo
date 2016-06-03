@@ -67,5 +67,9 @@
 	"Please enter password": "Please enter password",
 	"Password": "Password",
 	"Sign in": "Sign in",
-	"Logout": "Logout"
+	"Logout": "Logout",
+	"Config successfully added": "Config successfully added",
+	"collection Name": "collection Name",
+	"Confirm": "Confirm",
+	"Optional: comma separated user roles": "Optional: comma separated user roles"
 }
