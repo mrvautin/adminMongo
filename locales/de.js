@@ -90,5 +90,7 @@
 	"Save document": "Dokument speichern",
 	"Error connecting to database": "Fehler zu Datenbank verbinden",
 	"Invalid database name": "Ungültige Datenbanknamen",
-	"Index successfully dropped": "Index erfolgreich gesunken"
+	"Index successfully dropped": "Index erfolgreich gesunken",
+	"database name": "database name",
+ 	"Logout": "Ausloggen"
 }
