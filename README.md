@@ -14,6 +14,13 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 ## Deploy on Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
+## Start with PM2
+PM2 runs the node application as a service.
+
+1. npm pm2 install
+2. npm pm2 start
+3. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
+
 ### Features
 
 * Manage from a connection level for easy access to multiple databases

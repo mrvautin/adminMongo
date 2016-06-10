@@ -12,7 +12,9 @@
     "url": "https://github.com/mrvautin/adminmongo/issues"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "pm2 install": "sudo npm install pm2 -g",
+    "pm2 start": "sudo pm2 start app.js -x -- --prod"
   },
   "keywords": [
     "mongodb",
