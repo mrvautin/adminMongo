@@ -27,7 +27,7 @@ router.get('/login', function (req, res, next) {
     // if password is set then render the login page, else continue 
     if(passwordConf && passwordConf.hasOwnProperty("password")){
         res.render('login', {
-			context: req.app_context,
+            context: req.app_context,
             message: "",
             helpers: req.handlebars.helpers
         });
@@ -54,7 +54,7 @@ router.post('/login_action', function (req, res, next) {
         }else{
             // password is wrong. Show login form with a message
             res.render('login', {
-				context: req.app_context,
+                context: req.app_context,
                 message: "Password is incorrect",
                 helpers: req.handlebars.helpers
             });
@@ -69,7 +69,7 @@ router.get('/connection_list', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
 
     res.render('connections', {
-		context: req.app_context,
+        context: req.app_context,
         message: "",
         connection_list: order_object(connection_list),
         helpers: req.handlebars.helpers,
@@ -111,7 +111,7 @@ router.get('/:conn', function (req, res, next) {
                     get_sidebar_list(mongo_db, uri.database, conn_string, function(err, sidebar_list) {
                         get_db_list(uri, mongo_db, function(err, db_list) {
                             res.render('conn', {
-								context: req.app_context,
+                                context: req.app_context,
                                 conn_list: order_object(connection_list),
                                 db_stats: db_stats,
                                 conn_name: req.params.conn,
@@ -166,7 +166,7 @@ router.get('/:conn/:db/', function (req, res, next) {
                         db.getCollectionNames(function (err, collection_list) {
                             order_array(collection_list)
                             res.render('db', {
-								context: req.app_context,
+                                context: req.app_context,
                                 conn_name: req.params.conn,
                                 conn_list: order_object(connection_list),
                                 db_stats: db_stats,
@@ -235,7 +235,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
                             render_error(res, req, "Collection does not exist", req.params.conn);
                         }else{
                             res.render('coll-view', {
-								context: req.app_context,
+                                context: req.app_context,
                                 conn_list: order_object(connection_list),
                                 conn_name: req.params.conn,
                                 db_name: req.params.db,
@@ -299,7 +299,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
                             render_error(res, req, "Collection does not exist", req.params.conn);
                         }else{
                             res.render('coll-indexes', {
-								context: req.app_context,
+                                context: req.app_context,
                                 coll_indexes: coll_indexes,
                                 conn_list: order_object(connection_list),
                                 conn_name: req.params.conn,
@@ -357,7 +357,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
                         render_error(res, req, "Collection does not exist", req.params.conn);
                     }else{
                         res.render('coll-new', {
-							context: req.app_context,
+                            context: req.app_context,
                             conn_name: req.params.conn,
                             conn_list: order_object(connection_list),
                             coll_name: req.params.coll,
@@ -421,7 +421,7 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
                         }
 
                         res.render('coll-edit', {
-							context: req.app_context,
+                            context: req.app_context,
                             conn_list: order_object(connection_list),
                             conn_name: req.params.conn,
                             db_name: req.params.db,
@@ -1487,7 +1487,7 @@ function render_error(res, req, err, conn){
     }
 
     res.render('error', {
-		context: req.app_context,
+        context: req.app_context,
         message: err,
         conn: conn,
         conn_string: conn_string,
