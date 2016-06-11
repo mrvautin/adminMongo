@@ -19,7 +19,7 @@
                         <td class="text-center">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button class="btn btn-danger btn-sm pull-left" id="update_config"  onclick="dropConfig('{{@index}}');">{{__ "Delete"}}</button>
-                                <a href="/{{@key}}" class="btn btn-primary btn-sm">{{__ "Connect"}}</a>
+                                <a href="{{context}}/{{@key}}" class="btn btn-primary btn-sm">{{__ "Connect"}}</a>
                                 <button class="btn btn-success btn-sm pull-right" id="update_config"  onclick="updateConfig('{{@index}}');">{{__ "Update"}}</button>
                             </div>
                         </td>

@@ -112,6 +112,7 @@ nconf.add('app', { type: 'file', file: app_config });
 // set app defaults
 var app_host = '0.0.0.0';
 var app_port = process.env.PORT || 1234;
+var app_context = '';
 
 // get the app configs and override if present
 if(nconf.stores.app.get('app:host') != undefined){
@@ -123,6 +124,9 @@ if(nconf.stores.app.get('app:port') != undefined){
 if(nconf.stores.app.get('app:locale') != undefined){
     i18n.setLocale(nconf.stores.app.get('app:locale'));
 }
+if(nconf.stores.app.get('app:context') != undefined){
+    app_context = nconf.stores.app.get('app:context');
+}
 
 
 // Make stuff accessible to our router
@@ -130,6 +134,7 @@ app.use(function (req, res, next) {
     req.nconf = nconf.stores;
 	req.handlebars = handlebars;
     req.i18n = i18n;
+    req.app_context = app_context;
 	next();
 });
 
@@ -150,6 +155,7 @@ if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
+			context: req.app_context,
             message: err.message,
             error: err
         });
@@ -161,6 +167,7 @@ if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
+        context: req.app_context,
         message: err.message,
         error: {}
     });
