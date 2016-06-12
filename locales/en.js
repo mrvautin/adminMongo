@@ -71,5 +71,13 @@
 	"Config successfully added": "Config successfully added",
 	"collection Name": "collection Name",
 	"Confirm": "Confirm",
-	"Optional: comma separated user roles": "Optional: comma separated user roles"
+	"Optional: comma separated user roles": "Optional: comma separated user roles",
+	"Collection successfully created": "Collection successfully created",
+	"Collection successfully deleted": "Collection successfully deleted",
+	"User successfully created": "User successfully created",
+	"User successfully deleted": "User successfully deleted",
+	"Add document": "Add document",
+	"Document successfully added": "Document successfully added",
+	"Document successfully deleted": "Document successfully deleted",
+	"Document successfully updated": "Document successfully updated"
 }

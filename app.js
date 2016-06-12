@@ -43,6 +43,13 @@ handlebars = handlebars.create({
                 return "No";
             }
         },
+        app_context : function(){
+            if(nconf.stores.app.get('app:context') != undefined){
+                return "/" + nconf.stores.app.get('app:context');
+            }else{
+                return "";
+            }
+        },
         formatBytes : function(bytes) {
             if(bytes == 0) return '0 Byte';
             var k = 1000;
@@ -124,7 +131,6 @@ if(nconf.stores.app.get('app:locale') != undefined){
     i18n.setLocale(nconf.stores.app.get('app:locale'));
 }
 
-
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
     req.nconf = nconf.stores;
@@ -133,7 +139,16 @@ app.use(function (req, res, next) {
 	next();
 });
 
-app.use('/', routes);
+// setup the app context
+var app_context = "";
+if(nconf.stores.app.get('app:context') != undefined){
+    app_context = "/" + nconf.stores.app.get('app:context');
+    app.use(app_context, routes);
+    app.locals.app_context = app_context;
+}else{
+    app.use('/', routes);
+    app.locals.app_context = "";
+}
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -151,7 +166,8 @@ if (app.get('env') === 'development') {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
-            error: err
+            error: err,
+            helpers: handlebars.helpers
         });
     });
 }
@@ -162,14 +178,15 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
-        error: {}
+        error: {},
+        helpers: handlebars.helpers
     });
 });
 
 
 // lift the app
 app.listen(app_port, app_host, function () {
-    console.log('adminMongo listening on host: http://' + app_host + ':' + app_port);
+    console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
 });
 
 module.exports = app;

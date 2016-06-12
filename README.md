@@ -44,9 +44,13 @@ The config file options are:
         "docs_per_page": 15,
         "password": "secureadminpassword",
         "locale": "de"
+        "context": "dbApp"
     }
 }
 ```
+
+Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on 
+root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.
 
 **Note: Any changes to the config file requires a restart of the application**
 
