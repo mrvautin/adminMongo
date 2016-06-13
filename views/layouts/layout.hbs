@@ -7,23 +7,23 @@
     <meta name="google" content="notranslate" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>adminMongo</title>
-    <link rel='stylesheet' type='text/css' href='/bootstrap/css/bootstrap.min.css' />
-    <link rel='stylesheet' type='text/css' href='/css/flatly.bootstrap.min.css' />
-    <link rel='stylesheet' type='text/css' href='/css/style.css' />
-    <link rel='stylesheet' type='text/css' href='/font-awesome/css/font-awesome.min.css' />
-    <link rel="stylesheet" type='text/css' href='/css/highlightjs.github.min.css'>
-    <script src="/jquery/jquery.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <link rel='stylesheet' type='text/css' href='{{app_context}}/bootstrap/css/bootstrap.min.css' />
+    <link rel='stylesheet' type='text/css' href='{{app_context}}/css/flatly.bootstrap.min.css' />
+    <link rel='stylesheet' type='text/css' href='{{app_context}}/css/style.css' />
+    <link rel='stylesheet' type='text/css' href='{{app_context}}/font-awesome/css/font-awesome.min.css' />
+    <link rel="stylesheet" type='text/css' href='{{app_context}}/css/highlightjs.github.min.css'>
+    <script src="{{app_context}}/jquery/jquery.min.js"></script>
+    <script src="{{app_context}}/bootstrap/js/bootstrap.min.js"></script>
     {{#if paginate}}
-    <script src="/js/jquery.bootpag.min.js"></script>
+    <script src="{{app_context}}/js/jquery.bootpag.min.js"></script>
     {{/if}}
     {{#if editor}}
-    <script src="/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/js/toEJSON.js"></script>
-    <script src="/js/editor.js"></script>
+    <script src="{{app_context}}/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{app_context}}/js/toEJSON.js"></script>
+    <script src="{{app_context}}/js/editor.js"></script>
     {{/if}}
-    <script src="/js/adminMongo.js"></script>
-    <script src="/js/highlight.min.js"></script>
+    <script src="{{app_context}}/js/adminMongo.js"></script>
+    <script src="{{app_context}}/js/highlight.min.js"></script>
 </head>
 <body>
       <nav class="navbar navbar-default navbar-static-top">
