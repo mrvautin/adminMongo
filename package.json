@@ -1,6 +1,6 @@
 {
   "name": "admin-mongo",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "A Web user interface to administer MongoDB databases",
   "author": "Mark Moffat <mrvautin@gmail.com>",
   "private": false,
@@ -40,14 +40,19 @@
     "i18n-2": "^0.6.3",
     "install": "^0.8.1",
     "jquery": "^2.2.0",
+    "lodash": "^4.13.1",
+    "mongo-uri": "^0.1.2",
     "mongodb": "^2.1.4",
     "mongodb-extended-json": "^1.6.2",
-    "mongodb-uri": "^0.9.7",
-    "mongojs": "^2.2.2",
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",
     "npm": "^3.9.3",
     "serve-favicon": "~2.3.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "should": "^9.0.2",
+    "supertest": "^1.2.0"
+  }
 }

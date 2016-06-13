@@ -407,7 +407,7 @@ function updateConfig(config_index){
             }, 2500);
         })
         .error(function(msg) {
-            show_notification(msg.responseText,"danger");
+            show_notification(msg.responseText,"danger", true);
         });
     }else{
         show_notification("Please enter a connection name and connection string","danger");

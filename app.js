@@ -8,6 +8,7 @@ var MongoClient = require('mongodb').MongoClient;
 var handlebars = require('express-handlebars');
 var nconf = require('nconf');
 var session = require('express-session');
+var async = require('async');
 
 // routes
 var routes = require('./routes/index');
@@ -183,10 +184,31 @@ app.use(function (err, req, res, next) {
     });
 });
 
+// add the connections to the connection pool
+var connection_list = nconf.stores.connections.get('connections'); 
+var connPool = require('./connections');
+app.locals.dbConnections = null;
 
-// lift the app
-app.listen(app_port, app_host, function () {
-    console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
+async.forEachOf(connection_list, function (value, key, callback) {  
+    var MongoURI = require('mongo-uri');
+
+    try {
+        uri = MongoURI.parse(value.connection_string);
+        connPool.addConnection({connName: key, connString: value.connection_string}, app, function(err, data){
+            if(err){
+                delete connection_list[key];
+            }
+            callback();
+        });
+    } catch (err) {
+        callback();
+    }
+}, function (err) {
+if (err) console.error(err.message);
+    // lift the app
+    app.listen(app_port, app_host, function () {
+        console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
+    });
 });
 
 module.exports = app;
