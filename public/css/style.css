@@ -93,6 +93,10 @@ body {
     color: #ffffff;
 }
 
+.recordCount{
+    font-size: 22px;
+}
+
 #notify_message{
     position: fixed;
     display: none;

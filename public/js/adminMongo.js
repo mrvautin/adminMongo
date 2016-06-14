@@ -24,8 +24,10 @@ $(document).ready(function() {
     
     // To reset we call paginate() with no query object
     $("#searchReset").click(function() {
-        localStorage.removeItem('searchQuery');
-        window.location.href = $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
+        if(!$('#searchReset').hasClass("disabled")){
+            localStorage.removeItem('searchQuery');
+            window.location.href = $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
+        }
     });
     
     $("#queryDocumentsAction").click(function() {
@@ -311,6 +313,19 @@ function paginate(){
             maxVisible: 5,
             href: pager_href
         });
+
+        var isFiltered = "";
+
+        // enable/disable the reset filter button
+        if(query_string == null){
+            $('#searchReset').addClass("disabled");
+        }else{
+            $('#searchReset').removeClass("disabled");
+            isFiltered = " <span class='text-danger'>(filtered)</span>";
+        }
+
+         // set the total record count
+        $('#recordCount').html(response.total_docs + isFiltered);
         
         //clear the div first
         $('#coll_docs').empty();
