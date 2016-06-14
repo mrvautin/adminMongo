@@ -63,28 +63,7 @@ handlebars = handlebars.create({
     }
 });
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json({limit: '16mb'}));
-app.use(bodyParser.urlencoded({extended: false }));
-app.use(cookieParser());
-
-// setup session
-app.use(session({
-    secret: '858SGTUyX8w1L6JNm1m93Cvm8uX1QX2D',
-    resave: true,
-    saveUninitialized: true
-}))
-
-// front-end modules loaded from NPM
-app.use("/ace", express.static(path.join(__dirname, 'node_modules/ace-builds/src-min/')));
-app.use("/font-awesome", express.static(path.join(__dirname, 'node_modules/font-awesome/')));
-app.use("/jquery", express.static(path.join(__dirname, 'node_modules/jquery/dist/')));
-app.use("/bootstrap", express.static(path.join(__dirname, 'node_modules/bootstrap/dist/')));
-app.use(express.static(path.join(__dirname, 'public')));
-
 // setup nconf to read in the file
-
 // create config dir and blank files if they dont exist
 var fs = require('fs');
 if (!fs.existsSync("config")){
@@ -132,23 +111,48 @@ if(nconf.stores.app.get('app:locale') != undefined){
     i18n.setLocale(nconf.stores.app.get('app:locale'));
 }
 
+// setup the app context
+app_context = "";
+if(nconf.stores.app.get('app:context') != undefined){
+    app_context = "/" + nconf.stores.app.get('app:context');
+}
+
+app.use(logger('dev'));
+app.use(bodyParser.json({limit: '16mb'}));
+app.use(bodyParser.urlencoded({extended: false }));
+app.use(cookieParser());
+
+// setup session
+app.use(session({
+    secret: '858SGTUyX8w1L6JNm1m93Cvm8uX1QX2D',
+    resave: true,
+    saveUninitialized: true
+}))
+
+// front-end modules loaded from NPM
+app.use(app_context + '/ace', express.static(path.join(__dirname, 'node_modules/ace-builds/src-min/')));
+app.use(app_context + '/font-awesome', express.static(path.join(__dirname, 'node_modules/font-awesome/')));
+app.use(app_context + '/jquery', express.static(path.join(__dirname, 'node_modules/jquery/dist/')));
+app.use(app_context + '/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/')));
+app.use(app_context + '/css',express.static(path.join(__dirname, 'public/css')));
+app.use(app_context + '/fonts',express.static(path.join(__dirname, 'public/fonts')));
+app.use(app_context + '/js',express.static(path.join(__dirname, 'public/js')));
+app.use(app_context + '/favicon.ico',express.static(path.join(__dirname, 'public/favicon.ico')));
+
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
     req.nconf = nconf.stores;
 	req.handlebars = handlebars;
     req.i18n = i18n;
+    req.app_context = app_context;
 	next();
 });
 
-// setup the app context
-var app_context = "";
-if(nconf.stores.app.get('app:context') != undefined){
-    app_context = "/" + nconf.stores.app.get('app:context');
+// add context to route if required
+if(app_context != ""){
     app.use(app_context, routes);
-    app.locals.app_context = app_context;
 }else{
     app.use('/', routes);
-    app.locals.app_context = "";
 }
 
 // catch 404 and forward to error handler

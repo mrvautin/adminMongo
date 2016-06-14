@@ -10,13 +10,14 @@ router.all("/*", checkLogin, function(req, res, next) {
 // the home route
 router.get('/', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
+
 	if(connection_list){
         // we have a connection and redirect to the first
         var first_conn = Object.keys(connection_list)[0];
-        res.redirect(req.app.locals.app_context + "/" + first_conn);
+        res.redirect(req.app_context + "/" + first_conn);
     }else{
         // go to connection setup
-        res.redirect(req.app.locals.app_context + '/connection_list');
+        res.redirect(req.app_context + '/connection_list');
     }
 });
 
@@ -31,14 +32,14 @@ router.get('/login', function (req, res, next) {
             helpers: req.handlebars.helpers
         });
     }else{
-        res.redirect(req.app.locals.app_context + '/');
+        res.redirect(req.app_context + '/');
     }
 });
 
 // logout
 router.get('/logout', function (req, res, next) {
     req.session.loggedIn = null;
-    res.redirect(req.app.locals.app_context + '/');
+    res.redirect(req.app_context + '/');
 });
 
 // login page
@@ -49,7 +50,7 @@ router.post('/login_action', function (req, res, next) {
         if(req.body.inputPassword == passwordConf.password){
             // password is ok, go to home
             req.session.loggedIn = true;
-            res.redirect(req.app.locals.app_context + '/');
+            res.redirect(req.app_context + '/');
         }else{
             // password is wrong. Show login form with a message
             res.render('login', {
@@ -58,7 +59,7 @@ router.post('/login_action', function (req, res, next) {
             });
         }
     }else{
-        res.redirect(req.app.locals.app_context + '/');
+        res.redirect(req.app_context + '/');
     }
 });
 
@@ -79,7 +80,7 @@ router.get('/:conn', function (req, res, next) {
 
     // if no connection found
     if(connection_list == undefined || Object.keys(connection_list).length == 0){
-        res.redirect(req.app.locals.app_context + "/");
+        res.redirect(req.app_context + "/");
         return;
     }
 
@@ -89,7 +90,7 @@ router.get('/:conn', function (req, res, next) {
 
     // If there is a DB in the connection string, we redirect to the DB level
     if(uri.database){
-        res.redirect(req.app.locals.app_context + "/" +  req.params.conn + "/" + uri.database);
+        res.redirect(req.app_context + "/" +  req.params.conn + "/" + uri.database);
         return;
     }
 
@@ -155,12 +156,12 @@ router.get('/:conn/:db', function (req, res, next) {
 
 // redirect to page 1
 router.get('/:conn/:db/:coll/', function (req, res, next) {
-     res.redirect(req.app.locals.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
+     res.redirect(req.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
 });
 
 // redirect to page 1
 router.get('/:conn/:db/:coll/view/', function (req, res, next) {
-     res.redirect(req.app.locals.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
+     res.redirect(req.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
 });
 
 router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (req, res, next) {
@@ -1220,7 +1221,7 @@ function checkLogin(req, res, next) {
             if (req.session.loggedIn) {
                 next(); // allow the next route to run
             } else {
-                res.redirect("login");
+                res.redirect(req.app_context + "/login");
             }
         }
     }else{

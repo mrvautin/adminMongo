@@ -43,16 +43,38 @@ The config file options are:
         "port": 4321,
         "docs_per_page": 15,
         "password": "secureadminpassword",
-        "locale": "de"
+        "locale": "de",
         "context": "dbApp"
     }
 }
 ```
 
+**Note: Any changes to the config file requires a restart of the application**
+
+### Setting a context path
+
 Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on 
 root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.
 
-**Note: Any changes to the config file requires a restart of the application**
+An example Nginx server block. Note the `location /dbApp {` and `proxy_pass http://10.0.0.1:4321/dbApp;` lines match 
+the `context` set in the `/config/app.json` file.
+
+```
+server {
+    listen 80;
+
+    server_name mydomain.com www.mydomain.com;
+
+    location /dbApp {
+        proxy_pass http://10.0.0.1:4321/dbApp;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
 
 ### Language locale
 
