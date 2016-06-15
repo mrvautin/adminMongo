@@ -1,58 +1,66 @@
 {
   "name": "admin-mongo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A Web user interface to administer MongoDB databases",
   "author": "Mark Moffat <mrvautin@gmail.com>",
   "private": false,
   "repository": {
-    "type": "git",
-    "url": "https://github.com/mrvautin/adminmongo"
+      "type": "git",
+      "url": "https://github.com/mrvautin/adminmongo"
   },
   "bugs": {
-    "url": "https://github.com/mrvautin/adminmongo/issues"
+      "url": "https://github.com/mrvautin/adminmongo/issues"
   },
   "scripts": {
-    "start": "node app.js"
+      "start": "node app.js",
+      "test": "find ./tests -name '*.js' | xargs mocha -R spec"
   },
   "keywords": [
-    "mongodb",
-    "admin",
-    "web",
-    "ui",
-    "gui",
-    "database",
-    "user",
-    "manage",
-    "administer"
+      "mongo",
+      "mongodb",
+      "admin",
+      "web",
+      "ui",
+      "UI",
+      "gui",
+      "GUI",
+      "DB",
+      "database",
+      "user",
+      "manage",
+      "manager",
+      "administer",
+      "interface",
+      "document",
+      "collection"
   ],
   "dependencies": {
-    "ace-builds": "^1.2.2",
-    "async": "^1.5.2",
-    "body-parser": "~1.13.2",
-    "bootstrap": "^3.3.6",
-    "config": "^1.17.1",
-    "cookie-parser": "~1.3.5",
-    "express": "~4.13.1",
-    "express-handlebars": "^2.0.1",
-    "express-session": "^1.13.0",
-    "font-awesome": "^4.5.0",
-    "hbs": "~3.1.0",
-    "i18n-2": "^0.6.3",
-    "install": "^0.8.1",
-    "jquery": "^2.2.0",
-    "lodash": "^4.13.1",
-    "mongo-uri": "^0.1.2",
-    "mongodb": "^2.1.4",
-    "mongodb-extended-json": "^1.6.2",
-    "morgan": "~1.6.1",
-    "nconf": "^0.8.2",
-    "npm": "^3.9.3",
-    "serve-favicon": "~2.3.0"
+      "ace-builds": "^1.2.2",
+      "async": "^1.5.2",
+      "body-parser": "~1.13.2",
+      "bootstrap": "^3.3.6",
+      "config": "^1.17.1",
+      "cookie-parser": "~1.3.5",
+      "express": "~4.13.1",
+      "express-handlebars": "^2.0.1",
+      "express-session": "^1.13.0",
+      "font-awesome": "^4.5.0",
+      "hbs": "~3.1.0",
+      "i18n-2": "^0.6.3",
+      "jquery": "^2.2.0",
+      "lodash": "^4.13.1",
+      "mongo-uri": "^0.1.2",
+      "mongodb": "^2.1.4",
+      "mongodb-extended-json": "^1.6.2",
+      "morgan": "~1.6.1",
+      "nconf": "^0.8.2",
+      "npm": "^3.9.3",
+      "serve-favicon": "~2.3.0"
   },
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.5.3",
-    "should": "^9.0.2",
-    "supertest": "^1.2.0"
+      "chai": "^3.5.0",
+      "mocha": "^2.5.3",
+      "supertest": "^1.2.0"
   }
 }

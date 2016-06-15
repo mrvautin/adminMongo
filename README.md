@@ -137,6 +137,26 @@ Indexes can be added from the collection screen. Please see the [official MongoD
 ![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_manageindexes.png "adminMongo indexes")
 *Viewing/Adding indexes*
 
+## Tests
+
+The `adminMongo` API tests include:
+
+- Add and remove a connection
+- Add and remove a database
+- Add, remove and rename a collection
+- Create and delete a user
+- Add, query and delete a document
+
+To run tests, simply run:
+
+```
+npm test
+```
+
+*You may need to edit the variables and connection string in `/tests/tests.js` for your MongoDB instance.*
+
+If you see any missing tests, please submit a PR.
+
 ## Contributing
 
 1. Fork it!
@@ -148,6 +168,7 @@ Indexes can be added from the collection screen. Please see the [official MongoD
 ## Future plans
 
 Please make any suggestions.
+
 
 ## License
 
