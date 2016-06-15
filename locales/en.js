@@ -95,5 +95,6 @@
 	"Config successfully deleted": "Config successfully deleted",
 	"Config error": "Config error",
 	"Config error: A connection by that name already exists": "Config error: A connection by that name already exists",
-	"Error dropping Index": "Error dropping Index"
+	"Error dropping Index": "Error dropping Index",
+	"Error deleting collection": "Error deleting collection"
 }
