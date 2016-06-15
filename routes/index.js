@@ -853,9 +853,11 @@ router.post('/update_config', function (req, res, next) {
 
 router.post('/drop_config', function (req, res, next) {
     var nconf = req.nconf.connections;
+    var connPool = require('../connections');
 
     // delete current config
     delete nconf.store.connections[req.body.curr_config];
+    connPool.removeConnection(req.body.curr_config, req.app);
 
     // save config
     nconf.save(function (err) {

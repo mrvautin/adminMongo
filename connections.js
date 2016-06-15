@@ -19,3 +19,13 @@ exports.addConnection = function (connection, app, callback) {
         }
     });
 };
+
+exports.removeConnection = function (connection, app) {
+    if(!app.locals.dbConnections){
+        app.locals.dbConnections = [];
+    }
+
+    app.locals.dbConnections[connection].native.close();
+    delete app.locals.dbConnections[connection];
+    return;
+};
