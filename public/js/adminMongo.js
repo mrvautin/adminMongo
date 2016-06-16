@@ -331,8 +331,8 @@ function paginate(){
         $('#coll_docs').empty();
         for (var i = 0; i < response.data.length; i++) {
             var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
-            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">Delete</a></div>';
-            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="' + $("#app_context").val() + '/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">Edit</a></div>';
+            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">' + response.deleteButton + '</a></div>';
+            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="' + $("#app_context").val() + '/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">' + response.editButton + '</a></div>';
             $('#coll_docs').append(inner_html);
         };
 
@@ -428,8 +428,6 @@ function updateConfig(config_index){
         show_notification("Please enter a connection name and connection string","danger");
     }
 }
-
-
 
 // show notification popup
 function show_notification(msg, type, reload_page){

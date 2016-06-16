@@ -941,7 +941,9 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
                     var return_data = {
                         data: result,
                         fields : fields,
-                        total_docs: doc_count
+                        total_docs: doc_count,
+                        deleteButton: req.i18n.__("Delete"),
+                        editButton: req.i18n.__("Edit")
                     }
                     res.status(200).json(return_data);
                 });
