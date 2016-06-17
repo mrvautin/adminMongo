@@ -64,10 +64,24 @@ $(document).ready(function() {
     $("#searchModalAction").click(function() {
         var key_name = $("#search_key_fields option:selected").text();
         var val = $("#search_value_value").val();
+
         if(key_name != "" && val != ""){
             // build the simply key/value query object and call paginate();
             var qry_obj = {};
-            qry_obj[key_name] = val; 
+
+            // check if value is a number/integer
+            var intReg = new RegExp('^[0-9]+$');
+            if(val.match(intReg)){
+                val = parseInt(val);
+            }else{
+            // if we find an integer wrapped in quotes
+                var strIntReg = new RegExp('^"[0-9]"+$');
+                if(val.match(strIntReg)){
+                    val = val.replace(/"/g,'');
+                }
+            }
+                
+            qry_obj[key_name] = val;
             
             // set the object to local storage to be used if page changes
             localStorage.setItem('searchQuery',JSON.stringify(qry_obj));
