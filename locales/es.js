@@ -98,5 +98,6 @@
 	"Error dropping Index": "Error eliminando índice",
 	"Error deleting collection": "Error eliminando colección",
 	"Create collection": "Crear colección",
-	"Total records": "Total de registros"
+	"Total records": "Total de registros",
+	"Edit": "Editar"
 }
