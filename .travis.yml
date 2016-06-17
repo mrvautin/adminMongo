@@ -4,3 +4,5 @@ node_js:
   - "1.8"
   - "5.4.1"
   - "6.2"
+  services:
+  - mongodb
