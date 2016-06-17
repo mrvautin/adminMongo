@@ -98,5 +98,7 @@
 	"Error dropping Index": "Error dropping Index",
 	"Error deleting collection": "Error deleting collection",
 	"Edit": "Edit",
-	"Total records": "Total records"
+	"Total records": "Total records",
+	"Invalid connection": "Invalid connection",
+	"Cannot find document by Id": "Cannot find document by Id"
 }
