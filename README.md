@@ -1,5 +1,10 @@
 # adminMongo
 
+![npm downloads badge](https://img.shields.io/npm/dm/admin-mongo.svg "npm download badge")
+![npm version badge](https://img.shields.io/npm/v/admin-mongo.svg "npm version badge")
+[![Build Status](https://travis-ci.org/mrvautin/adminMongo.svg?branch=master)](https://travis-ci.org/mrvautin/adminMongo)
+
+
 adminMongo is a Web based user interface (GUI) to handle all your MongoDB connections/databases needs. adminMongo is fully responsive and should work on a range of devices.
 
 > adminMongo connection information (including username/password) is stored unencrypted in a config file, it is not recommended to run this application on a production or public facing server without proper security considerations.
