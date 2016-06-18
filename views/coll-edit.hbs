@@ -13,4 +13,37 @@
 		<div class="edit_json" id="json">{{coll_doc}}</div>
         <input type="hidden" id="edit_request_type" value="edit_doc">
 	</div>
+	<div class="col-lg-12 no-side-pad">
+		{{#if images_fields}}	
+			<div class="col-lg-4">
+				{{#each images_fields}}
+					<h4>Image</h4>
+					<p><strong>Field:</strong> {{this.field}}</p>
+					<img class="img-responsive" src="{{this.src}}"/>
+				{{/each}}
+			</div>
+		{{/if}}
+		{{#if video_fields}}
+			<div class="col-lg-4 no-side-pad">
+				{{#each video_fields}}
+					<h4>Video</h4>
+					<p><strong>Field:</strong> {{this.field}}</p>
+					<div class="embed-responsive embed-responsive-16by9">
+						<video class="embed-responsive-item" controls>
+							<source type="{{this.type}}" src="{{this.src}}">
+						</video>
+					</div>
+				{{/each}}
+			</div>
+		{{/if}}
+		{{#if audio_fields}}
+			<div class="col-lg-4">
+				{{#each audio_fields}}
+					<h4>Audio</h4>
+					<p><strong>Field:</strong> {{this.field}}</p>
+					<audio controls src="{{this.src}}"/>
+				{{/each}}
+			</div>
+		{{/if}}
+	</div>
 </div>

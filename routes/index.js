@@ -646,32 +646,53 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // do DB stuff
-    mongo_db.listCollections().toArray(function(err, collection_list){
-        // clean up the collection list
-        collection_list = cleanCollections(collection_list);
-        get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
-            get_id_type(mongo_db, req.params.coll, req.params.doc_id, function(err, doc_id_type, doc) {
-                if(doc == undefined){
-                    console.error("No document found");
-                    render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
-                    return;
-                }
-                if(err){
-                    console.error("No document found");
-                    render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
-                    return;
-                }
+    get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
+        get_id_type(mongo_db, req.params.coll, req.params.doc_id, function(err, result) {
+            if(result.doc == undefined){
+                console.error("No document found");
+                render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
+                return;
+            }
+            if(err){
+                console.error("No document found");
+                render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
+                return;
+            }
 
-                res.render('coll-edit', {
-                    conn_name: req.params.conn,
-                    db_name: req.params.db,
-                    sidebar_list: sidebar_list,
-                    coll_name: req.params.coll,
-                    coll_doc: bsonify.stringify(doc, null, '    '),
-                    helpers: req.handlebars.helpers,
-                    editor: true,
-                    session: req.session
-                });
+            var images = [];
+            _.forOwn(result.doc, function(value, key) {
+                if(value.toString().substring(0,10) == "data:image"){
+                    images.push({"field": key, "src": value});
+                }
+            });
+
+            var videos = [];
+            _.forOwn(result.doc, function(value, key) {
+                if(value.toString().substring(0,10) == "data:video"){
+                    videos.push({"field": key, "src": value, "type": value.split(";")[0].replace("data:","")});
+                }
+            });
+
+            var audio = [];
+            _.forOwn(result.doc, function(value, key) {
+                if(value.toString().substring(0,10) == "data:audio"){
+                    audio.push({"field": key, "src": value});
+                }
+            });
+
+            res.render('coll-edit', {
+                conn_name: req.params.conn,
+                db_name: req.params.db,
+                conn_list: order_object(req.nconf.connections.get('connections')),
+                sidebar_list: sidebar_list,
+                coll_name: req.params.coll,
+                coll_doc: bsonify.stringify(result.doc, null, '    '),
+                helpers: req.handlebars.helpers,
+                editor: true,
+                images_fields: images,
+                video_fields: videos,
+                audio_fields: audio,
+                session: req.session
             });
         });
     });
@@ -740,9 +761,9 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
-    get_id_type(mongo_db, req.params.coll, req.body.doc_id, function(err, doc_id_type, doc) {
-        if(doc){
-            mongo_db.collection(req.params.coll).remove({_id: doc_id_type}, function(err, docs){
+    get_id_type(mongo_db, req.params.coll, req.body.doc_id, function(err, result) {
+        if(result.doc){
+            mongo_db.collection(req.params.coll).remove({_id: result.doc_id_type}, function(err, docs){
                 if(err){
                     console.error('Error deleting document: ' + err);
                     res.writeHead(400, { 'Content-Type': 'application/text' });
@@ -915,12 +936,13 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
             query_obj = {}
         }
     }
+
     mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function(err, result) {
         if (err) {
             console.error(err);
             res.status(500).json(err);
         }else{
-            mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function(err, simpleSearchFields) {
+            mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).toArray(function(err, simpleSearchFields) {
                 //get field names/keys of the Documents in collection                
                 var fields = [];
                 for (var i = 0; i < simpleSearchFields.length; i++) {
@@ -1092,41 +1114,46 @@ var get_db_list = function(uri, mongo_db, cb) {
 // the value will be an ObjectId (hopefully) so we try that first then go from there
 var get_id_type = function(mongo, collection, doc_id, cb) {
 
-    var ObjectID = require('mongodb').ObjectID;
-    // if a valid ObjectId we try that, then then try as a string
-    if(ObjectID.isValid(doc_id)){
-        mongo.collection(collection).findOne({_id: ObjectID(doc_id)}, function(err, doc) {
-            if(doc){
-                // doc_id is an ObjectId
-                cb(null, ObjectID(doc_id), doc);
-            }else{
-                mongo.collection(collection).findOne({_id: doc_id}, function(err, doc) {
-                    if(doc){
-                        // doc_id is string
-                        cb(null, doc_id, doc);
-                    }else{
-                        cb("Document not found", null, null);
-                    }
-                });
-            }
-        });
+    if(doc_id){
+        var ObjectID = require('mongodb').ObjectID;
+        // if a valid ObjectId we try that, then then try as a string
+        if(ObjectID.isValid(doc_id)){
+            mongo.collection(collection).findOne({_id: ObjectID(doc_id)}, function(err, doc) {
+                if(doc){
+                    // doc_id is an ObjectId
+                    cb(null, {"doc_id_type": ObjectID(doc_id),"doc": doc});
+                }else{
+                    mongo.collection(collection).findOne({_id: doc_id}, function(err, doc) {
+                        if(doc){
+                            // doc_id is string
+                            cb(null, {"doc_id_type": doc_id, "doc": doc});
+                        }else{
+                            cb("Document not found", {"doc_id_type": null, "doc": null});
+                        }
+                    });
+                }
+            });
+        }else{
+            // if the value is not a valid ObjectId value we try as an integer then as a last resort, a string.
+            mongo.collection(collection).findOne({_id: parseInt(doc_id)}, function(err, doc) {
+                if(doc){
+                    // doc_id is integer
+                    cb(null, {"doc_id_type": parseInt(doc_id), "doc": doc});
+                    return;
+                }else{
+                    mongo.collection(collection).findOne({_id: doc_id}, function(err, doc) {
+                        if(doc){
+                            // doc_id is string
+                            cb(null, {"doc_id_type": doc_id, "doc": doc});
+                        }else{
+                            cb("Document not found", {"doc_id_type": null, "doc": null});
+                        }
+                    });
+                }
+            });
+        }
     }else{
-        // if the value is not a valid ObjectId value we try as an integer then as a last resort, a string.
-        mongo.collection(collection).findOne({_id: parseInt(doc_id)}, function(err, doc) {
-            if(doc){
-                // doc_id is integer
-                cb(null, parseInt(doc_id), doc);
-            }else{
-                mongo.collection(collection).findOne({_id: doc_id}, function(err, doc) {
-                    if(doc){
-                        // doc_id is string
-                        cb(null, doc_id, doc);
-                    }else{
-                        cb("Document not found", null, null);
-                    }
-                });
-            }
-        });
+        cb(null, {"doc_id_type": null, "doc": null});
     }
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "admin-mongo",
   "version": "0.0.8",
-  "description": "A Web user interface to administer MongoDB databases",
+  "description": "A Web user interface to administer MongoDB databases built using Express",
   "author": "Mark Moffat <mrvautin@gmail.com>",
   "private": false,
   "repository": {
@@ -32,7 +32,8 @@
       "administer",
       "interface",
       "document",
-      "collection"
+      "collection",
+      "express"
   ],
   "dependencies": {
       "ace-builds": "^1.2.2",
