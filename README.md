@@ -135,6 +135,11 @@ Adding and editing documents is done using a JSON syntax highlighting control.
 ![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_docedit.png "adminMongo documents")
 *Editing a document*
 
+Documents with Media embedded show previews
+
+![adminMongo media](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_media.png "adminMongo media documents")
+*Documents with media*
+
 ### Indexes
 
 Indexes can be added from the collection screen. Please see the [official MongoDB documentation](https://docs.mongodb.org/manual/indexes/) on adding indexes.
