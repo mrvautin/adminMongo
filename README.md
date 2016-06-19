@@ -52,7 +52,7 @@ adminMongo will listen on host: `localhost` and  port: `1234` by default. This c
 }
 ```
 
-**Note: Any changes to the config file requires a restart of the application**
+> Note: Any changes to the config file requires a restart of the application
 
 The config file (optional) options are:
 
@@ -92,7 +92,7 @@ server {
 
 ### Language locale
 
-**Looking for people to translate into other languages. If you can help, grab the `/locale/en.js` file, translate to your language and submit a pull request.**
+> Looking for people to translate into other languages. If you can help, grab the `/locale/en.js` file, translate to your language and submit a pull request.
 
 The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. To override the detected locale
 a setting can be added to the `app.json` file. See Configuration section for a "German" example.
@@ -119,54 +119,75 @@ For example:
     "autoReconnect": false,
     "ssl": false
 }
-````
+```
 
 Note: The connection can be either local or remote hosted on VPS or MongoDB service such as mLab.
 
-![adminMongo connections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_connections.png "adminMongo connections screen")
 *The Connection setup screen*
+![adminMongo connections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_connections.png "adminMongo connections screen")
 
 ### Connection/Database admin
 
 After opening your newly created connection, you are able to see all database objects associated with your connection. Here you can create/delete collections, create/delete users and see various stats for your database.
 
-![adminMongo database screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_dbview.png "adminMongo database screen")
 *The connections/database screen*
+![adminMongo database screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_dbview.png "adminMongo database screen")
 
 ### Collections
 
 After selecting your collection from the "Database Objects" menu, you will be presented with the collections screen. Here you can see documents in pagination form, create new documents, search documents, delete, edit documents and view/add indexes to your collection.
 
-![adminMongo collections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_collectionview.png "adminMongo collections screen")
 *The collections screen*
+![adminMongo collections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_collectionview.png "adminMongo collections screen")
 
-### Searching documents
+### Searching/Querying documents
 
-You can search documents using the `Search documents` button on the collections screen. You will need to enter the key (field name) and value. Eg: key = "_id" and value = "569ff81e0077663d78a114ce".
+You can perform searches of documents using the `Search documents` button on the collections screen. You will need to enter the key (field name) and value. Eg: key = "_id" and value = "569ff81e0077663d78a114ce" (Only works on string "_id" fields - Use "Query Documents" for ObjectID's).
 
 > You can clear your search by clicking the `Reset` button on the collections screen.
 
+*Simple search documents*
 ![adminMongo search documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_searchdocuments.png "adminMongo search documents")
-*The collections screen*
+
+Complex querying of documents is done through the "Query documents" button. This allows a query Object to be passed to MongoDB to return results.
+Queries can be written in full BSON format or EJSON format. For example these queries should return the same results: 
+
+```
+{ 
+    ObjectId("56a97ed3f718fe9a4f599489")
+}
+``` 
+
+is equivalent to: 
+
+```
+{
+    "$oid": "56a97ed3f718fe9a4f599489"
+}
+```
+
+*Query documents*
+![adminMongo search documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_querydocuments.png "adminMongo search documents")
+
 
 ### Documents
 
 Adding and editing documents is done using a JSON syntax highlighting control.
 
-![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_docedit.png "adminMongo documents")
 *Editing a document*
+![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_docedit.png "adminMongo documents")
 
 Documents with Media embedded show previews
 
-![adminMongo media](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_media.png "adminMongo media documents")
 *Documents with media*
+![adminMongo media](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_media.png "adminMongo media documents")
 
 ### Indexes
 
 Indexes can be added from the collection screen. Please see the [official MongoDB documentation](https://docs.mongodb.org/manual/indexes/) on adding indexes.
 
-![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_manageindexes.png "adminMongo indexes")
 *Viewing/Adding indexes*
+![adminMongo documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_manageindexes.png "adminMongo indexes")
 
 ## Tests
 
@@ -199,7 +220,6 @@ If you see any missing tests, please submit a PR.
 ## Future plans
 
 Please make any suggestions.
-
 
 ## License
 
