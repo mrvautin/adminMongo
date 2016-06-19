@@ -3,19 +3,21 @@
     {{#if message}}<h3 class="text-danger">{{__ "Connection"}}: {{conn}} - {{message}}</h3>{{/if}}
     <div class="col-lg-12">
         <div class="col-lg-12">
-            <table class="table">
+            <table class="table table-responsive">
                 <thead>
                     <tr>
                         <th class="col-md-2 text-center">{{__ "Connection name"}}</th>
-                        <th class="col-md-6 text-center">{{__ "Connection string"}}</th>
+                        <th class="col-md-4 text-center">{{__ "Connection string"}}</th>
+                        <th class="col-md-3 text-center">{{__ "Connection options"}}</th>
                         <th class="col-md-4 text-center">{{__ "Action"}}</th>
                     </tr>
                 </thead>
                 {{#each connection_list}}
-                    <tr>
+                    <tr class="connectionRow">
                         <input type="hidden" id="curr_conf_conn_name_{{@index}}" value="{{@key}}">
                         <td><input type="text" class="form-control input-sm" id="conf_conn_name_{{@index}}" name="conf_conn_name" value="{{@key}}"></td>
                         <td><input type="text" class="form-control input-sm" id="conf_conn_string_{{@index}}" name="conf_conn_string" value="{{this.connection_string}}"></td>
+                        <td><pre class="code-block conectionOptions"><code class="json">{{{toJSON this.connection_options}}}</code></pre></td>
                         <td class="text-center">
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button class="btn btn-danger btn-sm pull-left" id="update_config"  onclick="dropConfig('{{@index}}');">{{__ "Delete"}}</button>
@@ -27,11 +29,20 @@
                 {{/each}}
                 <tr><td>&nbsp;</td></tr>
                 <tr>
+                    <td class="text-center"><strong>{{__ "Connection name"}}</strong></td>
+                    <td class="text-center"><strong>{{__ "Connection string"}}</strong></td>
+                    <td class="text-center"><strong>{{__ "Connection options"}}</strong> (See <a href="http://mongodb.github.io/node-mongodb-native/2.1/reference/connecting/connection-settings/" target="_blank">docs</a>)</td>
+                    <th class="text-center"><strong>{{__ "Action"}}</strong></th>
+                </tr>
+                <tr class="connectionRow">
                     <td>
                         <input type="text" class="form-control input-sm" id="new_conf_conn_name" name="new_conf_conn_name" placeholder="{{__ "A name for connection"}}">
                     </td>
                     <td>
                         <input type="text" class="form-control input-sm" id="new_conf_conn_string" name="new_conf_conn_string" placeholder="{{__ "Connection string"}}: mongodb://<user>:<password>@127.0.0.1:<port>/<db>">
+                    </td>
+                    <td>
+                        <div class="connection_json" id="json">{}</div>
                     </td>
                     <td class="text-center">
                         <button class="btn btn-success btn-sm" id="add_config">{{__ "Add connection"}}</button>

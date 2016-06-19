@@ -13,6 +13,20 @@ body {
     width: 100%;
 }
 
+.connection_json{
+    position: relative;
+    height: 60px;
+    width: 100%;
+}
+
+.connectionRow{
+    height: 100px;
+}
+
+.connectionRow > td, .connectionRow > td > input, .connectionRow .btn, .connectionRow > td > a{
+    margin-top: 15px;
+}
+
 .coll_indent{
     padding-left: 35px;
 }
@@ -80,6 +94,12 @@ body {
 .doc_view{
     max-height: 120px;
     min-height: 120px;
+    overflow: auto
+}
+
+.conectionOptions{
+    max-height: 60px;
+    min-height: 60px;
     overflow: auto
 }
 

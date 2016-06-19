@@ -69,6 +69,7 @@ router.get('/connection_list', function (req, res, next) {
 
     res.render('connections', {
         message: "",
+        editor: true,
         connection_list: order_object(connection_list),
         helpers: req.handlebars.helpers,
     });
@@ -799,16 +800,24 @@ router.post('/add_config', function (req, res, next) {
     // try parse uri string. If pass, add, else throw an error
     try {
         uri = MongoURI.parse(req.body[1]);
+        var options = {};
+        try{
+            options = JSON.parse(req.body[2]);
+        }catch(err) {
+            res.writeHead(400, { 'Content-Type': 'application/text' });
+            res.end(req.i18n.__('Error in connection options') +': ' + err);
+            return;
+        }
 
         // try add the connection
-        connPool.addConnection({connName: req.body[0], connString: req.body[1]}, req.app, function(err, data){
+        connPool.addConnection({connName: req.body[0], connString: req.body[1], connOptions: options}, req.app, function(err, data){
             if(err){
                 console.error('DB Connect error: ' + err);
                 res.writeHead(400, { 'Content-Type': 'application/text' });
                 res.end(req.i18n.__('Config error') +': ' + err);
             }else{
                 // set the new config
-                nconf.set('connections:' + req.body[0], {"connection_string": req.body[1]});
+                nconf.set('connections:' + req.body[0], {"connection_string": req.body[1], "connection_options": options});
 
                 // save for ron
                 nconf.save(function (err) {

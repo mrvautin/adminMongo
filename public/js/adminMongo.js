@@ -260,9 +260,17 @@ $(document).ready(function() {
     
     $("#add_config").click(function() {
         if($("#new_conf_conn_name").val() != "" && $("#new_conf_conn_string").val() != ""){
+            var editor = ace.edit("json");
+            var editor_val = editor.getValue();
+
+            if(editor_val == ""){
+                editor_val = {};
+            }
+
             var data_obj = {};
             data_obj[0] = $("#new_conf_conn_name").val();
             data_obj[1] = $("#new_conf_conn_string").val();
+            data_obj[2] = editor_val;
 
             $.ajax({
                 method: "POST",

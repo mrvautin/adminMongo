@@ -5,7 +5,11 @@ exports.addConnection = function (connection, app, callback) {
         app.locals.dbConnections = [];
     }
 
-    MongoClient.connect(connection.connString, function(err, database) {
+    if(!connection.connOptions){
+        connection.connOptions = {};
+    }
+
+    MongoClient.connect(connection.connString, connection.connOptions, function(err, database) {
         if(err){
             callback(err, null);
         }else{
