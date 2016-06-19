@@ -20,7 +20,7 @@ describe("Add connection, database and collection",function(){
     it("Add a new connection",function(done){
         agent
             .post("/add_config")
-            .send({0: conn_name,1: "mongodb://localhost:27017"})
+            .send({0: conn_name,1: "mongodb://localhost:27017", 2: "{}"})
             .expect(200)
             .expect("Config successfully added", done);
     });
