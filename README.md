@@ -30,7 +30,6 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 * Collection statistics
 * Export collections in JSON format
 
-
 ### Current limitations
 
 * Documents need to have an "_id" value which is a string, integer, or MongoDB ObjectId. Documents using Composite ID indexing is currently not supported.
@@ -38,9 +37,8 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 
 ### Configuration
 
-adminMongo will listen on host: `localhost` and  port: `1234` by default. 
-This can be overwritten by adding a config file in `/config/app.json`. The config file can also override the default 5 docs per page.
-The config file options are:
+adminMongo will listen on host: `localhost` and  port: `1234` by default. This can be overwritten by adding a config file in `/config/app.json`. For example:
+
 ```
 {
     "app": {
@@ -55,6 +53,17 @@ The config file options are:
 ```
 
 **Note: Any changes to the config file requires a restart of the application**
+
+The config file (optional) options are:
+
+|Option|Definition|
+|--- |--- |
+|`host`|The IP address  `adminMongo`  will listen on|
+|`port`|The Port `adminMongo` will listen on|
+|`docs_per_page`|When viewing docs you can specify how many are shown per page|
+|`password`|An application level password to add simply authentication|
+|`locale`|The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. This setting overrides the default/detected value|
+|`context`|Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.|
 
 ### Setting a context path
 
@@ -100,7 +109,19 @@ will then be authenticated for the life of the session (60 mins by default) or i
 
 After visiting [http://127.0.0.1:1234](http://127.0.0.1:1234) you will be presented with a connection screen. You need to give your connection a unique name as a reference when using adminMongo and a MongoDB formatted connection string. The format of a MongoDB connection string can form: `mongodb://<user>:<password>@127.0.0.1:<port>/<db>` where specifying to the `<db>` level is optional. For more information on MongoDB connection strings, see the [official MongoDB documentation](http://docs.mongodb.org/manual/reference/connection-string/).
 
-Note: The connection can be either local or remote hosted on VPS or MongoDB service such as MongoLab.
+You can supply a connection options object (see [docs](http://mongodb.github.io/node-mongodb-native/2.1/reference/connecting/connection-settings/)) with each connection. 
+
+For example:
+
+```
+{
+    "poolSize": 10,
+    "autoReconnect": false,
+    "ssl": false
+}
+````
+
+Note: The connection can be either local or remote hosted on VPS or MongoDB service such as mLab.
 
 ![adminMongo connections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_connections.png "adminMongo connections screen")
 *The Connection setup screen*
