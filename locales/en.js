@@ -102,5 +102,7 @@
 	"Invalid connection": "Invalid connection",
 	"Cannot find document by Id": "Cannot find document by Id",
 	"Document not found": "Document not found",
-	"Create collection": "Create collection"
+	"Create collection": "Create collection",
+	"Connection options": "Connection options",
+	"Error in connection options": "Error in connection options"
 }
