@@ -3,6 +3,7 @@
 ![npm downloads badge](https://img.shields.io/npm/dm/admin-mongo.svg "npm download badge")
 ![npm version badge](https://img.shields.io/npm/v/admin-mongo.svg "npm version badge")
 [![Build Status](https://travis-ci.org/mrvautin/adminMongo.svg?branch=master)](https://travis-ci.org/mrvautin/adminMongo)
+[![Github stars](https://img.shields.io/github/stars/mrvautin/adminMongo.svg?style=social&label=Star)](https://github.com/mrvautin/adminMongo)
 
 
 adminMongo is a Web based user interface (GUI) to handle all your MongoDB connections/databases needs. adminMongo is fully responsive and should work on a range of devices.
