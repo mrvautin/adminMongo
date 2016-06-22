@@ -104,5 +104,7 @@
 	"Document not found": "Document not found",
 	"Create collection": "Create collection",
 	"Connection options": "Connection options",
-	"Error in connection options": "Error in connection options"
+	"Error in connection options": "Error in connection options",
+	"Error deleting document": "Error deleting document",
+	"Invalid database name": "Invalid database name"
 }
