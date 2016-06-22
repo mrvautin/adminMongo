@@ -34,7 +34,7 @@
 		<th>{{__ "Sparse"}}</th>
 		<th>{{__ "Action"}}</th>
 		{{#each coll_indexes}}
-			<tr>
+			<tr id="index_row_{{@index}}">
 				<td>{{this.name}}</td>
 				<td>{{{toJSON this.key}}}</td>
 				<td>{{niceBool this.unique}}</td>

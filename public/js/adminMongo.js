@@ -1,26 +1,12 @@
 $(document).ready(function() {  
     // paginate if value is set
     if($("#to_paginate").val() == "true"){
+        if(localStorage.getItem('message_text') != ""){
+            show_notification(localStorage.getItem('message_text'), "success");
+            localStorage.setItem('message_text', "");
+        }
         paginate();
     }
-      
-    $("#coll_create").click(function() {
-        if($("#new_coll_name").val() != ""){
-            $.ajax({
-                method: "POST",
-                url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val()+ "/coll_create",
-                data: {"collection_name" : $("#new_coll_name").val()}
-            })
-            .success(function(msg) {
-                show_notification(msg,"success", true);
-            })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
-            });
-        }else{
-            show_notification("Please enter a collection name","danger");
-        }
-    });
     
     // To reset we call paginate() with no query object
     $("#searchReset").click(function() {
@@ -97,23 +83,45 @@ $(document).ready(function() {
     });
     
     $("#coll_name_edit").click(function() {
-        var data = $("#coll_name_newval").val();
-        if(data != ""){
+        var newCollName = $("#coll_name_newval").val();
+        if(newCollName != ""){
             $.ajax({
                 method: "POST",
                 url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/coll_name_edit",
-                data: {"new_collection_name" : data}
+                data: {"new_collection_name" : newCollName}
             })
-            .success(function(msg) {
-                show_notification(msg,"success");
-                window.location.href = $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + data + "/view?page=1";
+            .success(function(data) {
+                $("#headCollectionName").text(newCollName);
+                $('#collectioName').modal('toggle');
+                localStorage.setItem('message_text', data.msg);
+                window.location.href = $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + newCollName + "/view?page=1";
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }
         else{
             show_notification("Please enter an index","danger");
+        }
+    });
+
+    $("#coll_create").click(function() {
+        if($("#new_coll_name").val() != ""){
+            $.ajax({
+                method: "POST",
+                url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val()+ "/coll_create",
+                data: {"collection_name" : $("#new_coll_name").val()}
+            })
+            .success(function(data) {
+                $("#del_coll_name").append('<option>' + $("#new_coll_name").val() + '</option>');
+                $("#new_coll_name").val('');
+                show_notification(data.msg,"success");
+            })
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
+            });
+        }else{
+            show_notification("Please enter a collection name","danger");
         }
     });
     
@@ -124,11 +132,13 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/coll_delete",
                 data: {"collection_name" : $("#del_coll_name option:selected" ).text()}
             })
-            .success(function(msg) {
-                show_notification(msg,"success", true);
+            .success(function(data) {
+                $("#del_coll_name option:contains('" + data.coll_name + "')").remove();
+                $("#del_coll_name").val($("#del_coll_name option:first").val());
+                show_notification(data.msg,"success");
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }
     });
@@ -140,11 +150,13 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/" + $("#conn_name").val() + "/db_create",
                 data: {"db_name" : $("#new_db_name").val()}
             })
-            .success(function(msg) {
-                show_notification(msg,"success", true);
+            .success(function(data) {
+                $("#del_db_name").append('<option>' + $("#new_db_name").val() + '</option>');
+                $("#new_db_name").val('');
+                show_notification(data.msg,"success");
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }else{
             show_notification("Please enter a database name","danger");
@@ -158,41 +170,16 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/" + $("#conn_name").val() + "/db_delete",
                 data: {"db_name" : $("#del_db_name option:selected" ).text()}
             })
-            .success(function(msg) {
-                show_notification(msg,"success", true);
+            .success(function(data) {
+                $("#del_db_name option:contains('" + data.db_name + "')").remove();
+                $("#del_db_name").val($("#del_db_name option:first").val());
+                show_notification(data.msg,"success");
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }else{
             show_notification("Please enter a database name","danger");
-        }
-    });
-    
-    $("#coll_addindex").click(function() {
-        var edit = ace.edit("json");
-        var json = $.parseJSON(edit.getValue());
-       
-        if(json != "{}"){
-            var data_obj = {};
-            data_obj[0] = JSON.stringify(json);
-            data_obj[1] = $("#index_unique").is(":checked") ? "true" : "false";
-            data_obj[2] = $("#index_sparse").is(":checked") ? "true" : "false";
-            
-            $.ajax({
-                method: "POST",
-                url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/create_index",
-                data: data_obj 
-            })
-            .success(function(msg) {
-                show_notification(msg,"success", true);
-            })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
-            });
-        }
-        else{
-            show_notification("Please enter an index","danger");
         }
     });
     
@@ -219,14 +206,18 @@ $(document).ready(function() {
                     "roles_text": $("#new_user_roles").val()
                 }
         })
-        .success(function(msg) {
-            show_notification(msg,"success");
-            setInterval(function() {
-                window.location = $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val();
-            }, 2000);
+        .success(function(data) {
+            $("#del_user_name").append('<option>' + $("#new_username").val() + '</option>');
+            show_notification(data.msg,"success");
+
+            // clear items
+            $("#new_username").val('');
+            $("#new_password").val('');
+            $("#new_password_confirm").val('');
+            $("#new_user_roles").val('');
         })
-        .error(function(msg) {
-            show_notification(msg.responseText,"danger");
+        .error(function(data) {
+            show_notification(data.responseJSON.msg,"danger");
         });
     });
     
@@ -246,14 +237,13 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/na/user_delete",
                 data: {"username": $("#del_user_name option:selected" ).text()}
             })
-            .success(function(msg) {
-                show_notification(msg,"success");
-                setInterval(function() {
-                    window.location = $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val();
-                }, 2000);
+            .success(function(data) {
+                $("#del_user_name option:contains('" + $("#del_user_name option:selected" ).text() + "')").remove();
+                $("#del_user_name").val($("#del_user_name option:first").val());
+                show_notification(data.msg,"success");
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }
     });
@@ -277,18 +267,67 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/add_config",
                 data: data_obj
             })
-            .success(function(msg) {
-                show_notification(msg,"success");
+            .success(function(data) {
+                show_notification(data.msg,"success");
                 setInterval(function() {
                     location.reload();
                 }, 2500);
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }else{
             show_notification("Please enter both a connection name and connection string","danger");
         }
+    });
+
+    $(".btnConnDelete").click(function() {
+        if(confirm("WARNING: Are you sure you want to delete this connection?") == true) {
+            var current_name = $(this).parents('.conn_id').attr("id");
+            var rowElement = $(this).parents('.connectionRow');
+
+            $.ajax({
+                method: "POST",
+                url: $("#app_context").val() + "/drop_config",
+                data: {"curr_config":  current_name}
+            })
+            .success(function(data) {
+                rowElement.remove();
+                show_notification(data.msg,"success");
+            })
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
+            });
+        }
+    });
+
+    $(".btnConnUpdate").click(function() {
+        if($("#conf_conn_name").val() != "" || $("#conf_conn_string").val() != "") {
+            var current_name = $(this).parents('.conn_id').attr("id");
+            var new_name = $(this).parents('.connectionRow').find('.conf_conn_name').val();
+            var new_string = $(this).parents('.connectionRow').find('.conf_conn_string').val();
+
+            $.ajax({
+                method: "POST",
+                url: $("#app_context").val() + "/update_config",
+                data: {"curr_config":  current_name, "conn_name": new_name, "conn_string": new_string}
+            })
+            .success(function(data) {
+                $(this).parents('.connectionRow').find('.conf_conn_name').val(data.name);
+                $(this).parents('.connectionRow').find('.conf_conn_string').val(data.string);
+                show_notification(data.msg,"success", true);
+            })
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
+            });
+        }else{
+            show_notification("Please enter a connection name and connection string","danger");
+        }
+    });
+
+    // redirect to connection
+    $(".btnConnConnect").click(function() {
+        window.location.href = $("#app_context").val() + "/" + $(this).parents('.conn_id').attr("id");
     });
 });
 
@@ -374,6 +413,11 @@ function paginate(){
             $(this).html(jsonPretty);
             hljs.highlightBlock(block);
         });
+
+        // Show extended message if API returns an invalid query
+        if(response.validQuery == false){
+            show_notification("Invalid query syntax" + response.queryMessage, "danger", false, 3000);
+        }
     })
     .fail(function() {
         show_notification("Error getting data from Query API","danger");
@@ -387,15 +431,42 @@ function deleteDoc(doc_id){
             url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/doc_delete",
             data: {"doc_id": doc_id}
         })
-        .success(function(msg) {
-            show_notification(msg,"success");
+        .success(function(data) {
+            show_notification(data.msg,"success");
             paginate();
         })
-        .error(function(msg) {
-            show_notification(msg.responseText,"danger");
+        .error(function(data) {
+            show_notification(data.responseJSON.msg,"danger");
         });
     }
 }
+
+$("#coll_addindex").click(function() {
+    var edit = ace.edit("json");
+    var json = $.parseJSON(edit.getValue());
+    
+    if(json != "{}"){
+        var data_obj = {};
+        data_obj[0] = JSON.stringify(json);
+        data_obj[1] = $("#index_unique").is(":checked") ? "true" : "false";
+        data_obj[2] = $("#index_sparse").is(":checked") ? "true" : "false";
+        
+        $.ajax({
+            method: "POST",
+            url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/create_index",
+            data: data_obj 
+        })
+        .success(function(data) {
+            show_notification(data.msg,"success", true);
+        })
+        .error(function(data) {
+            show_notification(data.responseJSON.msg,"danger");
+        });
+    }
+    else{
+        show_notification("Please enter an index","danger");
+    }
+});
 
 function dropIndex(index_index){
     $.ajax({
@@ -403,63 +474,25 @@ function dropIndex(index_index){
         url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/drop_index",
         data: {"index": index_index}
     })
-    .success(function(msg) {
-        show_notification(msg,"success", true);
+    .success(function(data) {
+        $('#index_row_' + index_index).remove();
+        show_notification(data.msg,"success");
     })
-    .error(function(msg) {
-        show_notification(msg.responseText,"danger");
+    .error(function(data) {
+        show_notification(data.responseJSON.msg,"danger");
     });
 }
 
-function dropConfig(config_index){
-    if(confirm("WARNING: Are you sure you want to delete this connection?") == true) {
-        $.ajax({
-            method: "POST",
-            url: $("#app_context").val() + "/drop_config",
-            data: {"curr_config":  $("#curr_conf_conn_name_" + config_index).val()}
-        })
-        .success(function(msg) {
-            show_notification(msg,"success");
-            setInterval(function() {
-                location.reload();
-            }, 2500);
-        })
-        .error(function(msg) {
-            show_notification(msg.responseText,"danger");
-        });
-    }
-}
-
-function updateConfig(config_index){
-    if($("#conf_conn_name").val() != "" || $("#conf_conn_string").val() != "") {
-        $.ajax({
-            method: "POST",
-            url: $("#app_context").val() + "/update_config",
-            data: {"curr_config":  $("#curr_conf_conn_name_" + config_index).val(),"conn_name": $("#conf_conn_name_" + config_index).val(), "conn_string": $("#conf_conn_string_" + config_index).val()}
-        })
-        .success(function(msg) {
-            show_notification(msg,"success");
-            setInterval(function() {
-                location.reload();
-            }, 2500);
-        })
-        .error(function(msg) {
-            show_notification(msg.responseText,"danger", true);
-        });
-    }else{
-        show_notification("Please enter a connection name and connection string","danger");
-    }
-}
-
 // show notification popup
-function show_notification(msg, type, reload_page){
+function show_notification(msg, type, reload_page, timeout){
     // defaults to false
     reload_page = reload_page || false;
+    timeout = timeout || 1200;
    
     $("#notify_message").removeClass();
     $("#notify_message").addClass('notify_message-' + type);
     $("#notify_message").html(msg);
-    $('#notify_message').slideDown(600).delay(1200).slideUp(600, function() {
+    $('#notify_message').slideDown(600).delay(timeout).slideUp(600, function() {
         if(reload_page == true){
             location.reload();
         }

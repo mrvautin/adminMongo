@@ -17,11 +17,11 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/" + $("#edit_request_type").val(),
                 data: JSON.stringify({ "objectData": ejson})
             })
-            .success(function(msg) {
-                show_notification(msg,"success");
+            .success(function(data) {
+                show_notification(data.msg,"success");
             })
-            .error(function(msg) {
-                show_notification(msg.responseText,"danger");
+            .error(function(data) {
+                show_notification(data.responseJSON.msg,"danger");
             });
         }
         catch (err) {

@@ -85,6 +85,12 @@ router.get('/:conn', function (req, res, next) {
         return;
     }
 
+    // Check for existance of connection
+    if(connection_list[req.params.conn] == undefined){
+        render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
+        return;
+    }
+
     // parse the connection string to get DB
     var conn_string = connection_list[req.params.conn].connString;
     var uri = MongoURI.parse(conn_string);
@@ -191,7 +197,7 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
         get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
             mongo_db.db(req.params.db).collection(req.params.coll).count(function (err, coll_count) {
                 if (collection_list.indexOf(req.params.coll) === -1) {
-                    render_error(res, req, "Collection does not exist", req.params.conn);
+                    render_error(res, req, "Database or Collection does not exist", req.params.conn);
                 }else{
                     res.render('coll-view', {
                         conn_list: order_object(req.nconf.connections.get('connections')),
@@ -241,7 +247,7 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
             get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
                 if (collection_list.indexOf(req.params.coll) === -1) {
                     console.error("No collection found");
-                    render_error(res, req, "Collection does not exist", req.params.conn);
+                    render_error(res, req, "Database or Collection does not exist", req.params.conn);
                 }else{
                     res.render('coll-indexes', {
                         coll_indexes: coll_indexes,
@@ -285,7 +291,7 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
         get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
             if (collection_list.indexOf(req.params.coll) === -1) {
                 console.error("No collection found");
-                render_error(res, req, "Collection does not exist", req.params.conn);
+                render_error(res, req, "Database or Collection does not exist", req.params.conn);
             }else{
                 res.render('coll-new', {
                     conn_name: req.params.conn,
@@ -308,14 +314,13 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
 
     // Get DB's form pool
@@ -328,11 +333,9 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     mongo_db.addUser(req.body.username, req.body.user_password, {"roles": roles}, function (err, user_name) {
         if(err){
             console.error('Error creating user: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error creating user') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error creating user') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('User successfully created'));
+            res.status(200).json({"msg": req.i18n.__('User successfully created')});
         }
     });
 });
@@ -343,14 +346,13 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
 
     // Get DB form pool
@@ -360,11 +362,9 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
     mongo_db.removeUser(req.body.username, function (err, user_name) {
         if(err){
             console.error('Error deleting user: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error deleting user') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error deleting user') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('User successfully deleted'));
+            res.status(200).json({"msg": req.i18n.__('User successfully deleted')});
         }
     });  
 });
@@ -375,14 +375,13 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
 
     // Get DB form pool
@@ -392,11 +391,9 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
     mongo_db.collection(req.params.coll).rename(req.body.new_collection_name, {"dropTarget": false} , function (err, coll_name) {
         if(err){
             console.error('Error renaming collection: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error renaming collection') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error renaming collection') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Collection successfully renamed'));
+            res.status(200).json({"msg": req.i18n.__('Collection successfully renamed')});
         }
     });
 });
@@ -407,14 +404,13 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
 
     // Get DB form pool
@@ -427,11 +423,9 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     mongo_db.collection(req.params.coll).createIndex(JSON.stringify(req.body[0]), options, function (err, index) {
         if(err){
             console.error('Error creating index: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error creating index') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error creating Index') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Index successfully created'));
+            res.status(200).json({"msg": req.i18n.__('Index successfully created')});
         }
     });
 });
@@ -442,14 +436,13 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
     
     // Get DB form pool
@@ -460,11 +453,9 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
         mongo_db.collection(req.params.coll).dropIndex(indexes[req.body.index].name, function (err, index) {
             if(err){
                 console.error('Error dropping Index: ' + err);
-                res.writeHead(400, { 'Content-Type': 'application/text' });
-                res.end(req.i18n.__('Error dropping Index') + ': ' + err);
+                res.status(400).json({"msg": req.i18n.__('Error dropping Index') + ': ' + err});
             }else{
-                res.writeHead(200, { 'Content-Type': 'application/text' });
-                res.end(req.i18n.__('Index successfully dropped'));
+                res.status(200).json({"msg": req.i18n.__('Index successfully dropped')});
             }
         });
     });
@@ -476,14 +467,13 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
     
     // Get DB form pool
@@ -493,11 +483,9 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
     mongo_db.createCollection(req.body.collection_name, function (err, coll) {
         if(err){
             console.error('Error creating collection: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error creating collection') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error creating collection') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Collection successfully created'));
+            res.status(200).json({"msg": req.i18n.__('Collection successfully created')});
         }
     });   
 });
@@ -508,14 +496,13 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
     
     // Get DB form pool
@@ -525,11 +512,9 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
     mongo_db.dropCollection(req.body.collection_name, function (err, coll) {
         if(err){
             console.error('Error deleting collection: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error deleting collection') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error deleting collection') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Collection successfully deleted'));
+            res.status(200).json({"msg": req.i18n.__('Collection successfully deleted'), "coll_name": req.body.collection_name});
         }
     });
 });
@@ -540,8 +525,14 @@ router.post('/:conn/db_create', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+        return;
+    }
+
+    // check for valid DB name
+    if(req.body.db_name.indexOf(' ') >= 0 || req.body.db_name.indexOf('.') >= 0){
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+        return;
     }
 
     // Get DB form pool
@@ -551,11 +542,9 @@ router.post('/:conn/db_create', function (req, res, next) {
     mongo_db.collection("test").save({}, function (err, docs) {
         if(err){
             console.error('Error creating database: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error creating database') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error creating database') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Database successfully created'));
+            res.status(200).json({"msg": req.i18n.__('Database successfully created')});
         }
     });
 });
@@ -566,8 +555,7 @@ router.post('/:conn/db_delete', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
     }
 
     // Get DB form pool
@@ -577,11 +565,9 @@ router.post('/:conn/db_delete', function (req, res, next) {
     mongo_db.dropDatabase(function(err, result) {
         if(err){
             console.error('Error deleting database: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error deleting database') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error deleting database') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Database successfully deleted'));
+            res.status(200).json({"msg": req.i18n.__('Database successfully deleted'), "db_name": req.body.db_name});
         }
     });
 });
@@ -592,14 +578,12 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
     
     // Get DB form pool
@@ -609,20 +593,17 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
         var eJsonData = ejson.parse(req.body.objectData);
     }catch (e) {
         console.error("Syntax error: " + e);
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Syntax error. Please check the syntax'));
+        res.status(400).json({"msg": req.i18n.__('Syntax error. Please check the syntax')});
         return;
     }
 
     // adding a new doc
     mongo_db.collection(req.params.coll).save(eJsonData, function (err, docs) {
         if(err){
-            console.error('Error inserting document: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error inserting document') + ': ' + err);
+            console.error('Error inserting document', err);
+            res.status(400).json({"msg": req.i18n.__('Error inserting document') + ': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Document successfully added'));
+            res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': docs.ops[0]._id});
         }
     });
 });
@@ -705,14 +686,12 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
     
     // Get DB's form pool
@@ -722,24 +701,20 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
         var eJsonData = ejson.parse(req.body.objectData);
     }catch (e) {
         console.error("Syntax error: " + e);
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Syntax error. Please check the syntax'));
+        res.status(400).json({"msg": req.i18n.__('Syntax error. Please check the syntax')});
         return;
     }
 
     mongo_db.collection(req.params.coll).save(eJsonData, function (err, doc, lastErrorObject) {
         if(err){
             console.error("Error updating document: " + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error updating document') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error updating document') + ': ' + err});
         }else{
             if(doc['nModified'] == 0){
                 console.error('Error updating document: Document ID is incorrect');
-                res.writeHead(400, { 'Content-Type': 'application/text' });
-                res.end(req.i18n.__('Error updating document: Syntax error'));
+                res.status(400).json({"msg": req.i18n.__('Error updating document: Syntax error')});
             }else{
-                res.writeHead(200, { 'Content-Type': 'application/text' });
-                res.end(req.i18n.__('Document successfully updated'));
+                res.status(200).json({"msg": req.i18n.__('Document successfully updated')});
             }
         }
     });
@@ -750,34 +725,29 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
 
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
     
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
     get_id_type(mongo_db, req.params.coll, req.body.doc_id, function(err, result) {
         if(result.doc){
-            mongo_db.collection(req.params.coll).remove({_id: result.doc_id_type}, function(err, docs){
-                if(err){
+            mongo_db.collection(req.params.coll).remove({_id: result.doc_id_type},true, function(err, docs){
+                if(err || docs.result.n == 0){
                     console.error('Error deleting document: ' + err);
-                    res.writeHead(400, { 'Content-Type': 'application/text' });
-                    res.end(req.i18n.__('Error deleting document') + ': ' + err);
+                    res.status(400).json({"msg": req.i18n.__('Error deleting document') + ': ' + req.i18n.__("Cannot find document by Id")});
                 }else{
-                    res.writeHead(200, { 'Content-Type': 'application/text' });
-                    res.end(req.i18n.__('Document successfully deleted'));
+                    res.status(200).json({"msg": req.i18n.__('Document successfully deleted')});
                 }
             });
         }else{
             console.error('Error deleting document: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Cannot find document by Id'));
+            res.status(400).json({"msg": req.i18n.__('Cannot find document by Id')});
         }
     });
 });
@@ -791,8 +761,7 @@ router.post('/add_config', function (req, res, next) {
     // check if name already exists
     if(connection_list != undefined){
         if(connection_list[req.body[0]] != undefined){
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Config error: A connection by that name already exists'));
+            res.status(400).json({"msg": req.i18n.__('Config error: A connection by that name already exists')});
             return;
         }
     }
@@ -804,8 +773,7 @@ router.post('/add_config', function (req, res, next) {
         try{
             options = JSON.parse(req.body[2]);
         }catch(err) {
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Error in connection options') +': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Error in connection options') +': ' + er});
             return;
         }
 
@@ -813,8 +781,7 @@ router.post('/add_config', function (req, res, next) {
         connPool.addConnection({connName: req.body[0], connString: req.body[1], connOptions: options}, req.app, function(err, data){
             if(err){
                 console.error('DB Connect error: ' + err);
-                res.writeHead(400, { 'Content-Type': 'application/text' });
-                res.end(req.i18n.__('Config error') +': ' + err);
+                res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
             }else{
                 // set the new config
                 nconf.set('connections:' + req.body[0], {"connection_string": req.body[1], "connection_options": options});
@@ -823,19 +790,16 @@ router.post('/add_config', function (req, res, next) {
                 nconf.save(function (err) {
                     if(err){
                         console.error('Config error: ' + err);
-                        res.writeHead(400, { 'Content-Type': 'application/text' });
-                        res.end(req.i18n.__('Config error') +': ' + err);
+                        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
                     }else{
-                        res.writeHead(200, { 'Content-Type': 'application/text' });
-                        res.end(req.i18n.__('Config successfully added'));
+                        res.status(200).json({"msg": req.i18n.__('Config successfully added')});
                     }
                 });
             }
         });
     }catch(err) {
         console.error('Config error: ' + err);
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Config error') +': ' + err);
+        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
     }
 });
 
@@ -848,36 +812,36 @@ router.post('/update_config', function (req, res, next) {
     try {
         uri = MongoURI.parse(req.body.conn_string);
 
+        // var get current options
+        var current_options = nconf.store.connections[req.body.curr_config].connection_options;
+
         // try add the connection
-        connPool.addConnection({connName: req.body.conn_name, connString: req.body.conn_string}, req.app, function(err, data){
+        connPool.addConnection({connName: req.body.conn_name, connString: req.body.conn_string, connOptions: current_options}, req.app, function(err, data){
             if(err){
                 console.error('DB Connect error: ' + err);
-                res.writeHead(400, { 'Content-Type': 'application/text' });
-                res.end(req.i18n.__('Config error') +': ' + err);
+                res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
             }else{
                 // delete current config
                 delete nconf.store.connections[req.body.curr_config];
-
+                connPool.removeConnection(req.body.curr_config, req.app);
+                
                 // set the new
-                nconf.set('connections:' + req.body.conn_name, { 'connection_string':  req.body.conn_string});
+                nconf.set('connections:' + req.body.conn_name, { 'connection_string':  req.body.conn_string, "connection_options": current_options});
 
                 // save for ron
                 nconf.save(function (err) {
                     if(err){
                         console.error('Config error1: ' + err);
-                        res.writeHead(400, { 'Content-Type': 'application/text' });
-                        res.end(req.i18n.__('Config error') + ': ' + err);
+                        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
                     }else{
-                        res.writeHead(200, { 'Content-Type': 'application/text' });
-                        res.end(req.i18n.__('Config successfully updated'));
+                       res.status(200).json({"msg": req.i18n.__('Config successfully updated'), "name": req.body.conn_name, "string": req.body.conn_string});
                     }
                 });
             }
         });
     }catch(err) {
         console.error('Config error2: ' + err);
-        res.writeHead(400, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Config error') +': ' + err);
+        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
     }   
 });
 
@@ -893,11 +857,9 @@ router.post('/drop_config', function (req, res, next) {
     nconf.save(function (err) {
         if(err){
             console.error('Config error: ' + err);
-            res.writeHead(400, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Config error') + ': ' + err);
+            res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
         }else{
-            res.writeHead(200, { 'Content-Type': 'application/text' });
-            res.end(req.i18n.__('Config successfully deleted'));
+            res.status(200).json({"msg": req.i18n.__('Config successfully deleted')});
         }
     });
 });
@@ -910,14 +872,12 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
    
     // Check for existance of connection
     if(connection_list[req.params.conn] == undefined){
-        res.writeHead(500, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid connection name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
     }
 
     // Validate database name
     if (req.params.db.indexOf(" ") > -1){
-        res.writeHead(500, { 'Content-Type': 'application/text' });
-        res.end(req.i18n.__('Invalid database name'));
+        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
     }
 
     // Get DB's form pool
@@ -938,11 +898,15 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var limit = page_size;
     
     var query_obj = {};
+    var validQuery = true;
+    var queryMessage = "";
     if(req.body.query){     
         try {
             query_obj = ejson.parse(req.body.query);
         }catch (e) {
-            query_obj = {}
+            validQuery = false;
+            queryMessage = e.toString();
+            query_obj = {};
         }
     }
 
@@ -974,11 +938,12 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
                         fields : fields,
                         total_docs: doc_count,
                         deleteButton: req.i18n.__("Delete"),
-                        editButton: req.i18n.__("Edit")
+                        editButton: req.i18n.__("Edit"),
+                        validQuery: validQuery,
+                        queryMessage: queryMessage
                     }
                     res.status(200).json(return_data);
                 });
-
             });                
         }            
     });

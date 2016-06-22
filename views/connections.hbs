@@ -14,15 +14,14 @@
                 </thead>
                 {{#each connection_list}}
                     <tr class="connectionRow">
-                        <input type="hidden" id="curr_conf_conn_name_{{@index}}" value="{{@key}}">
-                        <td><input type="text" class="form-control input-sm" id="conf_conn_name_{{@index}}" name="conf_conn_name" value="{{@key}}"></td>
-                        <td><input type="text" class="form-control input-sm" id="conf_conn_string_{{@index}}" name="conf_conn_string" value="{{this.connection_string}}"></td>
+                        <td><input type="text" class="form-control input-sm conf_conn_name" value="{{@key}}"></td>
+                        <td><input type="text" class="form-control input-sm conf_conn_string" value="{{this.connection_string}}"></td>
                         <td><pre class="code-block conectionOptions"><code class="json">{{{toJSON this.connection_options}}}</code></pre></td>
-                        <td class="text-center">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button class="btn btn-danger btn-sm pull-left" id="update_config"  onclick="dropConfig('{{@index}}');">{{__ "Delete"}}</button>
-                                <a href="{{app_context}}/{{@key}}" class="btn btn-primary btn-sm">{{__ "Connect"}}</a>
-                                <button class="btn btn-success btn-sm pull-right" id="update_config"  onclick="updateConfig('{{@index}}');">{{__ "Update"}}</button>
+                        <td class="text-center conn_id" id="{{@key}}">
+                            <div class="btn-group" role="group" aria-label="ConnButtons">
+                                <button class="btn btn-danger btn-sm pull-left btnConnDelete">{{__ "Delete"}}</button>
+                                <button class="btn btn-primary btn-sm btnConnConnect" id="{{@index}}">{{__ "Connect"}}</button>
+                                <button class="btn btn-success btn-sm pull-right btnConnUpdate">{{__ "Update"}}</button>
                             </div>
                         </td>
                     </tr>

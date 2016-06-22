@@ -1,67 +1,69 @@
 {
-  "name": "admin-mongo",
-  "version": "0.0.10",
-  "description": "A Web user interface to administer MongoDB databases built using Express",
-  "author": "Mark Moffat <mrvautin@gmail.com>",
-  "private": false,
-  "repository": {
-      "type": "git",
-      "url": "https://github.com/mrvautin/adminmongo"
-  },
-  "bugs": {
-      "url": "https://github.com/mrvautin/adminmongo/issues"
-  },
-  "scripts": {
-      "start": "node app.js",
-      "test": "find ./tests -name '*.js' | xargs mocha -R spec"
-  },
-  "keywords": [
-      "mongo",
-      "mongodb",
-      "admin",
-      "web",
-      "ui",
-      "UI",
-      "gui",
-      "GUI",
-      "DB",
-      "database",
-      "user",
-      "manage",
-      "manager",
-      "administer",
-      "interface",
-      "document",
-      "collection",
-      "express"
-  ],
-  "dependencies": {
-      "ace-builds": "^1.2.2",
-      "async": "^1.5.2",
-      "body-parser": "~1.13.2",
-      "bootstrap": "^3.3.6",
-      "config": "^1.17.1",
-      "cookie-parser": "~1.3.5",
-      "express": "~4.13.1",
-      "express-handlebars": "^2.0.1",
-      "express-session": "^1.13.0",
-      "font-awesome": "^4.5.0",
-      "hbs": "~3.1.0",
-      "i18n-2": "^0.6.3",
-      "jquery": "^2.2.0",
-      "lodash": "^4.13.1",
-      "mongo-uri": "^0.1.2",
-      "mongodb": "^2.1.4",
-      "mongodb-extended-json": "^1.6.2",
-      "morgan": "~1.6.1",
-      "nconf": "^0.8.2",
-      "npm": "^3.9.3",
-      "serve-favicon": "~2.3.0"
-  },
-  "license": "MIT",
-  "devDependencies": {
-      "chai": "^3.5.0",
-      "mocha": "^2.5.3",
-      "supertest": "^1.2.0"
-  }
+    "name": "admin-mongo",
+    "version": "0.0.11",
+    "description": "A Web user interface to administer MongoDB databases built using Express",
+    "author": "Mark Moffat <mrvautin@gmail.com>",
+    "private": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mrvautin/adminmongo"
+    },
+    "bugs": {
+        "url": "https://github.com/mrvautin/adminmongo/issues"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "test": "find ./tests -name '*.js' | xargs mocha -R spec"
+    },
+    "keywords": [
+        "mongo",
+        "mongodb",
+        "admin",
+        "web",
+        "ui",
+        "UI",
+        "gui",
+        "GUI",
+        "DB",
+        "database",
+        "user",
+        "manage",
+        "manager",
+        "administer",
+        "interface",
+        "document",
+        "collection",
+        "express"
+    ],
+    "dependencies": {
+        "ace-builds": "^1.2.2",
+        "async": "^1.5.2",
+        "body-parser": "~1.13.2",
+        "bootstrap": "^3.3.6",
+        "config": "^1.17.1",
+        "cookie-parser": "~1.3.5",
+        "express": "~4.13.1",
+        "express-handlebars": "^2.0.1",
+        "express-session": "^1.13.0",
+        "font-awesome": "^4.5.0",
+        "hbs": "~3.1.0",
+        "i18n-2": "^0.6.3",
+        "jquery": "^2.2.0",
+        "lodash": "^4.13.1",
+        "mongo-uri": "^0.1.2",
+        "mongodb": "^2.1.4",
+        "mongodb-extended-json": "^1.6.2",
+        "morgan": "~1.6.1",
+        "nconf": "^0.8.2",
+        "npm": "^3.9.3",
+        "serve-favicon": "~2.3.0"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "chai": "^3.5.0",
+        "jsdom": "^9.2.1",
+        "mocha": "^2.5.3",
+        "mocha-jsdom": "^1.1.0",
+        "supertest": "^1.2.0"
+    }
 }

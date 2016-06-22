@@ -16,6 +16,7 @@ exports.addConnection = function (connection, app, callback) {
             var dbObj = {};
             dbObj.native = database;
             dbObj.connString = connection.connString;
+            dbObj.connOptions = connection.connOptions;
             
             app.locals.dbConnections[connection.connName] = null;
             app.locals.dbConnections[connection.connName] = dbObj;
@@ -29,7 +30,10 @@ exports.removeConnection = function (connection, app) {
         app.locals.dbConnections = [];
     }
 
-    app.locals.dbConnections[connection].native.close();
+    try{
+        app.locals.dbConnections[connection].native.close();
+    }catch(e){}
+
     delete app.locals.dbConnections[connection];
     return;
 };

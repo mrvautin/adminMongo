@@ -212,7 +212,7 @@ if (err) console.error(err.message);
     // lift the app
     app.listen(app_port, app_host, function () {
         console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
-        app.emit("adminMongoStarted", "true")
+        app.emit("adminMongoStarted");
     });
 });
 
