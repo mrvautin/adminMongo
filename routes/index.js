@@ -11,14 +11,15 @@ router.all("/*", checkLogin, function(req, res, next) {
 router.get('/', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
 
-	if(connection_list){
-        // we have a connection and redirect to the first
-        var first_conn = Object.keys(connection_list)[0];
-        res.redirect(req.app_context + "/" + first_conn);
-    }else{
-        // go to connection setup
-        res.redirect(req.app_context + '/connection_list');
+    if(connection_list){
+        if(connection_list.length > 0){
+            // we have a connection and redirect to the first
+            var first_conn = Object.keys(connection_list)[0];
+            res.redirect(req.app_context + "/" + first_conn);
+        }
     }
+    // if no connections, go to connection setup
+    res.redirect(req.app_context + '/connection_list');
 });
 
 // login page
