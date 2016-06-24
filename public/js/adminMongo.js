@@ -61,9 +61,10 @@ $(document).ready(function() {
                 val = parseInt(val);
             }else{
             // if we find an integer wrapped in quotes
-                var strIntReg = new RegExp('^"[0-9]"+$');
+                var strIntReg = new RegExp('^"[0-9]+"$');
                 if(val.match(strIntReg)){
                     val = val.replace(/"/g,'');
+                    val = parseInt(val);
                 }
             }
                 
