@@ -20,7 +20,11 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 ## Deploy on Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-### Features
+## Demo (read only)
+
+A read only demo can be seen [here](http://adminmongo.mrvautin.com) 
+
+## Features
 
 * Manage from a connection level for easy access to multiple databases
 * Create/Delete databases
@@ -36,7 +40,7 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 * Documents need to have an "_id" value which is a string, integer, or MongoDB ObjectId. Documents using Composite ID indexing is currently not supported.
 * Connection strings with multiple hosts for replica sets are currently not supported.
 
-### Configuration
+## Configuration
 
 adminMongo will listen on host: `localhost` and  port: `1234` by default. This can be overwritten by adding a config file in `/config/app.json`. For example:
 
@@ -219,6 +223,8 @@ If you see any missing tests, please submit a PR.
 5. Submit a pull request :D
 
 ## Future plans
+
+- MongoDB monitoring/reporting
 
 Please make any suggestions.
 
