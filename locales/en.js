@@ -106,5 +106,9 @@
 	"Connection options": "Connection options",
 	"Error in connection options": "Error in connection options",
 	"Error deleting document": "Error deleting document",
-	"Invalid database name": "Invalid database name"
+	"Invalid database name": "Invalid database name",
+	"Error creating database": "Error creating database",
+	"Error creating collection": "Error creating collection",
+	"Monitoring": "Monitoring",
+	"Connection": "Connection"
 }
