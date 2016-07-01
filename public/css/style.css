@@ -13,6 +13,11 @@ body {
     width: 100%;
 }
 
+#chartsMessage{
+    font-size: 22px;
+    padding-top: 50px;
+}
+
 .connection_json{
     position: relative;
     height: 60px;

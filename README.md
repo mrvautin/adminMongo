@@ -52,7 +52,8 @@ adminMongo will listen on host: `localhost` and  port: `1234` by default. This c
         "docs_per_page": 15,
         "password": "secureadminpassword",
         "locale": "de",
-        "context": "dbApp"
+        "context": "dbApp",
+        "monitoring": false
     }
 }
 ```
@@ -69,6 +70,7 @@ The config file (optional) options are:
 |`password`|An application level password to add simply authentication|
 |`locale`|The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. This setting overrides the default/detected value|
 |`context`|Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.|
+|`monitoring`|Whether to run monitoring at regular intervals. Defaults to true or on|
 
 ### Setting a context path
 
@@ -186,6 +188,17 @@ Documents with Media embedded show previews
 
 *Documents with media*
 ![adminMongo media](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_media.png "adminMongo media documents")
+
+### Server Monitoring
+
+*Functionality currently in Beta*
+
+Selected server monitoring is done at regular intervals and stored in local database store for 24hrs. 
+
+*New connections require an app restart for monitoring to commence*
+
+*Server monitoring*
+![adminMongo server monitoring](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_servermonitoring.png "adminMongo server monitoring")
 
 ### Indexes
 

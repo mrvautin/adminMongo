@@ -20,6 +20,10 @@ var i18n = new (require('i18n-2'))({
     locales: ['en', 'de', 'es']
 });
 
+// setup DB for server stats
+var Datastore = require('nedb')
+var db = new Datastore({ filename: 'data/dbStats.db', autoload: true });
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: 'layout.hbs' }));
@@ -145,6 +149,7 @@ app.use(function (req, res, next) {
 	req.handlebars = handlebars;
     req.i18n = i18n;
     req.app_context = app_context;
+    req.db = db;
 	next();
 });
 
@@ -191,6 +196,7 @@ app.use(function (err, req, res, next) {
 // add the connections to the connection pool
 var connection_list = nconf.stores.connections.get('connections'); 
 var connPool = require('./connections');
+var monitoring = require('./monitoring');
 app.locals.dbConnections = null;
 
 async.forEachOf(connection_list, function (value, key, callback) {  
@@ -212,6 +218,16 @@ if (err) console.error(err.message);
     // lift the app
     app.listen(app_port, app_host, function () {
         console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
+
+        if(nconf.stores.app.get('app:monitoring') != false){
+            // start the initial monitoring
+            monitoring.serverMonitoring(db, app.locals.dbConnections);
+
+            // Keep firing monitoring every 30 seconds
+            setInterval(function(){
+                monitoring.serverMonitoring(db, app.locals.dbConnections);
+            }, 30000);
+        }
     });
 });
 

@@ -55,6 +55,7 @@
     "mongodb-extended-json": "^1.6.2",
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",
+    "nedb": "^1.8.0",
     "npm": "^3.9.3",
     "serve-favicon": "~2.3.0"
   },

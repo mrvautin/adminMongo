@@ -12,14 +12,16 @@ router.get('/', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
 
     if(connection_list){
-        if(connection_list.length > 0){
+        if(Object.keys(connection_list).length > 0){
             // we have a connection and redirect to the first
             var first_conn = Object.keys(connection_list)[0];
             res.redirect(req.app_context + "/" + first_conn);
+            return;
         }
     }
     // if no connections, go to connection setup
     res.redirect(req.app_context + '/connection_list');
+    return;
 });
 
 // login page
@@ -81,7 +83,7 @@ router.get('/:conn', function (req, res, next) {
     var MongoURI = require('mongo-uri');
 
     // if no connection found
-    if(connection_list == undefined || Object.keys(connection_list).length == 0){
+    if(Object.keys(connection_list).length == 0){
         res.redirect(req.app_context + "/");
         return;
     }
@@ -119,6 +121,113 @@ router.get('/:conn', function (req, res, next) {
                 });
             });
         });
+    });
+});
+
+// show server monitoring
+router.get('/monitoring/:conn/', function (req, res, next) {
+    var connection_list = req.app.locals.dbConnections;
+
+    var monitoringMessage = "";
+    var monitoringRequired = true;
+    if(req.nconf.app.get('app:monitoring') == false){
+        monitoringRequired = false;
+        monitoringMessage = "Monitoring has been switched off in the config. Please enable or remove if you want this feature.";
+    }
+
+    res.render('monitoring', {
+        message: monitoringMessage,
+        monitoring: monitoringRequired,
+        conn_name: req.params.conn,
+        helpers: req.handlebars.helpers,
+    });
+});
+
+router.get('/api/monitoring/:conn', function (req, res, next) {
+    // 24 hours worth of 30 sec blocks (data refresh interval)
+    var recordCount = (24 * 60) * 60 / 30; 
+
+    req.db.find({connectionName: req.params.conn}).sort({eventDate: -1}).limit(recordCount).exec(function (err, serverEvents) {
+        var connectionsCurrent = [];
+        var connectionsAvailable = [];
+        var connectionsTotalCreated = [];
+
+        var clientsTotal = [];
+        var clientsReaders = [];
+        var clientsWriters = [];
+
+        var memoryVirtual = [];
+        var memoryMapped = [];
+        var memoryCurrent = [];
+
+        var docsQueried = [];
+        var docsInserted = [];
+        var docsDeleted = [];
+        var docsUpdated = [];
+
+        if(serverEvents.length > 0){
+            if(serverEvents[0].dataRetrieved == true){
+                if(serverEvents){
+                    _.each(serverEvents, function(value, key) {
+                        // connections
+                        if(value.connections){
+                            connectionsCurrent.push({x: value.eventDate, y: value.connections.current});
+                            connectionsAvailable.push({x: value.eventDate, y: value.connections.available});
+                            connectionsTotalCreated.push({x: value.eventDate, y: value.connections.totalCreated});
+                        }
+                        // clients
+                        if(value.activeClients){
+                            clientsTotal.push({x: value.eventDate, y: value.activeClients.total});
+                            clientsReaders.push({x: value.eventDate, y: value.activeClients.readers});
+                            clientsWriters.push({x: value.eventDate, y: value.activeClients.writers});
+                        }
+                        // memory
+                        if(value.memory){
+                            memoryVirtual.push({x: value.eventDate, y: value.memory.virtual});
+                            memoryMapped.push({x: value.eventDate, y: value.memory.mapped});
+                            memoryCurrent.push({x: value.eventDate, y: value.memory.resident});
+                        }
+
+                        if(value.docCounts){
+                            docsQueried.push({x: value.eventDate, y: value.docCounts.queried});
+                            docsInserted.push({x: value.eventDate, y: value.docCounts.inserted});
+                            docsDeleted.push({x: value.eventDate, y: value.docCounts.deleted});
+                            docsUpdated.push({x: value.eventDate, y: value.docCounts.updated});
+                        }
+                    });
+                }
+            }
+
+            var returnedData = {
+                connectionsCurrent: connectionsCurrent,
+                connectionsAvailable: connectionsAvailable,
+                connectionsTotalCreated: connectionsTotalCreated,
+                clientsTotal: clientsTotal,
+                clientsReaders: clientsReaders,
+                clientsWriters: clientsWriters,
+                memoryVirtual: memoryVirtual,
+                memoryMapped: memoryMapped,
+                memoryCurrent: memoryCurrent,
+                docsQueried: docsQueried,
+                docsInserted: docsInserted,
+                docsDeleted: docsDeleted,
+                docsUpdated: docsUpdated
+            }
+
+            // get hours or mins
+            var uptime = (serverEvents[0].uptime / 60).toFixed(2);
+            if(uptime > 61){
+                uptime = (uptime / 60).toFixed(2) + " hours";
+            }else{
+                uptime = uptime + " minutes";
+            }
+
+            if(err){
+                res.status(400).json({"msg": req.i18n.__('Could not get server monitoring')});
+            }else{
+                res.status(200).json({data: returnedData, dataRetrieved: serverEvents[0].dataRetrieved, pid: serverEvents[0].pid, version: serverEvents[0].version, uptime: uptime});
+            }
+        }
     });
 });
 
@@ -824,7 +933,6 @@ router.post('/update_config', function (req, res, next) {
             }else{
                 // delete current config
                 delete nconf.store.connections[req.body.curr_config];
-                connPool.removeConnection(req.body.curr_config, req.app);
                 
                 // set the new
                 nconf.set('connections:' + req.body.conn_name, { 'connection_string':  req.body.conn_string, "connection_options": current_options});
@@ -1141,22 +1249,26 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
     if(db_name == null){
         var adminDb = mongo_db.admin();
         adminDb.listDatabases(function (err, db_list) {
-            async.forEachOf(db_list.databases, function (value, key, callback) {
-                var skipped_dbs = ["null", "admin", "local"];
-                if(skipped_dbs.indexOf(value.name) === -1){
-                    mongo_db.db(value.name).listCollections().toArray(function(err, collections){
-                        collections = cleanCollections(collections);
-                        order_array(collections);
-                        db_obj[value.name] = collections;
+            if(db_list){
+                async.forEachOf(db_list.databases, function (value, key, callback) {
+                    var skipped_dbs = ["null", "admin", "local"];
+                    if(skipped_dbs.indexOf(value.name) === -1){
+                        mongo_db.db(value.name).listCollections().toArray(function(err, collections){
+                            collections = cleanCollections(collections);
+                            order_array(collections);
+                            db_obj[value.name] = collections;
+                            callback();
+                        });
+                    }else{
                         callback();
-                    });
-                }else{
-                    callback();
-                }
-            }, function (err) {
-                if (err) console.error(err.message);
+                    }
+                }, function (err) {
+                    if (err) console.error(err.message);
+                    cb(null, order_object(db_obj));
+                });
+            }else{
                 cb(null, order_object(db_obj));
-            });
+            }
         });
     }else{
         mongo_db.db(db_name).listCollections().toArray(function(err, collections){
