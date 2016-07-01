@@ -487,7 +487,7 @@ function dropIndex(index_index){
 function show_notification(msg, type, reload_page, timeout){
     // defaults to false
     reload_page = reload_page || false;
-    timeout = timeout || 1200;
+    timeout = timeout || 3000;
    
     $("#notify_message").removeClass();
     $("#notify_message").addClass('notify_message-' + type);
