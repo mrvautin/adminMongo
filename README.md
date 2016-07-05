@@ -22,7 +22,7 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 
 ## Demo (read only)
 
-A read only demo can be seen [here](http://adminmongo.mrvautin.com) 
+A read only demo can be seen [here](http://demo.adminmongo.com) 
 
 ## Features
 
