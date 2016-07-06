@@ -753,22 +753,28 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
 
             var images = [];
             _.forOwn(result.doc, function(value, key) {
-                if(value.toString().substring(0,10) == "data:image"){
-                    images.push({"field": key, "src": value});
+                if(value){
+                    if(value.toString().substring(0,10) == "data:image"){
+                        images.push({"field": key, "src": value});
+                    }
                 }
             });
 
             var videos = [];
             _.forOwn(result.doc, function(value, key) {
-                if(value.toString().substring(0,10) == "data:video"){
-                    videos.push({"field": key, "src": value, "type": value.split(";")[0].replace("data:","")});
+                if(value){
+                    if(value.toString().substring(0,10) == "data:video"){
+                        videos.push({"field": key, "src": value, "type": value.split(";")[0].replace("data:","")});
+                    }
                 }
             });
 
             var audio = [];
             _.forOwn(result.doc, function(value, key) {
-                if(value.toString().substring(0,10) == "data:audio"){
-                    audio.push({"field": key, "src": value});
+                if(value){
+                    if(value.toString().substring(0,10) == "data:audio"){
+                        audio.push({"field": key, "src": value});
+                    }
                 }
             });
 
