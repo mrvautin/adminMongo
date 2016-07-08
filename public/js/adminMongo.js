@@ -391,9 +391,12 @@ function paginate(){
         //clear the div first
         $('#coll_docs').empty();
         for (var i = 0; i < response.data.length; i++) {
-            var inner_html = '<div class="col-xs-12 col-md-8 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
-            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-left pad-bottom"><a href="#"  class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')" style="margin-right: 15px; margin-left: 15px;">' + response.deleteButton + '</a></div>';
-            inner_html += '<div class="col-xs-6 col-md-2 col-lg-1 text-right no-side-pad pad-bottom"><a href="' + $("#app_context").val() + '/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">' + response.editButton + '</a></div>';
+            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
+            inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-left no-pad-right">';
+            inner_html += '<div class="btn-group btn-group-justified" role="group" aria-label="...">';
+            inner_html += '<a href="#" class="btn btn-danger btn-sm" onclick="deleteDoc(\''+response.data[i]._id+'\')">' + response.deleteButton + '</a>';
+            inner_html += '<a href="' + $("#app_context").val() + '/'+ conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">' + response.editButton + '</a>';
+            inner_html += '</div></div>';
             $('#coll_docs').append(inner_html);
         };
 
