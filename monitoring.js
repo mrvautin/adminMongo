@@ -49,17 +49,34 @@ exports.serverMonitoring = function (monitoringDB, dbs) {
                 }
 
                 // doc numbers. We get the last interval number and subtract the current to get the diff
-                var docCounts = getDocCounts(currDocCounts, info.metrics.document)
+                var docCounts = "";
+                var activeClients = "";
+                var pid = "N/A";
+                var version = "N/A";
+                var uptime = "N/A";
+                var connections = "";
+                var memory = "";
+
+                // set the values if we can get them
+                if(info){
+                    docCounts = getDocCounts(currDocCounts, info.metrics.document);
+                    activeClients = info.globalLock.activeClients;
+                    pid = info.pid;
+                    version = info.version;
+                    uptime = info.uptime;
+                    connections= info.connections;
+                    memory = info.mem;
+                }
 
                 var doc = {
                     eventDate: new Date(),
-                    pid: info.pid,
-                    version: info.version,
-                    uptime: info.uptime,
-                    activeClients: info.globalLock.activeClients,
+                    pid: pid,
+                    version: version,
+                    uptime: uptime,
+                    activeClients: activeClients,
                     connectionName: key,
-                    connections: info.connections,
-                    memory: info.mem,
+                    connections: connections,
+                    memory: memory,
                     dataRetrieved: dataRetrieved,
                     docCounts: docCounts
                 }
