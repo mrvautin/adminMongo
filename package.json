@@ -8,12 +8,16 @@
     "type": "git",
     "url": "https://github.com/mrvautin/adminmongo"
   },
+  "main": "electron.js",
   "bugs": {
     "url": "https://github.com/mrvautin/adminmongo/issues"
   },
   "scripts": {
     "start": "node app.js",
-    "test": "find ./tests -name '*.js' | xargs mocha -R spec -t 5000"
+    "test": "find ./tests -name '*.js' | xargs mocha -R spec -t 5000",
+    "packageOsx": "electron-packager ./ adminMongo --out=releases/ --platform=darwin --arch=x64 --prune --overwrite --ignore=releases/* --icon=public/logo.icns",
+    "packageWin32": "electron-packager ./ adminMongo --out=releases/ --platform=win32 --arch=ia32 --prune --overwrite --ignore=releases/* --icon=public/logo.ico",
+    "packageLinux": "electron-packager ./ adminMongo --out=releases/ --platform=linux --arch=ia32 --prune --overwrite --ignore=releases/* --icon=public/logo.ico"
   },
   "keywords": [
     "mongo",
@@ -36,7 +40,6 @@
     "express"
   ],
   "dependencies": {
-    "ace-builds": "^1.2.2",
     "async": "^1.5.2",
     "body-parser": "~1.13.2",
     "bootstrap": "^3.3.6",
@@ -56,7 +59,6 @@
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",
     "nedb": "^1.8.0",
-    "npm": "^3.9.3",
     "serve-favicon": "~2.3.0"
   },
   "license": "MIT",
@@ -66,6 +68,7 @@
     "jsdom": "^9.2.1",
     "mocha": "^2.5.3",
     "mocha-jsdom": "^1.1.0",
-    "supertest": "^1.2.0"
+    "supertest": "^1.2.0",
+    "electron-prebuilt": "^1.2.6"
   }
 }

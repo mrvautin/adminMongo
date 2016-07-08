@@ -6,7 +6,7 @@
 [![Github stars](https://img.shields.io/github/stars/mrvautin/adminMongo.svg?style=social&label=Star)](https://github.com/mrvautin/adminMongo)
 
 
-adminMongo is a Web based user interface (GUI) to handle all your MongoDB connections/databases needs. adminMongo is fully responsive and should work on a range of devices.
+adminMongo is a cross platform user interface (GUI) to handle all your MongoDB connections/databases needs. adminMongo is fully responsive and should work on a range of devices.
 
 > adminMongo connection information (including username/password) is stored unencrypted in a config file, it is not recommended to run this application on a production or public facing server without proper security considerations.
 
@@ -16,6 +16,26 @@ adminMongo is a Web based user interface (GUI) to handle all your MongoDB connec
 2. Install dependencies: `npm install`
 3. Start application: `npm start`
 4. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
+
+## Electron App
+
+adminMongo can also be used as a cross platform Electon application. Due to the size of Electron it will need to be built manully.
+
+To build for Mac:
+
+`$ npm run-script packageOsx`
+
+To build for Windows:
+
+`$ npm run-script packageWin32`
+
+To build for Linux:
+
+`$ npm run-script packageLinux`
+
+Once built, the executable will be in the `/releases` folder.
+
+> It's been tested on Mac and Windows 10. Linux has not been tested. Please report any issues.
 
 ## Deploy on Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)

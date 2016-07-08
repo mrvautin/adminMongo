@@ -12,13 +12,14 @@
     <link rel='stylesheet' type='text/css' href='{{app_context}}/css/style.css' />
     <link rel='stylesheet' type='text/css' href='{{app_context}}/font-awesome/css/font-awesome.min.css' />
     <link rel="stylesheet" type='text/css' href='{{app_context}}/css/highlightjs.github.min.css'>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="{{app_context}}/jquery/jquery.min.js"></script>
     <script src="{{app_context}}/bootstrap/js/bootstrap.min.js"></script>
     {{#if paginate}}
     <script src="{{app_context}}/js/jquery.bootpag.min.js"></script>
     {{/if}}
     {{#if editor}}
-    <script src="{{app_context}}/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{app_context}}/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{app_context}}/js/toEJSON.js"></script>
     <script src="{{app_context}}/js/editor.js"></script>
     {{/if}}
@@ -29,6 +30,7 @@
     {{/if}}
     <script src="{{app_context}}/js/adminMongo.js"></script>
     <script src="{{app_context}}/js/highlight.min.js"></script>
+    <script>if (window.module) module = window.module;</script>
 </head>
 <body>
       <nav class="navbar navbar-default navbar-static-top">

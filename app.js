@@ -13,20 +13,27 @@ var async = require('async');
 // routes
 var routes = require('./routes/index');
 
+// set the base dir to __dirname when running as webapp and electron path if running as electron app
+var baseDir = __dirname;
+if(process.versions['electron']){
+    baseDir = path.join(process.resourcesPath.toString(), 'app/');
+}
+
 var app = express();
 
 // setup the translation
 var i18n = new (require('i18n-2'))({
-    locales: ['en', 'de', 'es']
+    locales: ['en', 'de', 'es'],
+    directory: path.join(baseDir, 'locales/')
 });
 
 // setup DB for server stats
 var Datastore = require('nedb')
-var db = new Datastore({ filename: 'data/dbStats.db', autoload: true });
+var db = new Datastore({ filename: path.join(baseDir,'data/dbStats.db'), autoload: true });
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: 'layout.hbs' }));
+app.set('views', path.join(baseDir, 'views'));
+app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: path.join(baseDir,'views/layouts/layout.hbs')}));
 app.set('view engine', 'hbs');
 
 // helpers for the handlebars templating platform
@@ -70,18 +77,18 @@ handlebars = handlebars.create({
 // setup nconf to read in the file
 // create config dir and blank files if they dont exist
 var fs = require('fs');
-if (!fs.existsSync("config")){
-    fs.mkdirSync("config");
+if (!fs.existsSync(path.join(baseDir, "config"))){
+    fs.mkdirSync(baseDir + "config");
 }
-if (!fs.existsSync("config/config.json")){
-    fs.writeFileSync("config/config.json", "{}");
+if (!fs.existsSync(path.join(baseDir, "config/config.json"))){
+    fs.writeFileSync(baseDir + "config/config.json", "{}");
 }
-if (!fs.existsSync("config/app.json")){
-    fs.writeFileSync("config/app.json", "{}");
+if (!fs.existsSync(path.join(baseDir, "config/app.json"))){
+    fs.writeFileSync(baseDir + "config/app.json", "{}");
 }
 
-var connection_config = path.join(__dirname, 'config', 'config.json');
-var app_config = path.join(__dirname, 'config', 'app.json');
+var connection_config = path.join(baseDir, 'config', 'config.json');
+var app_config = path.join(baseDir, 'config', 'app.json');
 
 // if config files exist but are blank we write blank files for nconf
 if (fs.existsSync(app_config, "utf8")) {
@@ -115,6 +122,9 @@ if(nconf.stores.app.get('app:locale') != undefined){
     i18n.setLocale(nconf.stores.app.get('app:locale'));
 }
 
+app.locals.app_host = app_host;
+app.locals.app_port = app_port;
+
 // setup the app context
 app_context = "";
 if(nconf.stores.app.get('app:context') != undefined){
@@ -134,14 +144,13 @@ app.use(session({
 }))
 
 // front-end modules loaded from NPM
-app.use(app_context + '/ace', express.static(path.join(__dirname, 'node_modules/ace-builds/src-min/')));
-app.use(app_context + '/font-awesome', express.static(path.join(__dirname, 'node_modules/font-awesome/')));
-app.use(app_context + '/jquery', express.static(path.join(__dirname, 'node_modules/jquery/dist/')));
-app.use(app_context + '/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/')));
-app.use(app_context + '/css',express.static(path.join(__dirname, 'public/css')));
-app.use(app_context + '/fonts',express.static(path.join(__dirname, 'public/fonts')));
-app.use(app_context + '/js',express.static(path.join(__dirname, 'public/js')));
-app.use(app_context + '/favicon.ico',express.static(path.join(__dirname, 'public/favicon.ico')));
+app.use(app_context + '/font-awesome', express.static(path.join(baseDir, 'node_modules/font-awesome/')));
+app.use(app_context + '/jquery', express.static(path.join(baseDir, 'node_modules/jquery/dist/')));
+app.use(app_context + '/bootstrap', express.static(path.join(baseDir, 'node_modules/bootstrap/dist/')));
+app.use(app_context + '/css',express.static(path.join(baseDir, 'public/css')));
+app.use(app_context + '/fonts',express.static(path.join(baseDir, 'public/fonts')));
+app.use(app_context + '/js',express.static(path.join(baseDir, 'public/js')));
+app.use(app_context + '/favicon.ico',express.static(path.join(baseDir, 'public/favicon.ico')));
 
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
@@ -216,8 +225,12 @@ async.forEachOf(connection_list, function (value, key, callback) {
 }, function (err) {
 if (err) console.error(err.message);
     // lift the app
-    app.listen(app_port, app_host, function () {
+    //app.listen(app_port, app_host).on('error', function(err) {
+    app.listen(app_port, app_host, function() { 
         console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
+
+        // used for electron to know when express app has started
+        app.emit("startedAdminMongo");
 
         if(nconf.stores.app.get('app:monitoring') != false){
             // start the initial monitoring
@@ -228,6 +241,10 @@ if (err) console.error(err.message);
                 monitoring.serverMonitoring(db, app.locals.dbConnections);
             }, 30000);
         }
+    }).on('error', function(err) { 
+        console.error("Error starting adminMongo: " + err);
+        app.emit("errorAdminMongo");
+        //process.exit();
     });
 });
 
