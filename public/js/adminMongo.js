@@ -1,7 +1,7 @@
 $(document).ready(function() {  
     // paginate if value is set
     if($("#to_paginate").val() == "true"){
-        if(localStorage.getItem('message_text') != ""){
+        if(localStorage.getItem('message_text') != null){
             show_notification(localStorage.getItem('message_text'), "success");
             localStorage.setItem('message_text', "");
         }
