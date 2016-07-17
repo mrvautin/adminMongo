@@ -77,14 +77,15 @@ handlebars = handlebars.create({
 // setup nconf to read in the file
 // create config dir and blank files if they dont exist
 var fs = require('fs');
-if (!fs.existsSync(path.join(baseDir, "config"))){
-    fs.mkdirSync(baseDir + "config");
+var configDir = path.join(baseDir, "config");
+if (!fs.existsSync(configDir)){
+    fs.mkdirSync(configDir);
 }
-if (!fs.existsSync(path.join(baseDir, "config/config.json"))){
-    fs.writeFileSync(baseDir + "config/config.json", "{}");
+if (!fs.existsSync(path.join(configDir, "config.json"))){
+    fs.writeFileSync(path.join(configDir, "config.json"), "{}");
 }
-if (!fs.existsSync(path.join(baseDir, "config/app.json"))){
-    fs.writeFileSync(baseDir + "config/app.json", "{}");
+if (!fs.existsSync(path.join(configDir, "app.json"))){
+    fs.writeFileSync(path.join(configDir, "app.json"), "{}");
 }
 
 var connection_config = path.join(baseDir, 'config', 'config.json');
