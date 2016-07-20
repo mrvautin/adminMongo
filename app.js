@@ -210,7 +210,6 @@ async.forEachOf(connection_list, function (value, key, callback) {
     function (err) {
         if (err) console.error(err.message);
         // lift the app
-        //app.listen(app_port, app_host).on('error', function(err) {
         app.listen(app_port, app_host, function () {
             console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
 
@@ -232,7 +231,6 @@ async.forEachOf(connection_list, function (value, key, callback) {
             }
             else console.error('Error starting adminMongo: ' + err)
             app.emit('errorAdminMongo');
-            //process.exit();
         });
     });
 
