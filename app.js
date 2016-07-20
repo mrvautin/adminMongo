@@ -29,33 +29,33 @@ var i18n = new (require('i18n-2'))({
 
 // setup DB for server stats
 var Datastore = require('nedb');
-var db = new Datastore({ filename: path.join(dir_base,'data/dbStats.db'), autoload: true });
+var db = new Datastore({ filename: path.join(dir_base, 'data/dbStats.db'), autoload: true });
 
 // view engine setup
 app.set('views', path.join(dir_base, 'views/'));
-app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: path.join(dir_base,'views/layouts/layout.hbs')}));
+app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: path.join(dir_base, 'views/layouts/layout.hbs') }));
 app.set('view engine', 'hbs');
 
 // helpers for the handlebars templating platform
 handlebars = handlebars.create({
     helpers: {
-        __ : function(value) {
+        __: function (value) {
             return i18n.__(value);
         },
-        toJSON : function(object) {
+        toJSON: function (object) {
             return JSON.stringify(object);
         },
-        niceBool : function(object) {
+        niceBool: function (object) {
             if (object === undefined) return 'No';
             if (object === true) return 'Yes';
             else return 'No';
         },
-        app_context : function() {
+        app_context: function () {
             if (nconf.stores.app.get('app:context') != undefined) {
                 return '/' + nconf.stores.app.get('app:context');
             } else return '';
         },
-        formatBytes : function(bytes) {
+        formatBytes: function (bytes) {
             if (bytes == 0) return '0 Byte';
             var k = 1000;
             var decimals = 2;
@@ -75,9 +75,9 @@ var config_connections = path.join(dir_config, 'config.json');
 var config_app = path.join(dir_config, 'app.json');
 
 // Check existence of config dir and config files, create if nothing
-if (!fs.existsSync(dir_config))			fs.mkdirSync(dir_config);
-if (!fs.existsSync(config_connections))	fs.writeFileSync(config_connections, '{}');
-if (!fs.existsSync(config_app))	        fs.writeFileSync(config_app, '{}');
+if (!fs.existsSync(dir_config)) fs.mkdirSync(dir_config);
+if (!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, '{}');
+if (!fs.existsSync(config_app)) fs.writeFileSync(config_app, '{}');
 
 // if config files exist but are blank we write blank files for nconf
 if (fs.existsSync(config_app, 'utf8')) {
@@ -121,8 +121,8 @@ if (nconf.stores.app.get('app:context') != undefined) {
 }
 
 app.use(logger('dev'));
-app.use(bodyParser.json({limit: '16mb'}));
-app.use(bodyParser.urlencoded({extended: false }));
+app.use(bodyParser.json({ limit: '16mb' }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // setup session
@@ -144,11 +144,11 @@ app.use(app_context + '/favicon.ico', express.static(path.join(dir_base, 'public
 // Make stuff accessible to our router
 app.use(function (req, res, next) {
     req.nconf = nconf.stores;
-	req.handlebars = handlebars;
+    req.handlebars = handlebars;
     req.i18n = i18n;
     req.app_context = app_context;
     req.db = db;
-	next();
+    next();
 });
 
 // add context to route if required
@@ -189,17 +189,17 @@ app.use(function (err, req, res, next) {
 });
 
 // add the connections to the connection pool
-var connection_list = nconf.stores.connections.get('connections'); 
+var connection_list = nconf.stores.connections.get('connections');
 var connPool = require('./connections');
 var monitoring = require('./monitoring');
 app.locals.dbConnections = null;
 
-async.forEachOf(connection_list, function (value, key, callback) { 
+async.forEachOf(connection_list, function (value, key, callback) {
     var MongoURI = require('mongo-uri');
 
     try {
         uri = MongoURI.parse(value.connection_string);
-        connPool.addConnection({connName: key, connString: value.connection_string, connOptions: value.connection_options}, app, function(err, data) {
+        connPool.addConnection({ connName: key, connString: value.connection_string, connOptions: value.connection_options }, app, function (err, data) {
             if (err) delete connection_list[key];
             callback();
         });
@@ -207,33 +207,33 @@ async.forEachOf(connection_list, function (value, key, callback) {
         callback();
     }
 },
-function (err) {
-	if (err) console.error(err.message);
-    // lift the app
-    //app.listen(app_port, app_host).on('error', function(err) {
-    app.listen(app_port, app_host, function() {
-        console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
+    function (err) {
+        if (err) console.error(err.message);
+        // lift the app
+        //app.listen(app_port, app_host).on('error', function(err) {
+        app.listen(app_port, app_host, function () {
+            console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
 
-        // used for electron to know when express app has started
-        app.emit('startedAdminMongo');
+            // used for electron to know when express app has started
+            app.emit('startedAdminMongo');
 
-        if (nconf.stores.app.get('app:monitoring') != false) {
-            // start the initial monitoring
-            monitoring.serverMonitoring(db, app.locals.dbConnections);
-
-            // Keep firing monitoring every 30 seconds
-            setInterval(function() {
+            if (nconf.stores.app.get('app:monitoring') != false) {
+                // start the initial monitoring
                 monitoring.serverMonitoring(db, app.locals.dbConnections);
-            }, 30000);
-        }
-    }).on('error', function(err) {
-		if (err.code == 'EADDRINUSE') {
-			console.error('Error starting adminMongo: Port '+ app_port +' already in use, choose another');
-		}
-		else console.error('Error starting adminMongo: ' + err)
-        app.emit('errorAdminMongo');
-        //process.exit();
+
+                // Keep firing monitoring every 30 seconds
+                setInterval(function () {
+                    monitoring.serverMonitoring(db, app.locals.dbConnections);
+                }, 30000);
+            }
+        }).on('error', function (err) {
+            if (err.code == 'EADDRINUSE') {
+                console.error('Error starting adminMongo: Port ' + app_port + ' already in use, choose another');
+            }
+            else console.error('Error starting adminMongo: ' + err)
+            app.emit('errorAdminMongo');
+            //process.exit();
+        });
     });
-});
 
 module.exports = app;
