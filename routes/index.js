@@ -3,16 +3,16 @@ var router = express.Router();
 var _ = require('lodash');
 
 // runs on all routes and checks password if one is setup
-router.all("/*", checkLogin, function(req, res, next) {
-    next(); 
+router.all("/*", checkLogin, function (req, res, next) {
+    next();
 });
 
 // the home route
 router.get('/', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
 
-    if(connection_list){
-        if(Object.keys(connection_list).length > 0){
+    if (connection_list) {
+        if (Object.keys(connection_list).length > 0) {
             // we have a connection and redirect to the first
             var first_conn = Object.keys(connection_list)[0];
             res.redirect(req.app_context + "/" + first_conn);
@@ -27,14 +27,14 @@ router.get('/', function (req, res, next) {
 // login page
 router.get('/login', function (req, res, next) {
     var passwordConf = req.nconf.app.get('app');
-    
+
     // if password is set then render the login page, else continue 
-    if(passwordConf && passwordConf.hasOwnProperty("password")){
+    if (passwordConf && passwordConf.hasOwnProperty("password")) {
         res.render('login', {
             message: "",
             helpers: req.handlebars.helpers
         });
-    }else{
+    } else {
         res.redirect(req.app_context + '/');
     }
 });
@@ -49,19 +49,19 @@ router.get('/logout', function (req, res, next) {
 router.post('/login_action', function (req, res, next) {
     var passwordConf = req.nconf.app.get('app');
 
-    if(passwordConf && passwordConf.hasOwnProperty("password")){
-        if(req.body.inputPassword == passwordConf.password){
+    if (passwordConf && passwordConf.hasOwnProperty("password")) {
+        if (req.body.inputPassword == passwordConf.password) {
             // password is ok, go to home
             req.session.loggedIn = true;
             res.redirect(req.app_context + '/');
-        }else{
+        } else {
             // password is wrong. Show login form with a message
             res.render('login', {
                 message: "Password is incorrect",
                 helpers: req.handlebars.helpers
             });
         }
-    }else{
+    } else {
         res.redirect(req.app_context + '/');
     }
 });
@@ -83,13 +83,13 @@ router.get('/:conn', function (req, res, next) {
     var MongoURI = require('mongo-uri');
 
     // if no connection found
-    if(Object.keys(connection_list).length == 0){
+    if (Object.keys(connection_list).length == 0) {
         res.redirect(req.app_context + "/");
         return;
     }
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
@@ -99,17 +99,17 @@ router.get('/:conn', function (req, res, next) {
     var uri = MongoURI.parse(conn_string);
 
     // If there is a DB in the connection string, we redirect to the DB level
-    if(uri.database){
-        res.redirect(req.app_context + "/" +  req.params.conn + "/" + uri.database);
+    if (uri.database) {
+        res.redirect(req.app_context + "/" + req.params.conn + "/" + uri.database);
         return;
     }
 
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native;
 
-    get_db_stats(mongo_db, uri.database, function(err, db_stats){
-        get_sidebar_list(mongo_db, uri.database, function(err, sidebar_list) {
-            get_db_list(uri, mongo_db, function(err, db_list) {
+    get_db_stats(mongo_db, uri.database, function (err, db_stats) {
+        get_sidebar_list(mongo_db, uri.database, function (err, sidebar_list) {
+            get_db_list(uri, mongo_db, function (err, db_list) {
                 res.render('conn', {
                     conn_list: order_object(connection_list),
                     db_stats: db_stats,
@@ -130,7 +130,7 @@ router.get('/monitoring/:conn/', function (req, res, next) {
 
     var monitoringMessage = "";
     var monitoringRequired = true;
-    if(req.nconf.app.get('app:monitoring') == false){
+    if (req.nconf.app.get('app:monitoring') == false) {
         monitoringRequired = false;
         monitoringMessage = "Monitoring has been switched off in the config. Please enable or remove if you want this feature.";
     }
@@ -145,9 +145,9 @@ router.get('/monitoring/:conn/', function (req, res, next) {
 
 router.get('/api/monitoring/:conn', function (req, res, next) {
     // 24 hours worth of 30 sec blocks (data refresh interval)
-    var recordCount = (24 * 60) * 60 / 30; 
+    var recordCount = (24 * 60) * 60 / 30;
 
-    req.db.find({connectionName: req.params.conn}).sort({eventDate: -1}).limit(recordCount).exec(function (err, serverEvents) {
+    req.db.find({ connectionName: req.params.conn }).sort({ eventDate: -1 }).limit(recordCount).exec(function (err, serverEvents) {
         var connectionsCurrent = [];
         var connectionsAvailable = [];
         var connectionsTotalCreated = [];
@@ -165,34 +165,34 @@ router.get('/api/monitoring/:conn', function (req, res, next) {
         var docsDeleted = [];
         var docsUpdated = [];
 
-        if(serverEvents.length > 0){
-            if(serverEvents[0].dataRetrieved == true){
-                if(serverEvents){
-                    _.each(serverEvents, function(value, key) {
+        if (serverEvents.length > 0) {
+            if (serverEvents[0].dataRetrieved == true) {
+                if (serverEvents) {
+                    _.each(serverEvents, function (value, key) {
                         // connections
-                        if(value.connections){
-                            connectionsCurrent.push({x: value.eventDate, y: value.connections.current});
-                            connectionsAvailable.push({x: value.eventDate, y: value.connections.available});
-                            connectionsTotalCreated.push({x: value.eventDate, y: value.connections.totalCreated});
+                        if (value.connections) {
+                            connectionsCurrent.push({ x: value.eventDate, y: value.connections.current });
+                            connectionsAvailable.push({ x: value.eventDate, y: value.connections.available });
+                            connectionsTotalCreated.push({ x: value.eventDate, y: value.connections.totalCreated });
                         }
                         // clients
-                        if(value.activeClients){
-                            clientsTotal.push({x: value.eventDate, y: value.activeClients.total});
-                            clientsReaders.push({x: value.eventDate, y: value.activeClients.readers});
-                            clientsWriters.push({x: value.eventDate, y: value.activeClients.writers});
+                        if (value.activeClients) {
+                            clientsTotal.push({ x: value.eventDate, y: value.activeClients.total });
+                            clientsReaders.push({ x: value.eventDate, y: value.activeClients.readers });
+                            clientsWriters.push({ x: value.eventDate, y: value.activeClients.writers });
                         }
                         // memory
-                        if(value.memory){
-                            memoryVirtual.push({x: value.eventDate, y: value.memory.virtual});
-                            memoryMapped.push({x: value.eventDate, y: value.memory.mapped});
-                            memoryCurrent.push({x: value.eventDate, y: value.memory.resident});
+                        if (value.memory) {
+                            memoryVirtual.push({ x: value.eventDate, y: value.memory.virtual });
+                            memoryMapped.push({ x: value.eventDate, y: value.memory.mapped });
+                            memoryCurrent.push({ x: value.eventDate, y: value.memory.resident });
                         }
 
-                        if(value.docCounts){
-                            docsQueried.push({x: value.eventDate, y: value.docCounts.queried});
-                            docsInserted.push({x: value.eventDate, y: value.docCounts.inserted});
-                            docsDeleted.push({x: value.eventDate, y: value.docCounts.deleted});
-                            docsUpdated.push({x: value.eventDate, y: value.docCounts.updated});
+                        if (value.docCounts) {
+                            docsQueried.push({ x: value.eventDate, y: value.docCounts.queried });
+                            docsInserted.push({ x: value.eventDate, y: value.docCounts.inserted });
+                            docsDeleted.push({ x: value.eventDate, y: value.docCounts.deleted });
+                            docsUpdated.push({ x: value.eventDate, y: value.docCounts.updated });
                         }
                     });
                 }
@@ -216,16 +216,16 @@ router.get('/api/monitoring/:conn', function (req, res, next) {
 
             // get hours or mins
             var uptime = (serverEvents[0].uptime / 60).toFixed(2);
-            if(uptime > 61){
+            if (uptime > 61) {
                 uptime = (uptime / 60).toFixed(2) + " hours";
-            }else{
+            } else {
                 uptime = uptime + " minutes";
             }
 
-            if(err){
-                res.status(400).json({"msg": req.i18n.__('Could not get server monitoring')});
-            }else{
-                res.status(200).json({data: returnedData, dataRetrieved: serverEvents[0].dataRetrieved, pid: serverEvents[0].pid, version: serverEvents[0].version, uptime: uptime});
+            if (err) {
+                res.status(400).json({ "msg": req.i18n.__('Could not get server monitoring') });
+            } else {
+                res.status(200).json({ data: returnedData, dataRetrieved: serverEvents[0].dataRetrieved, pid: serverEvents[0].pid, version: serverEvents[0].version, uptime: uptime });
             }
         }
     });
@@ -235,13 +235,13 @@ router.get('/:conn/:db', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
+    if (req.params.db.indexOf(" ") > -1) {
         render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
@@ -249,10 +249,10 @@ router.get('/:conn/:db', function (req, res, next) {
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // do DB stuff
-    get_db_stats(mongo_db, req.params.db, function(err, db_stats){
-        get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
-            mongo_db.command({ usersInfo: 1 },function (err, conn_users) {
-                mongo_db.listCollections().toArray(function(err, collection_list){
+    get_db_stats(mongo_db, req.params.db, function (err, db_stats) {
+        get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list) {
+            mongo_db.command({ usersInfo: 1 }, function (err, conn_users) {
+                mongo_db.listCollections().toArray(function (err, collection_list) {
                     res.render('db', {
                         conn_name: req.params.conn,
                         conn_list: order_object(connection_list),
@@ -273,12 +273,12 @@ router.get('/:conn/:db', function (req, res, next) {
 
 // redirect to page 1
 router.get('/:conn/:db/:coll/', function (req, res, next) {
-     res.redirect(req.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
+    res.redirect(req.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
 });
 
 // redirect to page 1
 router.get('/:conn/:db/:coll/view/', function (req, res, next) {
-     res.redirect(req.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
+    res.redirect(req.app_context + "/" + req.params.conn + "/" + req.params.db + "/" + req.params.coll + "/view/1");
 });
 
 router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (req, res, next) {
@@ -286,13 +286,13 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
     var docs_per_page = req.nconf.app.get('app:docs_per_page') != undefined ? req.nconf.app.get('app:docs_per_page') : 5;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
+    if (req.params.db.indexOf(" ") > -1) {
         render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
@@ -301,14 +301,14 @@ router.get('/:conn/:db/:coll/view/:page_num/:key_val?/:value_val?', function (re
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // do DB stuff
-    mongo_db.listCollections().toArray(function(err, collection_list){
+    mongo_db.listCollections().toArray(function (err, collection_list) {
         // clean up the collection list
         collection_list = cleanCollections(collection_list);
-        get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
+        get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list) {
             mongo_db.db(req.params.db).collection(req.params.coll).count(function (err, coll_count) {
                 if (collection_list.indexOf(req.params.coll) === -1) {
                     render_error(res, req, "Database or Collection does not exist", req.params.conn);
-                }else{
+                } else {
                     res.render('coll-view', {
                         conn_list: order_object(req.nconf.connections.get('connections')),
                         conn_name: req.params.conn,
@@ -335,13 +335,13 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
+    if (req.params.db.indexOf(" ") > -1) {
         render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
@@ -350,15 +350,15 @@ router.get('/:conn/:db/:coll/indexes', function (req, res, next) {
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // do DB stuff
-    mongo_db.listCollections().toArray(function(err, collection_list){
+    mongo_db.listCollections().toArray(function (err, collection_list) {
         // clean up the collection list
         collection_list = cleanCollections(collection_list);
         mongo_db.collection(req.params.coll).indexes(function (err, coll_indexes) {
-            get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
+            get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list) {
                 if (collection_list.indexOf(req.params.coll) === -1) {
                     console.error("No collection found");
                     render_error(res, req, "Database or Collection does not exist", req.params.conn);
-                }else{
+                } else {
                     res.render('coll-indexes', {
                         coll_indexes: coll_indexes,
                         conn_list: order_object(connection_list),
@@ -380,13 +380,13 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
+    if (req.params.db.indexOf(" ") > -1) {
         render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
@@ -395,14 +395,14 @@ router.get('/:conn/:db/:coll/new', function (req, res, next) {
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // do DB stuff
-    mongo_db.listCollections().toArray(function(err, collection_list){
+    mongo_db.listCollections().toArray(function (err, collection_list) {
         // clean up the collection list
         collection_list = cleanCollections(collection_list);
-        get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
+        get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list) {
             if (collection_list.indexOf(req.params.coll) === -1) {
                 console.error("No collection found");
                 render_error(res, req, "Database or Collection does not exist", req.params.conn);
-            }else{
+            } else {
                 res.render('coll-new', {
                     conn_name: req.params.conn,
                     conn_list: order_object(connection_list),
@@ -423,14 +423,14 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
 
     // Get DB's form pool
@@ -440,12 +440,12 @@ router.post('/:conn/:db/:coll/user_create', function (req, res, next) {
     var roles = req.body.roles_text ? req.body.roles_text.split(/\s*,\s*/) : [];
 
     // Add a user
-    mongo_db.addUser(req.body.username, req.body.user_password, {"roles": roles}, function (err, user_name) {
-        if(err){
+    mongo_db.addUser(req.body.username, req.body.user_password, { "roles": roles }, function (err, user_name) {
+        if (err) {
             console.error('Error creating user: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error creating user') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('User successfully created')});
+            res.status(400).json({ "msg": req.i18n.__('Error creating user') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('User successfully created') });
         }
     });
 });
@@ -455,14 +455,14 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
 
     // Get DB form pool
@@ -470,13 +470,13 @@ router.post('/:conn/:db/:coll/user_delete', function (req, res, next) {
 
     // remove a user
     mongo_db.removeUser(req.body.username, function (err, user_name) {
-        if(err){
+        if (err) {
             console.error('Error deleting user: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error deleting user') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('User successfully deleted')});
+            res.status(400).json({ "msg": req.i18n.__('Error deleting user') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('User successfully deleted') });
         }
-    });  
+    });
 });
 
 // rename a collection
@@ -484,26 +484,26 @@ router.post('/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
 
     // Get DB form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // change a collection name
-    mongo_db.collection(req.params.coll).rename(req.body.new_collection_name, {"dropTarget": false} , function (err, coll_name) {
-        if(err){
+    mongo_db.collection(req.params.coll).rename(req.body.new_collection_name, { "dropTarget": false }, function (err, coll_name) {
+        if (err) {
             console.error('Error renaming collection: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error renaming collection') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Collection successfully renamed')});
+            res.status(400).json({ "msg": req.i18n.__('Error renaming collection') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Collection successfully renamed') });
         }
     });
 });
@@ -513,14 +513,14 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
 
     // Get DB form pool
@@ -529,13 +529,13 @@ router.post('/:conn/:db/:coll/create_index', function (req, res, next) {
     // adding a new collection
     var unique_bool = (req.body[1] === 'true');
     var sparse_bool = (req.body[2] === 'true');
-    var options = {unique: unique_bool, background:true, sparse: sparse_bool};
+    var options = { unique: unique_bool, background: true, sparse: sparse_bool };
     mongo_db.collection(req.params.coll).createIndex(JSON.stringify(req.body[0]), options, function (err, index) {
-        if(err){
+        if (err) {
             console.error('Error creating index: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error creating Index') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Index successfully created')});
+            res.status(400).json({ "msg": req.i18n.__('Error creating Index') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Index successfully created') });
         }
     });
 });
@@ -545,27 +545,27 @@ router.post('/:conn/:db/:coll/drop_index', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
-    
+
     // Get DB form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // adding a new index
-    mongo_db.collection(req.params.coll).indexes(function(err, indexes) {
+    mongo_db.collection(req.params.coll).indexes(function (err, indexes) {
         mongo_db.collection(req.params.coll).dropIndex(indexes[req.body.index].name, function (err, index) {
-            if(err){
+            if (err) {
                 console.error('Error dropping Index: ' + err);
-                res.status(400).json({"msg": req.i18n.__('Error dropping Index') + ': ' + err});
-            }else{
-                res.status(200).json({"msg": req.i18n.__('Index successfully dropped')});
+                res.status(400).json({ "msg": req.i18n.__('Error dropping Index') + ': ' + err });
+            } else {
+                res.status(200).json({ "msg": req.i18n.__('Index successfully dropped') });
             }
         });
     });
@@ -576,28 +576,28 @@ router.post('/:conn/:db/coll_create', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
-    
+
     // Get DB form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // adding a new collection
     mongo_db.createCollection(req.body.collection_name, function (err, coll) {
-        if(err){
+        if (err) {
             console.error('Error creating collection: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error creating collection') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Collection successfully created')});
+            res.status(400).json({ "msg": req.i18n.__('Error creating collection') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Collection successfully created') });
         }
-    });   
+    });
 });
 
 // delete a collection
@@ -605,26 +605,26 @@ router.post('/:conn/:db/coll_delete', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
-    
+
     // Get DB form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
-    
+
     // delete a collection
     mongo_db.dropCollection(req.body.collection_name, function (err, coll) {
-        if(err){
+        if (err) {
             console.error('Error deleting collection: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error deleting collection') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Collection successfully deleted'), "coll_name": req.body.collection_name});
+            res.status(400).json({ "msg": req.i18n.__('Error deleting collection') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Collection successfully deleted'), "coll_name": req.body.collection_name });
         }
     });
 });
@@ -634,14 +634,14 @@ router.post('/:conn/db_create', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
         return;
     }
 
     // check for valid DB name
-    if(req.body.db_name.indexOf(' ') >= 0 || req.body.db_name.indexOf('.') >= 0){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.body.db_name.indexOf(' ') >= 0 || req.body.db_name.indexOf('.') >= 0) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
         return;
     }
 
@@ -650,11 +650,11 @@ router.post('/:conn/db_create', function (req, res, next) {
 
     // adding a new collection to create the DB
     mongo_db.collection("test").save({}, function (err, docs) {
-        if(err){
+        if (err) {
             console.error('Error creating database: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error creating database') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Database successfully created')});
+            res.status(400).json({ "msg": req.i18n.__('Error creating database') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Database successfully created') });
         }
     });
 });
@@ -664,20 +664,20 @@ router.post('/:conn/db_delete', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection') });
     }
 
     // Get DB form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.body.db_name);
 
     // delete a collection
-    mongo_db.dropDatabase(function(err, result) {
-        if(err){
+    mongo_db.dropDatabase(function (err, result) {
+        if (err) {
             console.error('Error deleting database: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Error deleting database') + ': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Database successfully deleted'), "db_name": req.body.db_name});
+            res.status(400).json({ "msg": req.i18n.__('Error deleting database') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Database successfully deleted'), "db_name": req.body.db_name });
         }
     });
 });
@@ -687,33 +687,33 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
     var ejson = require('mongodb-extended-json');
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection name') });
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
-    
+
     // Get DB form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     try {
         var eJsonData = ejson.parse(req.body.objectData);
-    }catch (e) {
+    } catch (e) {
         console.error("Syntax error: " + e);
-        res.status(400).json({"msg": req.i18n.__('Syntax error. Please check the syntax')});
+        res.status(400).json({ "msg": req.i18n.__('Syntax error. Please check the syntax') });
         return;
     }
 
     // adding a new doc
     mongo_db.collection(req.params.coll).save(eJsonData, function (err, docs) {
-        if(err){
+        if (err) {
             console.error('Error inserting document', err);
-            res.status(400).json({"msg": req.i18n.__('Error inserting document') + ': ' + err});
-        }else{
-            res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': docs.ops[0]._id});
+            res.status(400).json({ "msg": req.i18n.__('Error inserting document') + ': ' + err });
+        } else {
+            res.status(200).json({ 'msg': req.i18n.__('Document successfully added'), 'doc_id': docs.ops[0]._id });
         }
     });
 });
@@ -723,13 +723,13 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var bsonify = require('./bsonify');
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
+    if (req.params.db.indexOf(" ") > -1) {
         render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
@@ -738,42 +738,42 @@ router.get('/:conn/:db/:coll/edit/:doc_id', function (req, res, next) {
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     // do DB stuff
-    get_sidebar_list(mongo_db, req.params.db, function(err, sidebar_list) {
-        get_id_type(mongo_db, req.params.coll, req.params.doc_id, function(err, result) {
-            if(result.doc == undefined){
+    get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list) {
+        get_id_type(mongo_db, req.params.coll, req.params.doc_id, function (err, result) {
+            if (result.doc == undefined) {
                 console.error("No document found");
                 render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
                 return;
             }
-            if(err){
+            if (err) {
                 console.error("No document found");
                 render_error(res, req, req.i18n.__("Document not found"), req.params.conn);
                 return;
             }
 
             var images = [];
-            _.forOwn(result.doc, function(value, key) {
-                if(value){
-                    if(value.toString().substring(0,10) == "data:image"){
-                        images.push({"field": key, "src": value});
+            _.forOwn(result.doc, function (value, key) {
+                if (value) {
+                    if (value.toString().substring(0, 10) == "data:image") {
+                        images.push({ "field": key, "src": value });
                     }
                 }
             });
 
             var videos = [];
-            _.forOwn(result.doc, function(value, key) {
-                if(value){
-                    if(value.toString().substring(0,10) == "data:video"){
-                        videos.push({"field": key, "src": value, "type": value.split(";")[0].replace("data:","")});
+            _.forOwn(result.doc, function (value, key) {
+                if (value) {
+                    if (value.toString().substring(0, 10) == "data:video") {
+                        videos.push({ "field": key, "src": value, "type": value.split(";")[0].replace("data:", "") });
                     }
                 }
             });
 
             var audio = [];
-            _.forOwn(result.doc, function(value, key) {
-                if(value){
-                    if(value.toString().substring(0,10) == "data:audio"){
-                        audio.push({"field": key, "src": value});
+            _.forOwn(result.doc, function (value, key) {
+                if (value) {
+                    if (value.toString().substring(0, 10) == "data:audio") {
+                        audio.push({ "field": key, "src": value });
                     }
                 }
             });
@@ -801,36 +801,36 @@ router.post('/:conn/:db/:coll/edit_doc', function (req, res, next) {
     var ejson = require('mongodb-extended-json');
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection name') });
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
-    
+
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
     try {
         var eJsonData = ejson.parse(req.body.objectData);
-    }catch (e) {
+    } catch (e) {
         console.error("Syntax error: " + e);
-        res.status(400).json({"msg": req.i18n.__('Syntax error. Please check the syntax')});
+        res.status(400).json({ "msg": req.i18n.__('Syntax error. Please check the syntax') });
         return;
     }
 
     mongo_db.collection(req.params.coll).save(eJsonData, function (err, doc, lastErrorObject) {
-        if(err){
+        if (err) {
             console.error("Error updating document: " + err);
-            res.status(400).json({"msg": req.i18n.__('Error updating document') + ': ' + err});
-        }else{
-            if(doc['nModified'] == 0){
+            res.status(400).json({ "msg": req.i18n.__('Error updating document') + ': ' + err });
+        } else {
+            if (doc['nModified'] == 0) {
                 console.error('Error updating document: Document ID is incorrect');
-                res.status(400).json({"msg": req.i18n.__('Error updating document: Syntax error')});
-            }else{
-                res.status(200).json({"msg": req.i18n.__('Document successfully updated')});
+                res.status(400).json({ "msg": req.i18n.__('Error updating document: Syntax error') });
+            } else {
+                res.status(200).json({ "msg": req.i18n.__('Document successfully updated') });
             }
         }
     });
@@ -840,30 +840,30 @@ router.post('/:conn/:db/:coll/doc_delete', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection name') });
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
-    
+
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
-    get_id_type(mongo_db, req.params.coll, req.body.doc_id, function(err, result) {
-        if(result.doc){
-            mongo_db.collection(req.params.coll).remove({_id: result.doc_id_type},true, function(err, docs){
-                if(err || docs.result.n == 0){
+    get_id_type(mongo_db, req.params.coll, req.body.doc_id, function (err, result) {
+        if (result.doc) {
+            mongo_db.collection(req.params.coll).remove({ _id: result.doc_id_type }, true, function (err, docs) {
+                if (err || docs.result.n == 0) {
                     console.error('Error deleting document: ' + err);
-                    res.status(400).json({"msg": req.i18n.__('Error deleting document') + ': ' + req.i18n.__("Cannot find document by Id")});
-                }else{
-                    res.status(200).json({"msg": req.i18n.__('Document successfully deleted')});
+                    res.status(400).json({ "msg": req.i18n.__('Error deleting document') + ': ' + req.i18n.__("Cannot find document by Id") });
+                } else {
+                    res.status(200).json({ "msg": req.i18n.__('Document successfully deleted') });
                 }
             });
-        }else{
+        } else {
             console.error('Error deleting document: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Cannot find document by Id')});
+            res.status(400).json({ "msg": req.i18n.__('Cannot find document by Id') });
         }
     });
 });
@@ -875,9 +875,9 @@ router.post('/add_config', function (req, res, next) {
     var connection_list = req.nconf.connections.get('connections');
 
     // check if name already exists
-    if(connection_list != undefined){
-        if(connection_list[req.body[0]] != undefined){
-            res.status(400).json({"msg": req.i18n.__('Config error: A connection by that name already exists')});
+    if (connection_list != undefined) {
+        if (connection_list[req.body[0]] != undefined) {
+            res.status(400).json({ "msg": req.i18n.__('Config error: A connection by that name already exists') });
             return;
         }
     }
@@ -886,36 +886,36 @@ router.post('/add_config', function (req, res, next) {
     try {
         uri = MongoURI.parse(req.body[1]);
         var options = {};
-        try{
+        try {
             options = JSON.parse(req.body[2]);
-        }catch(err) {
-            res.status(400).json({"msg": req.i18n.__('Error in connection options') +': ' + er});
+        } catch (err) {
+            res.status(400).json({ "msg": req.i18n.__('Error in connection options') + ': ' + er });
             return;
         }
 
         // try add the connection
-        connPool.addConnection({connName: req.body[0], connString: req.body[1], connOptions: options}, req.app, function(err, data){
-            if(err){
+        connPool.addConnection({ connName: req.body[0], connString: req.body[1], connOptions: options }, req.app, function (err, data) {
+            if (err) {
                 console.error('DB Connect error: ' + err);
-                res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
-            }else{
+                res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
+            } else {
                 // set the new config
-                nconf.set('connections:' + req.body[0], {"connection_string": req.body[1], "connection_options": options});
+                nconf.set('connections:' + req.body[0], { "connection_string": req.body[1], "connection_options": options });
 
                 // save for ron
                 nconf.save(function (err) {
-                    if(err){
+                    if (err) {
                         console.error('Config error: ' + err);
-                        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
-                    }else{
-                        res.status(200).json({"msg": req.i18n.__('Config successfully added')});
+                        res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
+                    } else {
+                        res.status(200).json({ "msg": req.i18n.__('Config successfully added') });
                     }
                 });
             }
         });
-    }catch(err) {
+    } catch (err) {
         console.error('Config error: ' + err);
-        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
+        res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
     }
 });
 
@@ -932,32 +932,32 @@ router.post('/update_config', function (req, res, next) {
         var current_options = nconf.store.connections[req.body.curr_config].connection_options;
 
         // try add the connection
-        connPool.addConnection({connName: req.body.conn_name, connString: req.body.conn_string, connOptions: current_options}, req.app, function(err, data){
-            if(err){
+        connPool.addConnection({ connName: req.body.conn_name, connString: req.body.conn_string, connOptions: current_options }, req.app, function (err, data) {
+            if (err) {
                 console.error('DB Connect error: ' + err);
-                res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
-            }else{
+                res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
+            } else {
                 // delete current config
                 delete nconf.store.connections[req.body.curr_config];
-                
+
                 // set the new
-                nconf.set('connections:' + req.body.conn_name, { 'connection_string':  req.body.conn_string, "connection_options": current_options});
+                nconf.set('connections:' + req.body.conn_name, { 'connection_string': req.body.conn_string, "connection_options": current_options });
 
                 // save for ron
                 nconf.save(function (err) {
-                    if(err){
+                    if (err) {
                         console.error('Config error1: ' + err);
-                        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
-                    }else{
-                       res.status(200).json({"msg": req.i18n.__('Config successfully updated'), "name": req.body.conn_name, "string": req.body.conn_string});
+                        res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
+                    } else {
+                        res.status(200).json({ "msg": req.i18n.__('Config successfully updated'), "name": req.body.conn_name, "string": req.body.conn_string });
                     }
                 });
             }
         });
-    }catch(err) {
+    } catch (err) {
         console.error('Config error2: ' + err);
-        res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
-    }   
+        res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
+    }
 });
 
 router.post('/drop_config', function (req, res, next) {
@@ -970,11 +970,11 @@ router.post('/drop_config', function (req, res, next) {
 
     // save config
     nconf.save(function (err) {
-        if(err){
+        if (err) {
             console.error('Config error: ' + err);
-            res.status(400).json({"msg": req.i18n.__('Config error') +': ' + err});
-        }else{
-            res.status(200).json({"msg": req.i18n.__('Config successfully deleted')});
+            res.status(400).json({ "msg": req.i18n.__('Config error') + ': ' + err });
+        } else {
+            res.status(200).json({ "msg": req.i18n.__('Config successfully deleted') });
         }
     });
 });
@@ -984,15 +984,15 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
     var ejson = require('mongodb-extended-json');
     var docs_per_page = req.nconf.app.get('app:docs_per_page') != undefined ? req.nconf.app.get('app:docs_per_page') : 5;
-   
+
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
-        res.status(400).json({"msg": req.i18n.__('Invalid connection name')});
+    if (connection_list[req.params.conn] == undefined) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid connection name') });
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
-        res.status(400).json({"msg": req.i18n.__('Invalid database name')});
+    if (req.params.db.indexOf(" ") > -1) {
+        res.status(400).json({ "msg": req.i18n.__('Invalid database name') });
     }
 
     // Get DB's form pool
@@ -1001,56 +1001,56 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
     var page_size = docs_per_page;
     var page = 1;
 
-    if(req.params.page != undefined){
+    if (req.params.page != undefined) {
         page = parseInt(req.params.page);
     }
-        
+
     var skip = 0;
-    if(page > 1){
+    if (page > 1) {
         skip = (page - 1) * page_size
     }
 
     var limit = page_size;
-    
+
     var query_obj = {};
     var validQuery = true;
     var queryMessage = "";
-    if(req.body.query){     
+    if (req.body.query) {
         try {
             query_obj = ejson.parse(req.body.query);
-        }catch (e) {
+        } catch (e) {
             validQuery = false;
             queryMessage = e.toString();
             query_obj = {};
         }
     }
 
-    mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function(err, result) {
+    mongo_db.collection(req.params.coll).find(query_obj, { skip: skip, limit: limit }).toArray(function (err, result) {
         if (err) {
             console.error(err);
             res.status(500).json(err);
-        }else{
-            mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).toArray(function(err, simpleSearchFields) {
+        } else {
+            mongo_db.collection(req.params.coll).find({}, { skip: skip, limit: limit }).toArray(function (err, simpleSearchFields) {
                 //get field names/keys of the Documents in collection                
                 var fields = [];
                 for (var i = 0; i < simpleSearchFields.length; i++) {
                     var doc = simpleSearchFields[i];
 
-                    for (key in doc){
-                        if(key == "__v") continue;
+                    for (key in doc) {
+                        if (key == "__v") continue;
                         fields.push(key);
                     }
                 };
 
-                fields = fields.filter(function(item, pos) {
+                fields = fields.filter(function (item, pos) {
                     return fields.indexOf(item) == pos;
                 });
-                
+
                 // get total num docs in query
                 mongo_db.collection(req.params.coll).count(query_obj, function (err, doc_count) {
                     var return_data = {
                         data: result,
-                        fields : fields,
+                        fields: fields,
                         total_docs: doc_count,
                         deleteButton: req.i18n.__("Delete"),
                         editButton: req.i18n.__("Edit"),
@@ -1059,8 +1059,8 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next) {
                     }
                     res.status(200).json(return_data);
                 });
-            });                
-        }            
+            });
+        }
     });
 });
 
@@ -1068,70 +1068,70 @@ router.get('/:conn/:db/:coll/export/:excludedID?', function (req, res, next) {
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
-    if(connection_list[req.params.conn] == undefined){
+    if (connection_list[req.params.conn] == undefined) {
         render_error(res, req, req.i18n.__("Invalid connection name"), req.params.conn);
         return;
     }
 
     // Validate database name
-    if (req.params.db.indexOf(" ") > -1){
+    if (req.params.db.indexOf(" ") > -1) {
         render_error(res, req, req.i18n.__("Invalid database name"), req.params.conn);
         return;
     }
 
     // exclude _id from export
     var exportID = {};
-    if(req.params.excludedID === "true"){
-        exportID = {"_id": 0};
+    if (req.params.excludedID === "true") {
+        exportID = { "_id": 0 };
     }
-    
+
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
 
-    mongo_db.collection(req.params.coll).find({},exportID).toArray(function(err, data) {
-        if(data != ""){
-            res.set({"Content-Disposition":"attachment; filename=" + req.params.coll + ".json"});
+    mongo_db.collection(req.params.coll).find({}, exportID).toArray(function (err, data) {
+        if (data != "") {
+            res.set({ "Content-Disposition": "attachment; filename=" + req.params.coll + ".json" });
             res.send(JSON.stringify(data, null, 2));
-        }else{
+        } else {
             render_error(res, req, req.i18n.__("Export error: Collection not found"), req.params.conn);
         }
     });
 });
 
 // gets the db stats
-var get_db_stats = function(mongo_db, db_name, cb) {
+var get_db_stats = function (mongo_db, db_name, cb) {
     var async = require('async');
     var db_obj = {};
 
     // if at connection level we loop db's and collections
-    if(db_name == null){
+    if (db_name == null) {
         var adminDb = mongo_db.admin();
         adminDb.listDatabases(function (err, db_list) {
-            if(err){
+            if (err) {
                 cb("User is not authorised", null);
                 return;
             }
-            if(db_list != undefined){
+            if (db_list != undefined) {
                 async.forEachOf(order_object(db_list.databases), function (value, key, callback) {
                     order_object(db_list.databases);
                     var skipped_dbs = ["null", "admin", "local"];
-                    if(skipped_dbs.indexOf(value.name) === -1){
+                    if (skipped_dbs.indexOf(value.name) === -1) {
                         var tempDBName = value.name;
-                        mongo_db.db(tempDBName).listCollections().toArray(function(err, coll_list){
+                        mongo_db.db(tempDBName).listCollections().toArray(function (err, coll_list) {
                             var coll_obj = {};
                             async.forEachOf(cleanCollections(coll_list), function (value, key, callback) {
-                                mongo_db.db(tempDBName).collection(value).stats(function(err, coll_stat){
-                                    coll_obj[value] = {Storage: coll_stat.size, Documents: coll_stat.count};
+                                mongo_db.db(tempDBName).collection(value).stats(function (err, coll_stat) {
+                                    coll_obj[value] = { Storage: coll_stat.size, Documents: coll_stat.count };
                                     callback();
                                 });
                             }, function (err) {
-                            if (err) console.error(err.message);
+                                if (err) console.error(err.message);
                                 // add the collection object to the DB object with the DB as key
                                 db_obj[value.name] = order_object(coll_obj);
                                 callback();
                             });
                         });
-                    }else{
+                    } else {
                         callback();
                     }
                 }, function (err) {
@@ -1139,17 +1139,17 @@ var get_db_stats = function(mongo_db, db_name, cb) {
                     // wrap this whole thing up
                     cb(null, order_object(db_obj));
                 });
-            }else{
+            } else {
                 // if doesnt have the access to get all DB's
                 cb(null, null);
             }
         });
-    // if at DB level, we just grab the collections below
-    }else{
-        mongo_db.db(db_name).listCollections().toArray(function(err, coll_list){
+        // if at DB level, we just grab the collections below
+    } else {
+        mongo_db.db(db_name).listCollections().toArray(function (err, coll_list) {
             var coll_obj = {};
             async.forEachOf(cleanCollections(coll_list), function (value, key, callback) {
-                mongo_db.db(db_name).collection(value).stats(function(err, coll_stat){
+                mongo_db.db(db_name).collection(value).stats(function (err, coll_stat) {
                     coll_obj[value] = {
                         Storage: coll_stat ? coll_stat.size : 0,
                         Documents: coll_stat ? coll_stat.count : 0,
@@ -1167,19 +1167,19 @@ var get_db_stats = function(mongo_db, db_name, cb) {
 };
 
 // gets the Databases
-var get_db_list = function(uri, mongo_db, cb) {
+var get_db_list = function (uri, mongo_db, cb) {
     var async = require('async');
     var adminDb = mongo_db.admin();
     var db_arr = [];
 
     // if a DB is not specified in the Conn string we try get a list
-    if(uri.database == undefined){
+    if (uri.database == undefined) {
         // try go all admin and get the list of DB's
         adminDb.listDatabases(function (err, db_list) {
-            if(db_list != undefined){
+            if (db_list != undefined) {
                 async.forEachOf(db_list.databases, function (value, key, callback) {
                     var skipped_dbs = ["null", "admin", "local"];
-                    if(skipped_dbs.indexOf(value.name) === -1){
+                    if (skipped_dbs.indexOf(value.name) === -1) {
                         db_arr.push(value.name);
                     }
                     callback();
@@ -1188,11 +1188,11 @@ var get_db_list = function(uri, mongo_db, cb) {
                     order_array(db_arr);
                     cb(null, db_arr);
                 });
-            }else{
+            } else {
                 cb(null, null);
             }
         });
-    }else{
+    } else {
         cb(null, null);
     }
 };
@@ -1201,83 +1201,83 @@ var get_db_list = function(uri, mongo_db, cb) {
 // all document viewing in adminMongo is a parameter we dont know if it is an ObjectId, string or integer. We can check if
 // the _id string is a valid MongoDb ObjectId but this does not guarantee it is stored as an ObjectId in the DB. It's most likely
 // the value will be an ObjectId (hopefully) so we try that first then go from there
-var get_id_type = function(mongo, collection, doc_id, cb) {
+var get_id_type = function (mongo, collection, doc_id, cb) {
 
-    if(doc_id){
+    if (doc_id) {
         var ObjectID = require('mongodb').ObjectID;
         // if a valid ObjectId we try that, then then try as a string
-        if(ObjectID.isValid(doc_id)){
-            mongo.collection(collection).findOne({_id: ObjectID(doc_id)}, function(err, doc) {
-                if(doc){
+        if (ObjectID.isValid(doc_id)) {
+            mongo.collection(collection).findOne({ _id: ObjectID(doc_id) }, function (err, doc) {
+                if (doc) {
                     // doc_id is an ObjectId
-                    cb(null, {"doc_id_type": ObjectID(doc_id),"doc": doc});
-                }else{
-                    mongo.collection(collection).findOne({_id: doc_id}, function(err, doc) {
-                        if(doc){
+                    cb(null, { "doc_id_type": ObjectID(doc_id), "doc": doc });
+                } else {
+                    mongo.collection(collection).findOne({ _id: doc_id }, function (err, doc) {
+                        if (doc) {
                             // doc_id is string
-                            cb(null, {"doc_id_type": doc_id, "doc": doc});
-                        }else{
-                            cb("Document not found", {"doc_id_type": null, "doc": null});
+                            cb(null, { "doc_id_type": doc_id, "doc": doc });
+                        } else {
+                            cb("Document not found", { "doc_id_type": null, "doc": null });
                         }
                     });
                 }
             });
-        }else{
+        } else {
             // if the value is not a valid ObjectId value we try as an integer then as a last resort, a string.
-            mongo.collection(collection).findOne({_id: parseInt(doc_id)}, function(err, doc) {
-                if(doc){
+            mongo.collection(collection).findOne({ _id: parseInt(doc_id) }, function (err, doc) {
+                if (doc) {
                     // doc_id is integer
-                    cb(null, {"doc_id_type": parseInt(doc_id), "doc": doc});
+                    cb(null, { "doc_id_type": parseInt(doc_id), "doc": doc });
                     return;
-                }else{
-                    mongo.collection(collection).findOne({_id: doc_id}, function(err, doc) {
-                        if(doc){
+                } else {
+                    mongo.collection(collection).findOne({ _id: doc_id }, function (err, doc) {
+                        if (doc) {
                             // doc_id is string
-                            cb(null, {"doc_id_type": doc_id, "doc": doc});
-                        }else{
-                            cb("Document not found", {"doc_id_type": null, "doc": null});
+                            cb(null, { "doc_id_type": doc_id, "doc": doc });
+                        } else {
+                            cb("Document not found", { "doc_id_type": null, "doc": null });
                         }
                     });
                 }
             });
         }
-    }else{
-        cb(null, {"doc_id_type": null, "doc": null});
+    } else {
+        cb(null, { "doc_id_type": null, "doc": null });
     }
 }
 
 // gets the Databases and collections
-var get_sidebar_list = function(mongo_db, db_name, cb) {
+var get_sidebar_list = function (mongo_db, db_name, cb) {
     var async = require('async');
     var db_obj = {};
 
     // if no DB is specified, we get all DBs and collections
-    if(db_name == null){
+    if (db_name == null) {
         var adminDb = mongo_db.admin();
         adminDb.listDatabases(function (err, db_list) {
-            if(db_list){
+            if (db_list) {
                 async.forEachOf(db_list.databases, function (value, key, callback) {
                     var skipped_dbs = ["null", "admin", "local"];
-                    if(skipped_dbs.indexOf(value.name) === -1){
-                        mongo_db.db(value.name).listCollections().toArray(function(err, collections){
+                    if (skipped_dbs.indexOf(value.name) === -1) {
+                        mongo_db.db(value.name).listCollections().toArray(function (err, collections) {
                             collections = cleanCollections(collections);
                             order_array(collections);
                             db_obj[value.name] = collections;
                             callback();
                         });
-                    }else{
+                    } else {
                         callback();
                     }
                 }, function (err) {
                     if (err) console.error(err.message);
                     cb(null, order_object(db_obj));
                 });
-            }else{
+            } else {
                 cb(null, order_object(db_obj));
             }
         });
-    }else{
-        mongo_db.db(db_name).listCollections().toArray(function(err, collections){
+    } else {
+        mongo_db.db(db_name).listCollections().toArray(function (err, collections) {
             collections = cleanCollections(collections);
             order_array(collections);
             db_obj[db_name] = collections;
@@ -1287,38 +1287,38 @@ var get_sidebar_list = function(mongo_db, db_name, cb) {
 };
 
 // order the object by alpha key
-function order_object(unordered){
-    if(unordered != undefined){
+function order_object(unordered) {
+    if (unordered != undefined) {
         var ordered = {};
         var keys = Object.keys(unordered);
         order_array(keys);
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             ordered[key] = unordered[key];
         });
     }
     return ordered;
 }
 
-function order_array(array){
-    if(array){
-        array.sort(function(a,b) {
+function order_array(array) {
+    if (array) {
+        array.sort(function (a, b) {
             a = a.toLowerCase();
             b = b.toLowerCase();
-            if( a == b) return 0;
-            if( a > b) return 1;
+            if (a == b) return 0;
+            if (a > b) return 1;
             return -1;
         });
-    }else{
+    } else {
         return array;
     }
 }
 
 // render the error page
-function render_error(res, req, err, conn){
+function render_error(res, req, err, conn) {
     var connection_list = req.nconf.connections.get('connections');
 
     var conn_string = "";
-    if(connection_list[conn] != undefined){
+    if (connection_list[conn] != undefined) {
         conn_string = connection_list[conn].connection_string;
     }
 
@@ -1336,11 +1336,11 @@ function checkLogin(req, res, next) {
     var passwordConf = req.nconf.app.get('app');
 
     // only check for login if a password is specified in the /config/app.json file
-    if(passwordConf && passwordConf.hasOwnProperty("password")){
+    if (passwordConf && passwordConf.hasOwnProperty("password")) {
         // dont require login session for login route
-        if(req.path == "/login" || req.path == "/logout" || req.path == "/login_action"){
+        if (req.path == "/login" || req.path == "/logout" || req.path == "/login_action") {
             next();
-        }else{
+        } else {
             // if the session exists we continue, else renter login page
             if (req.session.loggedIn) {
                 next(); // allow the next route to run
@@ -1348,15 +1348,15 @@ function checkLogin(req, res, next) {
                 res.redirect(req.app_context + "/login");
             }
         }
-    }else{
+    } else {
         // no password is set so we continue
         next();
     }
 }
 
-function cleanCollections(collection_list){
+function cleanCollections(collection_list) {
     var list = [];
-    _.each(collection_list, function(item){
+    _.each(collection_list, function (item) {
         list.push(item.name);
     });
     return list;
