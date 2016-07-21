@@ -14,6 +14,7 @@
   },
   "scripts": {
     "start": "node app.js",
+    "postinstall": "node ./npm_postinstall.js",
     "test": "find ./tests -name '*.js' | xargs mocha -R spec -t 5000",
     "packageOsx": "electron-packager ./ adminMongo --out=releases/ --platform=darwin --arch=x64 --prune --overwrite --ignore=releases/* --icon=public/logo.icns",
     "packageWin32": "electron-packager ./ adminMongo --out=releases/ --platform=win32 --arch=ia32 --prune --overwrite --ignore=releases/* --icon=public/logo.ico",
@@ -58,6 +59,7 @@
     "mongodb-extended-json": "^1.6.2",
     "morgan": "~1.6.1",
     "nconf": "^0.8.2",
+    "ncp": "^2.0.0",
     "nedb": "^1.8.0",
     "serve-favicon": "~2.3.0"
   },
