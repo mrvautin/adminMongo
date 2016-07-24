@@ -22,7 +22,7 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 
 ## Electron App
 
-adminMongo can also be used as a cross platform Electon application. Due to the size of Electron it will need to be built manully.
+adminMongo can also be used as a cross platform Electron application. Due to the size of Electron it will need to be built manually.
 
 To build for Mac:
 
