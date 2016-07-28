@@ -709,9 +709,9 @@ router.post('/:conn/:db/:coll/insert_doc', function (req, res, next) {
 
     // adding a new doc
     mongo_db.collection(req.params.coll).save(eJsonData, function (err, docs) {
-        if (err) {
+        if (err || docs.ops == undefined) {
             console.error('Error inserting document', err);
-            res.status(400).json({ "msg": req.i18n.__('Error inserting document') + ': ' + err });
+            res.status(400).json({ "msg": req.i18n.__('Error inserting document') });
         } else {
             res.status(200).json({ 'msg': req.i18n.__('Document successfully added'), 'doc_id': docs.ops[0]._id });
         }
