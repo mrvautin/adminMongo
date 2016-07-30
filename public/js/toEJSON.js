@@ -1,9 +1,8 @@
-var toEJSON = (function () {
-    
-    var serialize_BinData = function (bsonString) {
+var toEJSON = (function (){
+    var serialize_BinData = function (bsonString){
         var bson_full = bsonString.match(/(BinData\s?\([^)]+\))/g);
-        if (bson_full) {
-            for (var i = 0; i < bson_full.length; i++) {
+        if(bson_full){
+            for(var i = 0; i < bson_full.length; i++){
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var bson_data = bson_value[1].split(',');
                 var ejson = '{ "$binary": ' + bson_data[1] + ',  "$type": "' + bson_data[0] + '" }';
@@ -13,10 +12,10 @@ var toEJSON = (function () {
         return bsonString;
     };
 
-    var serialize_Date = function (bsonString) {
+    var serialize_Date = function (bsonString){
         var bson_full = bsonString.match(/(new Date\s?)\(.?\)/g);
-        if (bson_full) {
-            for (var i = 0; i < bson_full.length; i++) {
+        if(bson_full){
+            for(var i = 0; i < bson_full.length; i++){
                 var dte = new Date();
                 var ejson = '{ "$date": "' + dte.toISOString() + '" }';
                 bsonString = bsonString.replace(bson_full[i], ejson);
@@ -25,10 +24,10 @@ var toEJSON = (function () {
         return bsonString;
     };
 
-    var serialize_ISODate = function (bsonString) {
+    var serialize_ISODate = function (bsonString){
         var bson_full = bsonString.match(/(ISODate\s?\([^)]+\))/g);
-        if (bson_full) {
-            for (var i = 0; i < bson_full.length; i++) {
+        if(bson_full){
+            for(var i = 0; i < bson_full.length; i++){
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var ejson = '{ "$date": ' + bson_value[1] + ' }';
                 bsonString = bsonString.replace(bson_full[i], ejson);
@@ -37,10 +36,10 @@ var toEJSON = (function () {
         return bsonString;
     };
 
-    var serialize_Timestamp = function (bsonString) {
+    var serialize_Timestamp = function (bsonString){
         var bson_full = bsonString.match(/(Timestamp\s?\([^)]+\))/g);
-        if (bson_full) {
-            for (var i = 0; i < bson_full.length; i++) {
+        if(bson_full){
+            for(var i = 0; i < bson_full.length; i++){
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var bson_data = bson_value[1].split(',');
                 var ejson = '{ "$timestamp": { "$t": ' + bson_data[0] + ',  "$i": ' + bson_data[1] + '}}';
@@ -50,42 +49,41 @@ var toEJSON = (function () {
         return bsonString;
     };
 
-    var serialize_Regex = function (bsonString) {
+    var serialize_Regex = function (bsonString){
         // TODO: Implement a regex fixer
         return bsonString;
     };
 
-    var serialize_ObjectId = function (bsonString) {
+    var serialize_ObjectId = function (bsonString){
         var bson_full = bsonString.match(/(ObjectId\s?\([^)]+\))/g);
-        if (bson_full) {
-            for (var i = 0; i < bson_full.length; i++) {
+        if(bson_full){
+            for(var i = 0; i < bson_full.length; i++){
                 var bson_value = bson_full[i].match(/\((.*?)\)/i);
                 var ejson = '{ "$oid": ' + bson_value[1] + '}';
                 bsonString = bsonString.replace(bson_full[i], ejson);
             }
         }
-        
+
         return bsonString;
     };
 
-    var serialize_Operators = function (bsonString) {
+    var serialize_Operators = function (bsonString){
         // find unquoted JSON keys. This is so people can write native mongoDB queries
         // like this without have to quote '$lt' etc like native Mongodb:
         //   {
         //      "integer": {$lt:2}
-        //   }  
+        //   }
         var objKeysRegex = /({|,)(?:\s*)(?:')?([A-Za-z_$\.][A-Za-z0-9_ \-\.$]*)(?:')?(?:\s*):/g;
-        bsonString = bsonString.replace(objKeysRegex, "$1\"$2\":");
+        bsonString = bsonString.replace(objKeysRegex, '$1"$2":');
         return bsonString;
     };
 
-    var serialize_DBRef = function (bsonString) {
+    var serialize_DBRef = function (bsonString){
         // TODO: possibly implement something in the future here
         return bsonString;
     };
 
-    var serializeString = function (bsonString) {
-        
+    var serializeString = function (bsonString){
         if(bsonString){
             bsonString = serialize_BinData(bsonString);
             bsonString = serialize_Date(bsonString);
@@ -100,8 +98,8 @@ var toEJSON = (function () {
         var eJsonString = bsonString;
         return eJsonString;
     };
-    
-    return {
-        serializeString: serializeString,
+
+    return{
+        serializeString: serializeString
     };
 })();

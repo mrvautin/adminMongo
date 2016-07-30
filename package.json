@@ -68,10 +68,14 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "colors": "^1.1.2",
+    "electron-prebuilt": "^1.2.8",
+    "eslint": "^3.2.0",
+    "eslint-config-standard": "^5.3.5",
+    "eslint-plugin-promise": "^2.0.0",
+    "eslint-plugin-standard": "^2.0.0",
     "jsdom": "^9.4.1",
     "mocha": "^2.5.3",
     "mocha-jsdom": "^1.1.0",
-    "supertest": "^1.2.0",
-    "electron-prebuilt": "^1.2.8"
+    "supertest": "^1.2.0"
   }
 }

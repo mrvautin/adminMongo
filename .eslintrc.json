@@ -1,0 +1,29 @@
+{
+    "extends": "standard",
+    "installedESLint": true,
+    "plugins": [
+        "standard",
+        "promise"
+    ],
+    "globals": {
+        "$": true
+    },
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "rules": {
+        "consistent-return": 2,
+        "indent"           : [1, 4],
+        "no-else-return"   : 1,
+        "semi"             : [1, "always"],
+        "space-unary-ops"  : 2,
+        "no-undef": 1,
+        "no-unused-vars": 1,
+        "keyword-spacing": ["error", { "before": false, "after": false }],
+        "space-before-function-paren": 0,
+        "space-before-blocks": ["error", "never"],
+        "camelcase": 0,
+        "handle-callback-err": ["error", "none"]
+    }
+}

@@ -21,7 +21,7 @@ var collectionRoute = require('./routes/collection');
 
 // set the base dir to __dirname when running as webapp and electron path if running as electron app
 var dir_base = __dirname;
-if (process.versions['electron']) {
+if(process.versions['electron']){
     dir_base = path.join(process.resourcesPath.toString(), 'app/');
 }
 
@@ -45,30 +45,30 @@ app.set('view engine', 'hbs');
 // helpers for the handlebars templating platform
 handlebars = handlebars.create({
     helpers: {
-        __: function (value) {
+        __: function (value){
             return i18n.__(value);
         },
-        toJSON: function (object) {
+        toJSON: function (object){
             return JSON.stringify(object);
         },
-        niceBool: function (object) {
-            if (object === undefined) return 'No';
-            if (object === true) return 'Yes';
-            else return 'No';
+        niceBool: function (object){
+            if(object === undefined)return'No';
+            if(object === true)return'Yes';
+            return'No';
         },
-        app_context: function () {
-            if (nconf.stores.app.get('app:context') != undefined) {
-                return '/' + nconf.stores.app.get('app:context');
-            } else return '';
+        app_context: function (){
+            if(nconf.stores.app.get('app:context') !== undefined){
+                return'/' + nconf.stores.app.get('app:context');
+            }return'';
         },
-        formatBytes: function (bytes) {
-            if (bytes == 0) return '0 Byte';
+        formatBytes: function (bytes){
+            if(bytes === 0)return'0 Byte';
             var k = 1000;
             var decimals = 2;
             var dm = decimals + 1 || 3;
             var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
             var i = Math.floor(Math.log(bytes) / Math.log(k));
-            return (bytes / Math.pow(k, i)).toPrecision(dm) + ' ' + sizes[i];
+            return(bytes / Math.pow(k, i)).toPrecision(dm) + ' ' + sizes[i];
         }
     }
 });
@@ -81,18 +81,18 @@ var config_connections = path.join(dir_config, 'config.json');
 var config_app = path.join(dir_config, 'app.json');
 
 // Check existence of config dir and config files, create if nothing
-if (!fs.existsSync(dir_config)) fs.mkdirSync(dir_config);
-if (!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, '{}');
-if (!fs.existsSync(config_app)) fs.writeFileSync(config_app, '{}');
+if(!fs.existsSync(dir_config)) fs.mkdirSync(dir_config);
+if(!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, '{}');
+if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, '{}');
 
 // if config files exist but are blank we write blank files for nconf
-if (fs.existsSync(config_app, 'utf8')) {
-    if (fs.readFileSync(config_app, 'utf8') == '') {
+if(fs.existsSync(config_app, 'utf8')){
+    if(fs.readFileSync(config_app, 'utf8') === ''){
         fs.writeFileSync(config_app, '{}', 'utf8');
     }
 }
-if (fs.existsSync(config_connections, 'utf8')) {
-    if (fs.readFileSync(config_connections, 'utf8') == '') {
+if(fs.existsSync(config_connections, 'utf8')){
+    if(fs.readFileSync(config_connections, 'utf8') === ''){
         fs.writeFileSync(config_connections, '{}', 'utf8');
     }
 }
@@ -107,13 +107,13 @@ var app_host = '0.0.0.0';
 var app_port = process.env.PORT || 1234;
 
 // get the app configs and override if present
-if (nconf.stores.app.get('app:host') != undefined) {
+if(nconf.stores.app.get('app:host') !== undefined){
     app_host = nconf.stores.app.get('app:host');
 }
-if (nconf.stores.app.get('app:port') != undefined) {
+if(nconf.stores.app.get('app:port') !== undefined){
     app_port = nconf.stores.app.get('app:port');
 }
-if (nconf.stores.app.get('app:locale') != undefined) {
+if(nconf.stores.app.get('app:locale') !== undefined){
     i18n.setLocale(nconf.stores.app.get('app:locale'));
 }
 
@@ -122,7 +122,7 @@ app.locals.app_port = app_port;
 
 // setup the app context
 var app_context = '';
-if (nconf.stores.app.get('app:context') != undefined) {
+if(nconf.stores.app.get('app:context') !== undefined){
     app_context = '/' + nconf.stores.app.get('app:context');
 }
 
@@ -136,7 +136,7 @@ app.use(session({
     secret: '858SGTUyX8w1L6JNm1m93Cvm8uX1QX2D',
     resave: true,
     saveUninitialized: true
-}))
+}));
 
 // front-end modules loaded from NPM
 app.use(app_context + '/font-awesome', express.static(path.join(dir_base, 'node_modules/font-awesome/')));
@@ -148,7 +148,7 @@ app.use(app_context + '/js', express.static(path.join(dir_base, 'public/js')));
 app.use(app_context + '/favicon.ico', express.static(path.join(dir_base, 'public/favicon.ico')));
 
 // Make stuff accessible to our router
-app.use(function (req, res, next) {
+app.use(function (req, res, next){
     req.nconf = nconf.stores;
     req.handlebars = handlebars;
     req.i18n = i18n;
@@ -158,7 +158,7 @@ app.use(function (req, res, next) {
 });
 
 // add context to route if required
-if (app_context != ''){
+if(app_context !== ''){
     app.use(app_context, apiRoute);
     app.use(app_context, usersRoute);
     app.use(app_context, configRoute);
@@ -177,7 +177,7 @@ if (app_context != ''){
 }
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req, res, next){
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -187,8 +187,8 @@ app.use(function (req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function (err, req, res, next) {
+if(app.get('env') === 'development'){
+    app.use(function (err, req, res, next){
         console.log(err.stack);
         res.status(err.status || 500);
         res.render('error', {
@@ -201,7 +201,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res, next){
     console.log(err.stack);
     res.status(err.status || 500);
     res.render('error', {
@@ -222,43 +222,44 @@ var connPool = require('./connections');
 var monitoring = require('./monitoring');
 app.locals.dbConnections = null;
 
-async.forEachOf(connection_list, function (value, key, callback) {
+async.forEachOf(connection_list, function (value, key, callback){
     var MongoURI = require('mongo-uri');
 
-    try {
+    try{
         uri = MongoURI.parse(value.connection_string);
-        connPool.addConnection({ connName: key, connString: value.connection_string, connOptions: value.connection_options }, app, function (err, data) {
-            if (err) delete connection_list[key];
+        connPool.addConnection({ connName: key, connString: value.connection_string, connOptions: value.connection_options }, app, function (err, data){
+            if(err)delete connection_list[key];
             callback();
         });
-    } catch (err) {
+    }catch(err){
         callback();
     }
 },
-    function (err) {
-        if (err) console.error(err.message);
+    function (err){
+        if(err) console.error(err.message);
         // lift the app
-        app.listen(app_port, app_host, function () {
+        app.listen(app_port, app_host, function (){
             console.log('adminMongo listening on host: http://' + app_host + ':' + app_port + app_context);
 
             // used for electron to know when express app has started
             app.emit('startedAdminMongo');
 
-            if (nconf.stores.app.get('app:monitoring') != false) {
+            if(nconf.stores.app.get('app:monitoring') !== false){
                 // start the initial monitoring
                 monitoring.serverMonitoring(db, app.locals.dbConnections);
 
                 // Keep firing monitoring every 30 seconds
-                setInterval(function () {
+                setInterval(function (){
                     monitoring.serverMonitoring(db, app.locals.dbConnections);
                 }, 30000);
             }
-        }).on('error', function (err) {
-            if (err.code == 'EADDRINUSE') {
+        }).on('error', function (err){
+            if(err.code === 'EADDRINUSE'){
                 console.error('Error starting adminMongo: Port ' + app_port + ' already in use, choose another');
+            }else{
+                console.error('Error starting adminMongo: ' + err);
+                app.emit('errorAdminMongo');
             }
-            else console.error('Error starting adminMongo: ' + err)
-            app.emit('errorAdminMongo');
         });
     });
 
