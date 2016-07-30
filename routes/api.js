@@ -16,12 +16,12 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
 
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection name') });
+        res.status(400).json({'msg': req.i18n.__('Invalid connection name')});
     }
 
     // Validate database name
     if(req.params.db.indexOf(' ') > -1){
-        res.status(400).json({ 'msg': req.i18n.__('Invalid database name') });
+        res.status(400).json({'msg': req.i18n.__('Invalid database name')});
     }
 
     // Get DB's form pool
@@ -54,12 +54,12 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
         }
     }
 
-    mongo_db.collection(req.params.coll).find(query_obj, { skip: skip, limit: limit }).toArray(function (err, result){
+    mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function (err, result){
         if(err){
             console.error(err);
             res.status(500).json(err);
         }else{
-            mongo_db.collection(req.params.coll).find({}, { skip: skip, limit: limit }).toArray(function (err, simpleSearchFields){
+            mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).toArray(function (err, simpleSearchFields){
                 // get field names/keys of the Documents in collection
                 var fields = [];
                 for(var i = 0; i < simpleSearchFields.length; i++){
@@ -98,7 +98,7 @@ router.get('/api/monitoring/:conn', function (req, res, next){
     // 24 hours worth of 30 sec blocks (data refresh interval)
     var recordCount = (24 * 60) * 60 / 30;
 
-    req.db.find({ connectionName: req.params.conn }).sort({ eventDate: -1 }).limit(recordCount).exec(function (err, serverEvents){
+    req.db.find({connectionName: req.params.conn}).sort({eventDate: -1}).limit(recordCount).exec(function (err, serverEvents){
         var connectionsCurrent = [];
         var connectionsAvailable = [];
         var connectionsTotalCreated = [];
@@ -122,28 +122,28 @@ router.get('/api/monitoring/:conn', function (req, res, next){
                     _.each(serverEvents, function (value, key){
                         // connections
                         if(value.connections){
-                            connectionsCurrent.push({ x: value.eventDate, y: value.connections.current });
-                            connectionsAvailable.push({ x: value.eventDate, y: value.connections.available });
-                            connectionsTotalCreated.push({ x: value.eventDate, y: value.connections.totalCreated });
+                            connectionsCurrent.push({x: value.eventDate, y: value.connections.current});
+                            connectionsAvailable.push({x: value.eventDate, y: value.connections.available});
+                            connectionsTotalCreated.push({x: value.eventDate, y: value.connections.totalCreated});
                         }
                         // clients
                         if(value.activeClients){
-                            clientsTotal.push({ x: value.eventDate, y: value.activeClients.total });
-                            clientsReaders.push({ x: value.eventDate, y: value.activeClients.readers });
-                            clientsWriters.push({ x: value.eventDate, y: value.activeClients.writers });
+                            clientsTotal.push({x: value.eventDate, y: value.activeClients.total});
+                            clientsReaders.push({x: value.eventDate, y: value.activeClients.readers});
+                            clientsWriters.push({x: value.eventDate, y: value.activeClients.writers});
                         }
                         // memory
                         if(value.memory){
-                            memoryVirtual.push({ x: value.eventDate, y: value.memory.virtual });
-                            memoryMapped.push({ x: value.eventDate, y: value.memory.mapped });
-                            memoryCurrent.push({ x: value.eventDate, y: value.memory.resident });
+                            memoryVirtual.push({x: value.eventDate, y: value.memory.virtual});
+                            memoryMapped.push({x: value.eventDate, y: value.memory.mapped});
+                            memoryCurrent.push({x: value.eventDate, y: value.memory.resident});
                         }
 
                         if(value.docCounts){
-                            docsQueried.push({ x: value.eventDate, y: value.docCounts.queried });
-                            docsInserted.push({ x: value.eventDate, y: value.docCounts.inserted });
-                            docsDeleted.push({ x: value.eventDate, y: value.docCounts.deleted });
-                            docsUpdated.push({ x: value.eventDate, y: value.docCounts.updated });
+                            docsQueried.push({x: value.eventDate, y: value.docCounts.queried});
+                            docsInserted.push({x: value.eventDate, y: value.docCounts.inserted});
+                            docsDeleted.push({x: value.eventDate, y: value.docCounts.deleted});
+                            docsUpdated.push({x: value.eventDate, y: value.docCounts.updated});
                         }
                     });
                 }
@@ -174,9 +174,9 @@ router.get('/api/monitoring/:conn', function (req, res, next){
             }
 
             if(err){
-                res.status(400).json({ 'msg': req.i18n.__('Could not get server monitoring') });
+                res.status(400).json({'msg': req.i18n.__('Could not get server monitoring')});
             }else{
-                res.status(200).json({ data: returnedData, dataRetrieved: serverEvents[0].dataRetrieved, pid: serverEvents[0].pid, version: serverEvents[0].version, uptime: uptime });
+                res.status(200).json({data: returnedData, dataRetrieved: serverEvents[0].dataRetrieved, pid: serverEvents[0].pid, version: serverEvents[0].version, uptime: uptime});
             }
         }
     });

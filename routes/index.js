@@ -176,7 +176,7 @@ router.get('/app/:conn/:db', function (req, res, next){
     // do DB stuff
     common.get_db_stats(mongo_db, req.params.db, function (err, db_stats){
         common.get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list){
-            mongo_db.command({ usersInfo: 1 }, function (err, conn_users){
+            mongo_db.command({usersInfo: 1}, function (err, conn_users){
                 mongo_db.listCollections().toArray(function (err, collection_list){
                     res.render('db', {
                         conn_name: req.params.conn,
@@ -384,7 +384,7 @@ router.get('/app/:conn/:db/:coll/edit/:doc_id', function (req, res, next){
             _.forOwn(result.doc, function (value, key){
                 if(value){
                     if(value.toString().substring(0, 10) === 'data:image'){
-                        images.push({ 'field': key, 'src': value });
+                        images.push({'field': key, 'src': value});
                     }
                 }
             });
@@ -393,7 +393,7 @@ router.get('/app/:conn/:db/:coll/edit/:doc_id', function (req, res, next){
             _.forOwn(result.doc, function (value, key){
                 if(value){
                     if(value.toString().substring(0, 10) === 'data:video'){
-                        videos.push({ 'field': key, 'src': value, 'type': value.split(';')[0].replace('data:', '') });
+                        videos.push({'field': key, 'src': value, 'type': value.split(';')[0].replace('data:', '')});
                     }
                 }
             });
@@ -402,7 +402,7 @@ router.get('/app/:conn/:db/:coll/edit/:doc_id', function (req, res, next){
             _.forOwn(result.doc, function (value, key){
                 if(value){
                     if(value.toString().substring(0, 10) === 'data:audio'){
-                        audio.push({ 'field': key, 'src': value });
+                        audio.push({'field': key, 'src': value});
                     }
                 }
             });

@@ -46,7 +46,7 @@ exports.get_db_stats = function (mongo_db, db_name, cb){
                             var coll_obj = {};
                             async.forEachOf(exports.cleanCollections(coll_list), function (value, key, callback){
                                 mongo_db.db(tempDBName).collection(value).stats(function (err, coll_stat){
-                                    coll_obj[value] = { Storage: coll_stat.size, Documents: coll_stat.count };
+                                    coll_obj[value] = {Storage: coll_stat.size, Documents: coll_stat.count};
                                     callback();
                                 });
                             }, function (err){
@@ -131,42 +131,42 @@ exports.get_id_type = function (mongo, collection, doc_id, cb){
         var ObjectID = require('mongodb').ObjectID;
         // if a valid ObjectId we try that, then then try as a string
         if(ObjectID.isValid(doc_id)){
-            mongo.collection(collection).findOne({ _id: ObjectID(doc_id) }, function (err, doc){
+            mongo.collection(collection).findOne({_id: ObjectID(doc_id)}, function (err, doc){
                 if(doc){
                     // doc_id is an ObjectId
-                    cb(null, { 'doc_id_type': ObjectID(doc_id), 'doc': doc });
+                    cb(null, {'doc_id_type': ObjectID(doc_id), 'doc': doc});
                 }else{
-                    mongo.collection(collection).findOne({ _id: doc_id }, function (err, doc){
+                    mongo.collection(collection).findOne({_id: doc_id}, function (err, doc){
                         if(doc){
                             // doc_id is string
-                            cb(null, { 'doc_id_type': doc_id, 'doc': doc });
+                            cb(null, {'doc_id_type': doc_id, 'doc': doc});
                         }else{
-                            cb('Document not found', { 'doc_id_type': null, 'doc': null });
+                            cb('Document not found', {'doc_id_type': null, 'doc': null});
                         }
                     });
                 }
             });
         }else{
             // if the value is not a valid ObjectId value we try as an integer then as a last resort, a string.
-            mongo.collection(collection).findOne({ _id: parseInt(doc_id) }, function (err, doc){
+            mongo.collection(collection).findOne({_id: parseInt(doc_id)}, function (err, doc){
                 if(doc){
                     // doc_id is integer
-                    cb(null, { 'doc_id_type': parseInt(doc_id), 'doc': doc });
+                    cb(null, {'doc_id_type': parseInt(doc_id), 'doc': doc});
                     return;
                 }else{
-                    mongo.collection(collection).findOne({ _id: doc_id }, function (err, doc){
+                    mongo.collection(collection).findOne({_id: doc_id}, function (err, doc){
                         if(doc){
                             // doc_id is string
-                            cb(null, { 'doc_id_type': doc_id, 'doc': doc });
+                            cb(null, {'doc_id_type': doc_id, 'doc': doc});
                         }else{
-                            cb('Document not found', { 'doc_id_type': null, 'doc': null });
+                            cb('Document not found', {'doc_id_type': null, 'doc': null});
                         }
                     });
                 }
             });
         }
     }else{
-        cb(null, { 'doc_id_type': null, 'doc': null });
+        cb(null, {'doc_id_type': null, 'doc': null});
     }
 };
 

@@ -24,6 +24,7 @@
         "space-before-function-paren": 0,
         "space-before-blocks": ["error", "never"],
         "camelcase": 0,
-        "handle-callback-err": ["error", "none"]
+        "handle-callback-err": ["error", "none"],
+        "object-curly-spacing": ["error", "never"]
     }
 }

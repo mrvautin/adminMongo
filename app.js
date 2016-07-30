@@ -35,11 +35,11 @@ var i18n = new (require('i18n-2'))({
 
 // setup DB for server stats
 var Datastore = require('nedb');
-var db = new Datastore({ filename: path.join(dir_base, 'data/dbStats.db'), autoload: true });
+var db = new Datastore({filename: path.join(dir_base, 'data/dbStats.db'), autoload: true});
 
 // view engine setup
 app.set('views', path.join(dir_base, 'views/'));
-app.engine('hbs', handlebars({ extname: 'hbs', defaultLayout: path.join(dir_base, 'views/layouts/layout.hbs') }));
+app.engine('hbs', handlebars({extname: 'hbs', defaultLayout: path.join(dir_base, 'views/layouts/layout.hbs')}));
 app.set('view engine', 'hbs');
 
 // helpers for the handlebars templating platform
@@ -99,8 +99,8 @@ if(fs.existsSync(config_connections, 'utf8')){
 
 // setup the two conf. 'app' holds application config, and connections
 // holds the mongoDB connections
-nconf.add('connections', { type: 'file', file: config_connections });
-nconf.add('app', { type: 'file', file: config_app });
+nconf.add('connections', {type: 'file', file: config_connections});
+nconf.add('app', {type: 'file', file: config_app});
 
 // set app defaults
 var app_host = '0.0.0.0';
@@ -127,8 +127,8 @@ if(nconf.stores.app.get('app:context') !== undefined){
 }
 
 app.use(logger('dev'));
-app.use(bodyParser.json({ limit: '16mb' }));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '16mb'}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
 // setup session
@@ -227,7 +227,7 @@ async.forEachOf(connection_list, function (value, key, callback){
 
     try{
         uri = MongoURI.parse(value.connection_string);
-        connPool.addConnection({ connName: key, connString: value.connection_string, connOptions: value.connection_options }, app, function (err, data){
+        connPool.addConnection({connName: key, connString: value.connection_string, connOptions: value.connection_options}, app, function (err, data){
             if(err)delete connection_list[key];
             callback();
         });

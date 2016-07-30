@@ -24,7 +24,7 @@ function serverMonitoringCleanup(db, conn){
             idArray.push(value._id);
         });
 
-        db.remove({'_id': {'$in': idArray}}, { multi: true }, function (err, newDoc){});
+        db.remove({'_id': {'$in': idArray}}, {multi: true}, function (err, newDoc){});
     });
 };
 

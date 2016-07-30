@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 
-exports.addConnection = function (connection, app, callback) {
+exports.addConnection = function (connection, app, callback){
     if(!app.locals.dbConnections){
         app.locals.dbConnections = [];
     }
@@ -9,7 +9,7 @@ exports.addConnection = function (connection, app, callback) {
         connection.connOptions = {};
     }
 
-    MongoClient.connect(connection.connString, connection.connOptions, function(err, database) {
+    MongoClient.connect(connection.connString, connection.connOptions, function(err, database){
         if(err){
             callback(err, null);
         }else{
@@ -17,7 +17,7 @@ exports.addConnection = function (connection, app, callback) {
             dbObj.native = database;
             dbObj.connString = connection.connString;
             dbObj.connOptions = connection.connOptions;
-            
+
             app.locals.dbConnections[connection.connName] = null;
             app.locals.dbConnections[connection.connName] = dbObj;
             callback(null, null);
@@ -25,7 +25,7 @@ exports.addConnection = function (connection, app, callback) {
     });
 };
 
-exports.removeConnection = function (connection, app) {
+exports.removeConnection = function (connection, app){
     if(!app.locals.dbConnections){
         app.locals.dbConnections = [];
     }
