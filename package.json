@@ -43,7 +43,7 @@
   "dependencies": {
     "async": "^2.0.0",
     "body-parser": "^1.15.2",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^3.3.7",
     "config": "^1.21.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
@@ -52,7 +52,7 @@
     "font-awesome": "^4.6.3",
     "hbs": "^4.0.0",
     "i18n-2": "^0.6.3",
-    "jquery": "^2.2.4",
+    "jquery": "^3.1.0",
     "lodash": "^4.13.1",
     "mongo-uri": "^0.1.2",
     "mongodb": "^2.2.4",

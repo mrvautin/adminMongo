@@ -90,13 +90,13 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/collection/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/coll_name_edit",
                 data: {"new_collection_name" : newCollName}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $("#headCollectionName").text(newCollName);
                 $('#collectioName').modal('toggle');
                 localStorage.setItem('message_text', data.msg);
                 window.location.href = $("#app_context").val() + "/app/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + newCollName + "/view?page=1";
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }
@@ -112,12 +112,12 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/collection/" + $("#conn_name").val() + "/" + $("#db_name").val()+ "/coll_create",
                 data: {"collection_name" : $("#new_coll_name").val()}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $("#del_coll_name").append('<option>' + $("#new_coll_name").val() + '</option>');
                 $("#new_coll_name").val('');
                 show_notification(data.msg,"success");
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }else{
@@ -132,12 +132,12 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/collection/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/coll_delete",
                 data: {"collection_name" : $("#del_coll_name option:selected" ).text()}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $("#del_coll_name option:contains('" + data.coll_name + "')").remove();
                 $("#del_coll_name").val($("#del_coll_name option:first").val());
                 show_notification(data.msg,"success");
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }
@@ -150,12 +150,12 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/database/" + $("#conn_name").val() + "/db_create",
                 data: {"db_name" : $("#new_db_name").val()}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $("#del_db_name").append('<option>' + $("#new_db_name").val() + '</option>');
                 $("#new_db_name").val('');
                 show_notification(data.msg,"success");
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }else{
@@ -170,12 +170,12 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/database/" + $("#conn_name").val() + "/db_delete",
                 data: {"db_name" : $("#del_db_name option:selected" ).text()}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $("#del_db_name option:contains('" + data.db_name + "')").remove();
                 $("#del_db_name").val($("#del_db_name option:first").val());
                 show_notification(data.msg,"success");
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }else{
@@ -206,7 +206,7 @@ $(document).ready(function() {
                     "roles_text": $("#new_user_roles").val()
                 }
         })
-        .success(function(data) {
+        .done(function(data) {
             $("#del_user_name").append('<option>' + $("#new_username").val() + '</option>');
             show_notification(data.msg,"success");
 
@@ -216,7 +216,7 @@ $(document).ready(function() {
             $("#new_password_confirm").val('');
             $("#new_user_roles").val('');
         })
-        .error(function(data) {
+        .fail(function(data) {
             show_notification(data.responseJSON.msg,"danger");
         });
     });
@@ -237,12 +237,12 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/users/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/user_delete",
                 data: {"username": $("#del_user_name option:selected" ).text()}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $("#del_user_name option:contains('" + $("#del_user_name option:selected" ).text() + "')").remove();
                 $("#del_user_name").val($("#del_user_name option:first").val());
                 show_notification(data.msg,"success");
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }
@@ -267,13 +267,13 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/config/add_config",
                 data: data_obj
             })
-            .success(function(data) {
+            .done(function(data) {
                 show_notification(data.msg,"success");
                 setInterval(function() {
                     location.reload();
                 }, 2500);
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }else{
@@ -291,11 +291,11 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/config/drop_config",
                 data: {"curr_config":  current_name}
             })
-            .success(function(data) {
+            .done(function(data) {
                 rowElement.remove();
                 show_notification(data.msg,"success");
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }
@@ -312,12 +312,12 @@ $(document).ready(function() {
                 url: $("#app_context").val() + "/config/update_config",
                 data: {"curr_config":  current_name, "conn_name": new_name, "conn_string": new_string}
             })
-            .success(function(data) {
+            .done(function(data) {
                 $(this).parents('.connectionRow').find('.conf_conn_name').val(data.name);
                 $(this).parents('.connectionRow').find('.conf_conn_string').val(data.string);
                 show_notification(data.msg,"success", true);
             })
-            .error(function(data) {
+            .fail(function(data) {
                 show_notification(data.responseJSON.msg,"danger");
             });
         }else{
@@ -434,11 +434,11 @@ function deleteDoc(doc_id){
             url: $("#app_context").val() + "/document/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/doc_delete",
             data: {"doc_id": doc_id}
         })
-        .success(function(data) {
+        .done(function(data) {
             show_notification(data.msg,"success");
             paginate();
         })
-        .error(function(data) {
+        .fail(function(data) {
             show_notification(data.responseJSON.msg,"danger");
         });
     }
@@ -459,10 +459,10 @@ $(document).on('click', '#coll_addindex', function(){
             url: $("#app_context").val() + "/collection/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/create_index",
             data: data_obj 
         })
-        .success(function(data) {
+        .done(function(data) {
             show_notification(data.msg,"success", true);
         })
-        .error(function(data) {
+        .fail(function(data) {
             show_notification(data.responseJSON.msg,"danger");
         });
     }else{
@@ -476,11 +476,11 @@ function dropIndex(index_index){
         url: $("#app_context").val() + "/collection/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/drop_index",
         data: {"index": index_index}
     })
-    .success(function(data) {
+    .done(function(data) {
         $('#index_row_' + index_index).remove();
         show_notification(data.msg,"success");
     })
-    .error(function(data) {
+    .fail(function(data) {
         show_notification(data.responseJSON.msg,"danger");
     });
 }
