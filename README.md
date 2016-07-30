@@ -246,6 +246,8 @@ To run tests, simply run:
 npm test
 ```
 
+**Note: You will need to ensure there is no password protection setup in the `/config/app.json`.**
+
 *You may need to edit the variables and connection string in `/tests/tests.js` for your MongoDB instance.*
 
 If you see any missing tests, please submit a PR.
@@ -259,8 +261,6 @@ If you see any missing tests, please submit a PR.
 5. Submit a pull request :D
 
 ## Future plans
-
-- MongoDB monitoring/reporting
 
 Please make any suggestions.
 
