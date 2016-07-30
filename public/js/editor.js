@@ -6,7 +6,7 @@ $(document).ready(function() {
     editor.getSession().setUseWorker(false);
     editor.$blockScrolling = Infinity;
     
-    $("#submit_json").click(function() {
+    $(document).on('click', '#submit_json', function(){
         try {
             // convert BSON string to EJSON
             var ejson = toEJSON.serializeString(editor.getValue());

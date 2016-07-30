@@ -9,14 +9,14 @@ $(document).ready(function() {
     }
     
     // To reset we call paginate() with no query object
-    $("#searchReset").click(function() {
+    $(document).on('click', '#searchReset', function(){
         if(!$('#searchReset').hasClass("disabled")){
             localStorage.removeItem('searchQuery');
             window.location.href = $("#app_context").val() + "/app/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $("#coll_name").val() + "/view/1";
         }
     });
     
-    $("#queryDocumentsAction").click(function() {
+    $(document).on('click', '#queryDocumentsAction', function(){
         var editor = ace.edit("json");
         var editor_val = editor.getValue();
 
@@ -35,19 +35,19 @@ $(document).ready(function() {
     });
     
     // redirect to export
-    $("#exportModalAction").click(function() {
+    $(document).on('click', '#exportModalAction', function(){
         var exportId = $("#exportExcludeID").is(":checked") ? "true" : "false";
         window.location.href = $("#app_context").val() + "/collection/" + $("#conn_name").val() + "/" + $("#db_name").val() + "/" + $('#export_coll').val() + "/export/" + exportId;
     });
     
     // sets the collection name to be used later to export entire collection
-    $(".exportLink").click(function() {  
+    $(document).on('click', '.exportLink', function(){
         $('#exportExcludeID').prop('checked', false);
         $('#export_coll').val($(this).attr("id"));
     });
     
     // set the URL search parameters
-    $("#searchModalAction").click(function() {
+    $(document).on('click', '#searchModalAction', function(){
         var key_name = $("#search_key_fields option:selected").text();
         var val = $("#search_value_value").val();
 
@@ -82,7 +82,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#coll_name_edit").click(function() {
+    $(document).on('click', '#coll_name_edit', function(){
         var newCollName = $("#coll_name_newval").val();
         if(newCollName != ""){
             $.ajax({
@@ -105,7 +105,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#coll_create").click(function() {
+    $(document).on('click', '#coll_create', function(){
         if($("#new_coll_name").val() != ""){
             $.ajax({
                 method: "POST",
@@ -125,7 +125,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#coll_delete").click(function() {
+    $(document).on('click', '#coll_delete', function(){
         if (confirm("WARNING: Are you sure you want to delete this collection and all documents?") == true) {
             $.ajax({
                 method: "POST",
@@ -143,7 +143,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#db_create").click(function() {
+    $(document).on('click', '#db_create', function(){
         if($("#new_db_name").val() != ""){
             $.ajax({
                 method: "POST",
@@ -163,7 +163,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#db_delete").click(function() {
+    $(document).on('click', '#db_delete', function(){
         if (confirm("WARNING: Are you sure you want to delete this collection and all documents?") == true) {
             $.ajax({
                 method: "POST",
@@ -183,7 +183,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#user_create").click(function() {
+    $(document).on('click', '#user_create', function(){
         if($("#new_username").val() == ""){
             show_notification("Please enter a Username","danger");
             return;
@@ -221,7 +221,7 @@ $(document).ready(function() {
         });
     });
     
-    $("#btnqueryDocuments").click(function() {
+    $(document).on('click', '#btnqueryDocuments', function(){
         var editor = ace.edit("json");
         if(localStorage.getItem('searchQuery')){
             editor.setValue(localStorage.getItem('searchQuery'));
@@ -229,8 +229,8 @@ $(document).ready(function() {
             editor.setValue("{}");
         }
     });
-    
-    $("#user_delete").click(function() {
+
+    $(document).on('click', '#user_delete', function(){
         if(confirm("WARNING: Are you sure you want to delete this user?") == true) {
             $.ajax({
                 method: "POST",
@@ -248,7 +248,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#add_config").click(function() {
+    $(document).on('click', '#add_config', function(){
         if($("#new_conf_conn_name").val() != "" && $("#new_conf_conn_string").val() != ""){
             var editor = ace.edit("json");
             var editor_val = editor.getValue();
@@ -281,7 +281,7 @@ $(document).ready(function() {
         }
     });
 
-    $(".btnConnDelete").click(function() {
+    $(document).on('click', '.btnConnDelete', function(){
         if(confirm("WARNING: Are you sure you want to delete this connection?") == true) {
             var current_name = $(this).parents('.conn_id').attr("id");
             var rowElement = $(this).parents('.connectionRow');
@@ -301,7 +301,7 @@ $(document).ready(function() {
         }
     });
 
-    $(".btnConnUpdate").click(function() {
+    $(document).on('click', '.btnConnUpdate', function(){
         if($("#conf_conn_name").val() != "" || $("#conf_conn_string").val() != "") {
             var current_name = $(this).parents('.conn_id').attr("id");
             var new_name = $(this).parents('.connectionRow').find('.conf_conn_name').val();
@@ -326,7 +326,7 @@ $(document).ready(function() {
     });
 
     // redirect to connection
-    $(".btnConnConnect").click(function() {
+    $(document).on('click', '.btnConnConnect', function(){
         window.location.href = $("#app_context").val() + "/app/" + $(this).parents('.conn_id').attr("id");
     });
 });
@@ -444,7 +444,7 @@ function deleteDoc(doc_id){
     }
 }
 
-$("#coll_addindex").click(function() {
+$(document).on('click', '#coll_addindex', function(){
     var edit = ace.edit("json");
     var json = $.parseJSON(edit.getValue());
     
