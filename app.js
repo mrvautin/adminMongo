@@ -10,8 +10,14 @@ var nconf = require('nconf');
 var session = require('express-session');
 var async = require('async');
 
-// routes
-var routes = require('./routes/index');
+// Define routes
+var indexRoute = require('./routes/index');
+var apiRoute = require('./routes/api');
+var usersRoute = require('./routes/users');
+var configRoute = require('./routes/config');
+var docRoute = require('./routes/document');
+var dbRoute = require('./routes/database');
+var collectionRoute = require('./routes/collection');
 
 // set the base dir to __dirname when running as webapp and electron path if running as electron app
 var dir_base = __dirname;
@@ -152,8 +158,23 @@ app.use(function (req, res, next) {
 });
 
 // add context to route if required
-if (app_context != '') app.use(app_context, routes);
-else app.use('/', routes);
+if (app_context != ''){
+    app.use(app_context, apiRoute);
+    app.use(app_context, usersRoute);
+    app.use(app_context, configRoute);
+    app.use(app_context, docRoute);
+    app.use(app_context, dbRoute);
+    app.use(app_context, collectionRoute);
+    app.use(app_context, indexRoute);
+}else{
+    app.use('/', apiRoute);
+    app.use('/', usersRoute);
+    app.use('/', configRoute);
+    app.use('/', docRoute);
+    app.use('/', dbRoute);
+    app.use('/', collectionRoute);
+    app.use('/', indexRoute);
+}
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -168,6 +189,7 @@ app.use(function (req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
+        console.log(err.stack);
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -180,12 +202,18 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
+    console.log(err.stack);
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
         error: {},
         helpers: handlebars.helpers
     });
+});
+
+app.on('uncaughtException', function(err){
+    console.error(err.stack);
+    process.exit();
 });
 
 // add the connections to the connection pool

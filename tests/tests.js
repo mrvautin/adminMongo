@@ -16,7 +16,7 @@ describe("Add connection, database and collection",function(){
 
     it("Add a new connection",function(done){
         agent
-            .post("/add_config")
+            .post("/config/add_config")
             .send({0: conn_name,1: "mongodb://localhost:27017", 2: "{}"})
             .expect(200)
             .expect({"msg": "Config successfully added"}, done);
@@ -24,7 +24,7 @@ describe("Add connection, database and collection",function(){
     
     it("Add a database",function(done){
         agent
-            .post("/" + conn_name + "/db_create")
+            .post("/database/" + conn_name + "/db_create")
             .send({"db_name" : db_name})
             .expect(200)
             .expect({"msg": "Database successfully created"}, done);
@@ -32,7 +32,7 @@ describe("Add connection, database and collection",function(){
 
     it("Add a collection",function(done){
         agent
-            .post("/" + conn_name + "/" + db_name + "/coll_create")
+            .post("/collection/" + conn_name + "/" + db_name + "/coll_create")
             .send({"collection_name" : coll_name})
             .expect(200)
             .expect({"msg": "Collection successfully created"}, done);
@@ -47,7 +47,7 @@ describe("User tests",function(){
             "roles_text": "read"
         }
         agent
-            .post("/" + conn_name + "/" + db_name + "/" + coll_name + "/user_create")
+            .post("/users/" + conn_name + "/" + db_name + "/user_create")
             .send(json)
             .expect(200)
             .expect({"msg": "User successfully created"}, done);
@@ -55,7 +55,7 @@ describe("User tests",function(){
  
     it('Delete a user', function(done){       
         agent
-            .post("/" + conn_name + "/" + db_name + "/" + coll_name + "/user_delete")
+            .post("/users/" + conn_name + "/" + db_name + "/user_delete")
             .send({"username": user_name})
             .expect(200)
             .expect({"msg": "User successfully deleted"}, done);
@@ -82,7 +82,7 @@ if(process.version.substring(1,2) >= 4){
             var json = '{"NewTestDocument":"Test Data","NewTestDateToday": ISODate("' + dte.toISOString() + '"),"NewTestDate5Days": ISODate("' + new Date(dte.setDate(dte.getDate() - 5)).toISOString() + '")}';
             var strJSON = toEJSON.serializeString(json);
             agent
-                .post("/" + conn_name + "/" + db_name + "/" + coll_name + "/insert_doc")
+                .post("/document/" + conn_name + "/" + db_name + "/" + coll_name + "/insert_doc")
                 .send({"objectData": strJSON})
                 .expect(200)
                 .end(function(err, result) {
@@ -173,7 +173,7 @@ if(process.version.substring(1,2) >= 4){
     
         it('Delete our new document', function(done){       
             agent
-                .post("/" + conn_name + "/" + db_name + "/" + coll_name + "/doc_delete")
+                .post("/document/" + conn_name + "/" + db_name + "/" + coll_name + "/doc_delete")
                 .send({"doc_id": doc_id})
                 .expect(200)
                 .expect({"msg": "Document successfully deleted"}, done);
@@ -186,7 +186,7 @@ if(process.version.substring(1,2) >= 4){
 describe("Remove and remove collection and connection",function(){
     it("Rename the collection",function(done){
         agent
-            .post("/" + conn_name + "/" + db_name + "/" + coll_name + "/coll_name_edit")
+            .post("/collection/" + conn_name + "/" + db_name + "/" + coll_name + "/coll_name_edit")
             .send({"new_collection_name" :  coll_name + "Changed"})
             .expect(200)
             .expect({"msg": "Collection successfully renamed"}, done);
@@ -194,7 +194,7 @@ describe("Remove and remove collection and connection",function(){
     
     it("Remove the collection",function(done){
         agent
-            .post("/" + conn_name + "/" + db_name + "/coll_delete")
+            .post("/collection/" + conn_name + "/" + db_name + "/coll_delete")
             .send({"collection_name" : coll_name + "Changed"})
             .expect(200)
             .expect({"coll_name": coll_name + "Changed", "msg": "Collection successfully deleted"}, done);
@@ -202,7 +202,7 @@ describe("Remove and remove collection and connection",function(){
     
     it("Remove the database",function(done){
         agent
-            .post("/" + conn_name + "/db_delete")
+            .post("/database/" + conn_name + "/db_delete")
             .send({"db_name" : db_name})
             .expect(200)
             .expect({"db_name": db_name, "msg": "Database successfully deleted"}, done);
@@ -210,7 +210,7 @@ describe("Remove and remove collection and connection",function(){
 
     it("Remove the connection",function(done){
         agent
-            .post("/drop_config")
+            .post("/config/drop_config")
             .send({"curr_config": conn_name})
             .expect(200)
             .expect({"msg": "Config successfully deleted"}, done);
