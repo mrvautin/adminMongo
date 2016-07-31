@@ -131,7 +131,7 @@ router.get('/app/:conn', function (req, res, next){
 
     // If there is a DB in the connection string, we redirect to the DB level
     if(uri.database){
-        res.redirect(req.app_context + '/' + req.params.conn + '/' + uri.database);
+        res.redirect(req.app_context + '/app/' + req.params.conn + '/' + uri.database);
         return;
     }
 
