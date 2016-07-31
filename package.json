@@ -38,7 +38,10 @@
     "interface",
     "document",
     "collection",
-    "express"
+    "express",
+    "electron",
+    "cross platform",
+    "open source"
   ],
   "dependencies": {
     "async": "^2.0.0",

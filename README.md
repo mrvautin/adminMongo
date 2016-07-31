@@ -38,7 +38,17 @@ To build for Linux:
 
 Once built, the executable will be in the `/releases` folder.
 
-> It's been tested on Mac and Windows 10. Linux has not been tested. Please report any issues.
+### Prebuilt binaries
+
+Prebuilt binaries can be downloaded here:
+
+[Mac 64bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Mac.zip) 
+
+[Windows 32bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Win32.zip) 
+
+[Windows 64bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Win64.zip) 
+
+> The Electron builds have been tested on Mac and Windows 10. Linux has not been tested. Please report any issues.
 
 ## Deploy on Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
