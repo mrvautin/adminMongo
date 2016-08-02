@@ -8,6 +8,11 @@ $(document).ready(function(){
         paginate();
     }
 
+    // allow collapsable side menu's
+    $(document).on('click', '.main-menu', function(){
+        $(this).parent().nextUntil('.main-menu').slideToggle('slow');
+    });
+
     // To reset we call paginate() with no query object
     $(document).on('click', '#searchReset', function(){
         if(!$('#searchReset').hasClass('disabled')){

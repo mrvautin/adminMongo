@@ -80,9 +80,9 @@
                             <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a></li>
                         {{/if}}
                         {{#each sidebar_list}}
-                            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
+                            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a><div class="pull-right main-menu"><i class="fa fa-angle-down" aria-hidden="true"></i></div></li>
                             {{#each this}}
-                                <li class="list-group-item coll_indent">&nbsp;&nbsp;&nbsp;<i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;<a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{this}}/view">{{this}}</a></li>
+                                <li class="list-group-item coll_indent sub-menu">&nbsp;&nbsp;&nbsp;<i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;<a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{this}}/view">{{this}}</a></li>
                             {{/each}}
                         {{/each}}
                     </ul>
