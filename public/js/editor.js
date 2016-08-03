@@ -19,6 +19,12 @@ $(document).ready(function(){
             })
             .done(function(data){
                 show_notification(data.msg, 'success');
+                if(data.doc_id){
+                    setInterval(function(){
+                        // remove "new" and replace with "edit" and redirect to edit the doc
+                        window.location = window.location.href.substring(0, window.location.href.length - 3) + 'edit/' + data.doc_id;
+                    }, 2500);
+                }
             })
             .fail(function(data){
                 show_notification(data.responseJSON.msg, 'danger');
