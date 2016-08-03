@@ -98,9 +98,10 @@ exports.get_db_list = function (uri, mongo_db, cb){
     var db_arr = [];
 
     // if a DB is not specified in the Conn string we try get a list
-    if(uri.database === undefined){
+    if(uri.database === undefined || uri.database === null){
         // try go all admin and get the list of DB's
         adminDb.listDatabases(function (err, db_list){
+            console.log(err);
             if(db_list !== undefined){
                 async.forEachOf(db_list.databases, function (value, key, callback){
                     var skipped_dbs = ['null', 'admin', 'local'];
