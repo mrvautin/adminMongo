@@ -1,12 +1,12 @@
-<div class="col-md-10 col-lg-10">
-    <ol class="breadcrumb">
-        <li><a href="{{app_context}}/app">{{__ "Home"}}</a></li>
-        <li><a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a>&nbsp;({{__ "connection"}})</li>
-        <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;({{__ "database"}})</li>
-        <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;({{__ "collection"}})</li>
-    </ol>
+<ol class="breadcrumb">
+    <li><a href="{{app_context}}/app">{{__ "Home"}}</a></li>
+    <li><a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a>&nbsp;({{__ "connection"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;({{__ "database"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;({{__ "collection"}})</li>
+</ol>
+<div class="col-lg-12">
     <a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view" class="btn btn-warning btn-sm pull-left action_button">{{__ "Back"}}</a>
     <button class="btn btn-success btn-sm pull-right action_button" id="submit_json">{{__ "Add document"}}</button>
     <div class="new_json" id="json">{}</div>
-    <input type="hidden" id="edit_request_type" value="insert_doc">
 </div>
+<input type="hidden" id="edit_request_type" value="insert_doc">

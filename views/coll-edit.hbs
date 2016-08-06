@@ -1,49 +1,47 @@
-<div class="col-md-10 col-lg-10">
-	<ol class="breadcrumb">
-		<li><a href="{{app_context}}/app">{{__ "Home"}}</a></li>
-		<li><a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a>&nbsp;({{__ "connection"}})</li>
-		<li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;({{__ "database"}})</li>
-		<li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;({{__ "collection"}})</li>
-	</ol>
-	<div class="col-lg-12 no-side-pad">
-		<a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view" class="btn btn-warning btn-sm pull-left action_button">{{__ "Back"}}</a>
-		<button class="btn btn-success btn-sm pull-right action_button" id="submit_json">{{__ "Save document"}}</button>
-	</div>
-	<div class="col-lg-12 no-side-pad">
-		<div class="edit_json" id="json">{{coll_doc}}</div>
-        <input type="hidden" id="edit_request_type" value="edit_doc">
-	</div>
-	<div class="col-lg-12 no-side-pad">
-		{{#if images_fields}}	
-			<div class="col-lg-4">
-				{{#each images_fields}}
-					<h4>Image</h4>
-					<p><strong>Field:</strong> {{this.field}}</p>
-					<img class="img-responsive" src="{{this.src}}"/>
-				{{/each}}
-			</div>
-		{{/if}}
-		{{#if video_fields}}
-			<div class="col-lg-4 no-side-pad">
-				{{#each video_fields}}
-					<h4>Video</h4>
-					<p><strong>Field:</strong> {{this.field}}</p>
-					<div class="embed-responsive embed-responsive-16by9">
-						<video class="embed-responsive-item" controls>
-							<source type="{{this.type}}" src="{{this.src}}">
-						</video>
-					</div>
-				{{/each}}
-			</div>
-		{{/if}}
-		{{#if audio_fields}}
-			<div class="col-lg-4">
-				{{#each audio_fields}}
-					<h4>Audio</h4>
-					<p><strong>Field:</strong> {{this.field}}</p>
-					<audio controls src="{{this.src}}"/>
-				{{/each}}
-			</div>
-		{{/if}}
-	</div>
+<ol class="breadcrumb">
+    <li><a href="{{app_context}}/app">{{__ "Home"}}</a></li>
+    <li><a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a>&nbsp;({{__ "connection"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;({{__ "database"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;({{__ "collection"}})</li>
+</ol>
+<div class="col-lg-12">
+    <a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view" class="btn btn-warning btn-sm pull-left action_button">{{__ "Back"}}</a>
+    <button class="btn btn-success btn-sm pull-right action_button" id="submit_json">{{__ "Save document"}}</button>
+</div>
+<div class="col-lg-12">
+    <div class="edit_json" id="json">{{coll_doc}}</div>
+    <input type="hidden" id="edit_request_type" value="edit_doc">
+</div>
+<div class="col-lg-12">
+    {{#if images_fields}}	
+        <div class="col-lg-4">
+            {{#each images_fields}}
+                <h4>Image</h4>
+                <p><strong>Field:</strong> {{this.field}}</p>
+                <img class="img-responsive" src="{{this.src}}"/>
+            {{/each}}
+        </div>
+    {{/if}}
+    {{#if video_fields}}
+        <div class="col-lg-4">
+            {{#each video_fields}}
+                <h4>Video</h4>
+                <p><strong>Field:</strong> {{this.field}}</p>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <video class="embed-responsive-item" controls>
+                        <source type="{{this.type}}" src="{{this.src}}">
+                    </video>
+                </div>
+            {{/each}}
+        </div>
+    {{/if}}
+    {{#if audio_fields}}
+        <div class="col-lg-4">
+            {{#each audio_fields}}
+                <h4>Audio</h4>
+                <p><strong>Field:</strong> {{this.field}}</p>
+                <audio controls src="{{this.src}}"/>
+            {{/each}}
+        </div>
+    {{/if}}
 </div>

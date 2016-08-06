@@ -61,6 +61,12 @@ handlebars = handlebars.create({
                 return'/' + nconf.stores.app.get('app:context');
             }return'';
         },
+        ifOr: function (v1, v2, options){
+            return(v1 || v2) ? options.fn(this) : options.inverse(this);
+        },
+        ifNotOr: function (v1, v2, options){
+            return(v1 || v2) ? options.inverse(this) : options.fn(this);
+        },
         formatBytes: function (bytes){
             if(bytes === 0)return'0 Byte';
             var k = 1000;
@@ -139,6 +145,7 @@ app.use(session({
 }));
 
 // front-end modules loaded from NPM
+app.use(app_context + '/static', express.static(path.join(dir_base, 'public/')));
 app.use(app_context + '/font-awesome', express.static(path.join(dir_base, 'node_modules/font-awesome/')));
 app.use(app_context + '/jquery', express.static(path.join(dir_base, 'node_modules/jquery/dist/')));
 app.use(app_context + '/bootstrap', express.static(path.join(dir_base, 'node_modules/bootstrap/dist/')));

@@ -9,9 +9,9 @@
     <title>adminMongo</title>
     <link rel='stylesheet' type='text/css' href='{{app_context}}/bootstrap/css/bootstrap.min.css' />
     <link rel='stylesheet' type='text/css' href='{{app_context}}/css/flatly.bootstrap.min.css' />
+    <link rel="stylesheet" type='text/css' href='{{app_context}}/css/highlightjs.github.min.css'>
     <link rel='stylesheet' type='text/css' href='{{app_context}}/css/style.css' />
     <link rel='stylesheet' type='text/css' href='{{app_context}}/font-awesome/css/font-awesome.min.css' />
-    <link rel="stylesheet" type='text/css' href='{{app_context}}/css/highlightjs.github.min.css'>
     <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
     <script src="{{app_context}}/jquery/jquery.min.js"></script>
     <script src="{{app_context}}/bootstrap/js/bootstrap.min.js"></script>
@@ -33,68 +33,108 @@
     <script>if (window.module) module = window.module;</script>
 </head>
 <body>
-      <nav class="navbar navbar-default navbar-static-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{{app_context}}/app">adminMongo</a>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-                {{#if conn_name}}
-                    <li><a href="{{app_context}}/app/monitoring/{{conn_name}}"><i class="fa fa-desktop"></i>&nbsp; {{__ "Monitoring"}}</a></li>
-                {{/if}}
-                <li><a href="{{app_context}}/app/connection_list"><i class="fa fa-plug"></i>&nbsp; {{__ "Connections"}}</a></li>
-                {{#if session.loggedIn}}
-                    <li><a href="{{app_context}}/app/logout"><i class="fa fa-sign-out"></i>&nbsp; {{__ "Logout"}}</a></li>
-                {{/if}}
-            </ul>
-        </div>
-    </nav>
-    <div class="container-fluid">
-        <div class="row">
-            {{#unless monitoring}}
-                {{#if conn_name}}
-                    <h2 class="text-center banner-heading">
-                        {{__ "Database"}}:
-                        {{#if db_name}}
-                            <a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>
-                        {{else}}
-                            <span class="text-warning"><i>{{__ "Not selected"}}</i></span>
-                        {{/if}}
-                        / {{__ "Collection"}} -
-                        {{#if coll_name}}
-                            <span id="headCollectionName" class="text-info">{{coll_name}}</span>
-                            <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#collectioName">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                            </button>
-                        {{else}}
-                            <span class="text-warning"><i>{{__ "Not selected"}}</i></span>
-                        {{/if}}
-                    </h2>
-                {{/if}}
-            {{/unless}}
+    <div class="container-fluid wrapper">
+        <div class="row row-offcanvas row-offcanvas-left">
             {{#if sidebar_list}}
-                <div id="sidebar" class="col-md-2 col-lg-2">
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-primary">{{__ "Database Objects"}}</li>
-                        {{#if conn_name}}
-                            <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a></li>
-                        {{/if}}
-                        {{#each sidebar_list}}
-                            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a><div class="pull-right main-menu"><i class="fa fa-angle-down" aria-hidden="true"></i></div></li>
-                            {{#each this}}
-                                <li class="list-group-item coll_indent sub-menu">&nbsp;&nbsp;&nbsp;<i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;<a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{this}}/view">{{this}}</a></li>
-                            {{/each}}
-                        {{/each}}
-                    </ul>
-                    <ul class="list-group">
-                        <li class="list-group-item list-group-item-primary">{{__ "Connections"}}</li>
-                        {{#each conn_list}}
-                            <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="{{app_context}}/app/{{@key}}">{{@key}}</a></li>
-                        {{/each}}
-                    </ul>
+            <div id="sidebar" class="column no-side-pad hidden-xs col-xs-12 col-sm-3 col-lg-2 sidebar-offcanvas">
+                <div class="row">
+                    <div class="col-lg-12 no-pad-left no-pad-right">
+                        <div class="navTitle"> 
+                            <a href="{{app_context}}/app"><img src="{{app_context}}/static/logo.png">adminMongo</a>
+                        </div>
+                    </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-12 no-pad-left no-pad-right">
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-primary">{{__ "Database Objects"}}</li>
+                            {{#if conn_name}}
+                                <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a></li>
+                            {{/if}}
+                            {{#each sidebar_list}}
+                                <li class="list-group-item mainMenu"><i class="fa fa-database"></i>&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a><div class="pull-right mainMenuToggle"><i class="fa fa-angle-down" aria-hidden="true"></i></div></li>
+                                {{#each this}}
+                                    <li class="list-group-item coll_indent sub-menu">&nbsp;&nbsp;&nbsp;<i class="fa fa-table"></i>&nbsp;&nbsp;&nbsp;<a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{this}}/view">{{this}}</a></li>
+                                {{/each}}
+                            {{/each}}
+                        </ul>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-primary">{{__ "Connections"}}</li>
+                            {{#each conn_list}}
+                                <li class="list-group-item"><i class="fa fa-plug"></i>&nbsp;<a href="{{app_context}}/app/{{@key}}">{{@key}}</a></li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
             {{/if}}
-            {{{body}}}
+            {{#ifOr monitoring connection_list}}
+            <div class="col-md-12 col-lg-12" id="main">
+            {{else}}
+            <div class="column col-xs-12 col-sm-9 col-lg-10" id="main">
+            {{/ifOr}}
+                <nav class="navbar navbar-default navbar-static-top">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="container-fluid no-pad-left">
+                        {{#ifOr monitoring connection_list}}
+                            <div class="navbar-left no-pad-left no-pad-right">
+                                <div class="navTitle navTitleDark"> 
+                                    <a href="{{app_context}}/app"><img src="{{app_context}}/static/logo.png">adminMongo</a>
+                                </div>
+                            </div>
+                        {{/ifOr}}
+                        {{#ifNotOr monitoring connection_list}}
+                            <div class="navbar-left no-pad-left no-pad-right">
+                                <button type="button" id="sidebarToggle" class="btn btn-success btn-sm pull-left"><i class="fa fa-bars" aria-hidden="true"></i></button>
+                            </div>
+                        {{/ifNotOr}}
+                        <ul class="nav navbar-nav navbar-right">
+                            <div id="navbar" class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav">
+                                    {{#if conn_name}}
+                                        <li><a href="{{app_context}}/app/monitoring/{{conn_name}}"><i class="fa fa-desktop"></i>&nbsp; {{__ "Monitoring"}}</a></li>
+                                    {{/if}}
+                                    <li><a href="{{app_context}}/app/connection_list"><i class="fa fa-plug"></i>&nbsp; {{__ "Connections"}}</a></li>
+                                    {{#if session.loggedIn}}
+                                        <li><a href="{{app_context}}/app/logout"><i class="fa fa-sign-out"></i>&nbsp; {{__ "Logout"}}</a></li>
+                                    {{/if}}
+                                </ul>
+                            </div
+                        </ul>
+                    </div>
+                </nav>
+                {{#unless monitoring}}
+                    {{#if conn_name}}
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3 class="text-center banner-heading">
+                                    {{__ "Database"}}:
+                                    {{#if db_name}}
+                                        <a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>
+                                    {{else}}
+                                        <span class="text-warning"><i>{{__ "Not selected"}}</i></span>
+                                    {{/if}}
+                                    / {{__ "Collection"}} -
+                                    {{#if coll_name}}
+                                        <span id="headCollectionName" class="text-info">{{coll_name}}</span>
+                                        <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#collectioName">
+                                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                        </button>
+                                    {{else}}
+                                        <span class="text-warning"><i>{{__ "Not selected"}}</i></span>
+                                    {{/if}}
+                                </h3>
+                            </div>
+                        </div>
+                    {{/if}}
+                {{/unless}}
+                {{{body}}}
+            </div>
             <input type="hidden" value="{{coll_count}}" id="coll_count">
             <input type="hidden" value="{{conn_name}}" id="conn_name">
             <input type="hidden" value="{{db_name}}" id="db_name">
@@ -102,7 +142,8 @@
             <input type="hidden" value="{{docs_per_page}}" id="docs_per_page">
             <input type="hidden" value="{{paginate}}" id="to_paginate">
             <input type="hidden" value="{{app_context}}" id="app_context">
-            <input type="hidden" id="export_coll">                   
+            <input type="hidden" id="export_coll"> 
+            <div id="mobile-indicator"></div>                  
         </div>
         <!-- Collection Name Modal -->
         <div class="modal fade" id="collectioName" tabindex="-1" role="dialog" aria-labelledby="collectionNameLabel">

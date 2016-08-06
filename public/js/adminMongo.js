@@ -8,9 +8,42 @@ $(document).ready(function(){
         paginate();
     }
 
+    // checks localstorage for sidemenu being opened/closed state
+    $('.mainMenu').each(function(index){
+        var menu = $(this).text().trim().toString();
+        if(window.localStorage.getItem(menu) === 'closed'){
+            $(this).addClass('collapsed');
+            $(this).nextUntil('.mainMenu').slideUp('fast');
+        }
+    });
+
+    // toggle the sidebar, resize the main view
+    $(document).on('click', '#sidebarToggle', function(){
+        $('.row-offcanvas').toggleClass('active');
+        $('#sidebar').toggleClass('hidden-xs');
+        $('#sidebar').toggleClass('hidden-sm');
+        $('#sidebar').toggleClass('hidden-md');
+        $('#sidebar').toggleClass('hidden-lg');
+        if($('.row-offcanvas').hasClass('active')){
+            $('#main').removeClass('col-sm-9 col-lg-10');
+            $('#main').addClass('col-sm-12 col-lg-12');
+        }else{
+            $('#main').removeClass('col-sm-12 col-lg-12');
+            $('#main').addClass('col-sm-9 col-lg-10');
+        }
+    });
+
     // allow collapsable side menu's
-    $(document).on('click', '.main-menu', function(){
-        $(this).parent().nextUntil('.main-menu').slideToggle('slow');
+    $(document).on('click', '.mainMenuToggle', function(){
+        if($(this).parent().hasClass('collapsed')){
+            window.localStorage.setItem($(this).prev().text().trim(), 'opened');
+            $(this).parent().removeClass('collapsed');
+            $(this).parent().nextUntil('.mainMenu').slideDown('fast');
+        }else{
+            window.localStorage.setItem($(this).prev().text().trim(), 'closed');
+            $(this).parent().addClass('collapsed');
+            $(this).parent().nextUntil('.mainMenu').slideUp('fast');
+        }
     });
 
     // To reset we call paginate() with no query object
@@ -95,13 +128,13 @@ $(document).ready(function(){
                 url: $('#app_context').val() + '/collection/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#coll_name').val() + '/coll_name_edit',
                 data: {'new_collection_name': newCollName}
             })
-                .done(function(data){
+            .done(function(data){
                 $('#headCollectionName').text(newCollName);
                 $('#collectioName').modal('toggle');
                 localStorage.setItem('message_text', data.msg);
                 window.location.href = $('#app_context').val() + '/app/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + newCollName + '/view?page=1';
             })
-                .fail(function(data){
+            .fail(function(data){
                 show_notification(data.responseJSON.msg, 'danger');
             });
         }else{
@@ -116,12 +149,12 @@ $(document).ready(function(){
                 url: $('#app_context').val() + '/collection/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/coll_create',
                 data: {'collection_name': $('#new_coll_name').val()}
             })
-                .done(function(data){
+            .done(function(data){
                 $('#del_coll_name').append('<option>' + $('#new_coll_name').val() + '</option>');
                 $('#new_coll_name').val('');
                 show_notification(data.msg, 'success');
             })
-                .fail(function(data){
+            .fail(function(data){
                 show_notification(data.responseJSON.msg, 'danger');
             });
         }else{
@@ -182,8 +215,6 @@ $(document).ready(function(){
             .fail(function(data){
                 show_notification(data.responseJSON.msg, 'danger');
             });
-        }else{
-            show_notification('Please enter a database name', 'danger');
         }
     });
 
@@ -214,7 +245,7 @@ $(document).ready(function(){
             $('#del_user_name').append('<option>' + $('#new_username').val() + '</option>');
             show_notification(data.msg, 'success');
 
-            // clear items
+        // clear items
             $('#new_username').val('');
             $('#new_password').val('');
             $('#new_password_confirm').val('');
@@ -360,7 +391,7 @@ function paginate(){
     })
     .done(function(response){
         // show message when none are found
-        if(response.data === ''){
+        if(response.data === '' || response.total_docs === 0){
             $('#doc_none_found').removeClass('hidden');
         }else{
             $('#doc_none_found').addClass('hidden');
@@ -385,21 +416,20 @@ function paginate(){
             isFiltered = " <span class='text-danger'>(filtered)</span>";
         }
 
-         // set the total record count
+        // set the total record count
         $('#recordCount').html(response.total_docs + isFiltered);
 
         // clear the div first
         $('#coll_docs').empty();
         for(var i = 0; i < response.data.length; i++){
-            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-pad-left"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
-            inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-left no-pad-right">';
-            inner_html += '<div class="btn-group btn-group-justified" role="group" aria-label="...">';
+            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
+            inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-right justifiedButtons">';
+            inner_html += '<div class="btn-group btn-group-justified justifiedButtons" role="group" aria-label="...">';
             inner_html += '<a href="#" class="btn btn-danger btn-sm" onclick="deleteDoc(\'' + response.data[i]._id + '\')">' + response.deleteButton + '</a>';
             inner_html += '<a href="' + $('#app_context').val() + '/app/' + conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">' + response.editButton + '</a>';
             inner_html += '</div></div>';
             $('#coll_docs').append(inner_html);
         };
-
         // Bind the DropDown Select For Fields
         var option = '';
         for(var x = 0; x < response.fields.length; x++){
@@ -407,6 +437,7 @@ function paginate(){
         }
         $('#search_key_fields').append(option);
 
+        // hide the loading placeholder
         $('#doc_load_placeholder').hide();
 
         // hook up the syntax highlight and prettify the json

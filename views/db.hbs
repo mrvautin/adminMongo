@@ -1,83 +1,78 @@
-<div class="col-md-10 col-lg-10">
-	<div class="col-lg-4">
-		<div class="col-lg-12">
-			<h3 class="no-pad-top">{{__ "Collection maintenance"}}</h3>
-			<label for="new_coll_name">{{__ "Create collection"}}</label>
-			<div class="input-group">
-				<input type="text" class="form-control input-sm" id="new_coll_name" placeholder="{{__ "collection Name"}}">
-				<span class="input-group-btn">
-					<button class="btn btn-success btn-sm" id="coll_create">{{__ "Create"}}</button>
-				</span>
-			</div></br>
-			<label for="del_coll_name">{{__ "Delete collection"}}</label>
-			<div class="input-group">
-				<select class="form-control input-sm" id="del_coll_name">
-					{{#each coll_list}}
-						<option>{{this}}</option>
-					{{/each}}
-				</select>
-				<span class="input-group-btn">
-					<button class="btn btn-danger btn-sm" id="coll_delete">{{__ "Delete"}}</button>
-				</span>	
-			</div>
-			<hr>
-			<h3>{{__ "Create User"}}</h3>
-			<label for="new_username">{{__ "Username"}}</label>
-			<input type="text" class="form-control input-sm" id="new_username" placeholder="{{__ "Username"}}"><br/>
-			<label for="new_pasword">{{__ "User Password"}}</label>
-			<input type="password" class="form-control input-sm" id="new_password" placeholder="{{__ "Password"}}"><br/>
-			<label for="new_password_confirm">{{__ "Confirm password"}}</label>
-			<input type="password" class="form-control input-sm" id="new_password_confirm" placeholder="{{__ "Confirm"}}"><br/>
-            <label for="new_user_roles">{{__ "Roles"}}</label>
-            <input type="text" class="form-control input-sm" id="new_user_roles" placeholder="{{__ "Optional: comma separated user roles"}}"><br/>
-			</br>
-			<button class="btn btn-success btn-sm pull-right" id="user_create">{{__ "Create user"}}</button>
-			</br></br>
-            {{#if conn_users}}
-                <label for="del_user_name">{{__ "Delete user"}}</label>
-                <div class="input-group">
-                    <select class="form-control input-sm" id="del_user_name">
-                        {{#each conn_users.users}}
-                            <option>{{this.user}}</option>
-                        {{/each}}
-                    </select>
-                    <span class="input-group-btn">
-                        <button class="btn btn-danger btn-sm" id="user_delete">{{__ "Delete"}}</button>
-                    </span>	
-                </div>
-            {{/if}}
-		</div>
-	</div>
-	<div class="col-lg-8">
-		<h3 class="no-pad-top">{{__ "Database statistics"}}</h3>
-        <div id="collection_chart"></div>
-		<ul class="list-group">
-			{{#each db_stats}}
-                <li class="list-group-item"><i class="fa fa-database"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
-                {{#each this}}  
-                    <li class="list-group-item coll_indent">
-                        <div class="row">
-                            <div class='col-lg-3 col-sm-12'>
-                                <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
-                            </div>
-                            <div class='col-lg-3 col-sm-4'>
-                                <i class="fa fa-hdd-o"></i>&nbsp; {{__ "Storage"}}: {{formatBytes this.Storage}}
-                            </div>
-                            <div class='col-lg-3 col-sm-4'>
-                                <i class="fa fa-file-text-o"></i>&nbsp; {{__ "Documents"}}: {{this.Documents}}
-                            </div>
-                            <div class='col-lg-3 col-sm-4'>
-                                <a href="#" id="{{@key}}" class="exportLink pull-right" data-toggle="modal" data-target="#exportModal"><i class="fa fa-download"></i>&nbsp; {{__ "Export"}}</a>
-                            </div>
-                        </div>
-                    </li>
-                {{/each}}
+<div class="col-lg-5">
+    <h4>{{__ "Collection maintenance"}}</h4>
+    <label for="new_coll_name">{{__ "Create collection"}}</label>
+    <div class="input-group">
+        <input type="text" class="form-control input-sm" id="new_coll_name" placeholder="{{__ "collection Name"}}">
+        <span class="input-group-btn">
+            <button class="btn btn-success btn-sm" id="coll_create">{{__ "Create"}}</button>
+        </span>
+    </div></br>
+    <label for="del_coll_name">{{__ "Delete collection"}}</label>
+    <div class="input-group">
+        <select class="form-control input-sm" id="del_coll_name">
+            {{#each coll_list}}
+                <option>{{this}}</option>
             {{/each}}
-		</ul>
-		<ul class="list-group">
-			{{#each db_list.databases}}
-				<li class="list-group-item"><strong>{{@key}}</strong>: {{this.name}}</li>
-			{{/each}}
-		</ul>
-	</div>
+        </select>
+        <span class="input-group-btn">
+            <button class="btn btn-danger btn-sm" id="coll_delete">{{__ "Delete"}}</button>
+        </span>	
+    </div>
+    <div class="formBreak"></div>
+    <h4>{{__ "Create User"}}</h4>
+    <label for="new_username">{{__ "Username"}}</label>
+    <input type="text" class="form-control input-sm" id="new_username" placeholder="{{__ "Username"}}"><br/>
+    <label for="new_pasword">{{__ "User Password"}}</label>
+    <input type="password" class="form-control input-sm" id="new_password" placeholder="{{__ "Password"}}"><br/>
+    <label for="new_password_confirm">{{__ "Confirm password"}}</label>
+    <input type="password" class="form-control input-sm" id="new_password_confirm" placeholder="{{__ "Confirm"}}"><br/>
+    <label for="new_user_roles">{{__ "Roles"}}</label>
+    <input type="text" class="form-control input-sm" id="new_user_roles" placeholder="{{__ "Optional: comma separated user roles"}}"><br/>
+    <button class="btn btn-success btn-sm pull-right" id="user_create">{{__ "Create user"}}</button>
+    <div class="formBreak"></div>
+    {{#if conn_users}}
+        <label for="del_user_name">{{__ "Delete user"}}</label>
+        <div class="input-group">
+            <select class="form-control input-sm" id="del_user_name">
+                {{#each conn_users.users}}
+                    <option>{{this.user}}</option>
+                {{/each}}
+            </select>
+            <span class="input-group-btn">
+                <button class="btn btn-danger btn-sm" id="user_delete">{{__ "Delete"}}</button>
+            </span>	
+        </div>
+    {{/if}}
+</div>
+<div class="col-lg-7">
+    <h4>{{__ "Database statistics"}}</h4>
+    <div id="collection_chart"></div>
+    <ul class="list-group">
+        {{#each db_stats}}
+            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
+            {{#each this}}  
+                <li class="list-group-item coll_indent">
+                    <div class="row">
+                        <div class='col-lg-3 col-sm-12'>
+                            <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
+                        </div>
+                        <div class='col-lg-3 col-sm-4'>
+                            <i class="fa fa-hdd-o"></i>&nbsp; {{__ "Storage"}}: {{formatBytes this.Storage}}
+                        </div>
+                        <div class='col-lg-3 col-sm-4'>
+                            <i class="fa fa-file-text-o"></i>&nbsp; {{__ "Documents"}}: {{this.Documents}}
+                        </div>
+                        <div class='col-lg-3 col-sm-4'>
+                            <a href="#" id="{{@key}}" class="exportLink pull-right" data-toggle="modal" data-target="#exportModal"><i class="fa fa-download"></i>&nbsp; {{__ "Export"}}</a>
+                        </div>
+                    </div>
+                </li>
+            {{/each}}
+        {{/each}}
+    </ul>
+    <ul class="list-group">
+        {{#each db_list.databases}}
+            <li class="list-group-item"><strong>{{@key}}</strong>: {{this.name}}</li>
+        {{/each}}
+    </ul>
 </div>
