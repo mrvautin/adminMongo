@@ -40,7 +40,11 @@ router.post('/document/:conn/:db/:coll/insert_doc', function (req, res, next){
             console.error('Error inserting document', err);
             res.status(400).json({'msg': req.i18n.__('Error inserting document') + ': ' + err});
         }else{
-            res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': docs.ops[0]._id});
+            var dataReturn = '';
+            if(docs.ops){
+                dataReturn = docs.ops[0]._id;
+            }
+            res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': dataReturn});
         }
     });
 });
