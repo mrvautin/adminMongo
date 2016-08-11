@@ -340,6 +340,21 @@ h4{
     overflow: auto
 }
 
+.code-block_expand{
+    position: absolute;
+    cursor: pointer;
+    top: 0.5em;
+    right: 0.5em;
+}
+
+.doc_view.expanded{
+    max-height: none;
+}
+
+.doc_view.expanded .code-block_expand{
+    transform: rotateZ(180deg);
+}
+
 .conectionOptions{
     max-height: 60px;
     min-height: 60px;
