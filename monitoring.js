@@ -58,8 +58,8 @@ exports.serverMonitoring = function (monitoringDB, dbs){
 
                 // set the values if we can get them
                 if(info){
-                    docCounts = getDocCounts(currDocCounts, info.metrics.document);
-                    activeClients = info.globalLock.activeClients;
+                    docCounts = info.metrics ? getDocCounts(currDocCounts, info.metrics.document) : 0;
+                    activeClients = info.globalLock ? info.globalLock.activeClients : 0;
                     pid = info.pid;
                     version = info.version;
                     uptime = info.uptime;
