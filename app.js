@@ -88,8 +88,35 @@ var config_app = path.join(dir_config, 'app.json');
 
 // Check existence of config dir and config files, create if nothing
 if(!fs.existsSync(dir_config)) fs.mkdirSync(dir_config);
-if(!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, '{}');
-if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, '{}');
+
+
+//The base of the /config/app.json file, will check against environment values
+var configApp = {
+    app: {}
+};
+if (process.env.HOST) configApp.app.host = process.env.HOST;
+if (process.env.PORT) configApp.app.port = process.env.PORT;
+if (process.env.DOCS_PER_PAGE) configApp.app.docs_per_page = process.env.DOCS_PER_PAGE;
+if (process.env.PASSWORD) configApp.app.password = process.env.PASSWORD;
+if (process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
+if (process.env.CONTEXT) configApp.app.locale = process.env.CONTEXT;
+if (process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
+
+if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(configApp));
+
+//Check the env for a connection to initiate
+var configConnection = {
+    connections: {}
+};
+if (process.env.CONN_NAME && process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_HOST) {
+    if (!process.env.DB_PORT) process.env.DB_PORT = '27017'; //Use the default mongodb port when DB_PORT is not set
+    configConnection.connections[process.env.CONN_NAME] = {
+        connection_options: {},
+        connection_string: "mongodb://" + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT
+    }
+}
+
+if(!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, JSON.stringify(configConnection));
 
 // if config files exist but are blank we write blank files for nconf
 if(fs.existsSync(config_app, 'utf8')){
@@ -107,6 +134,7 @@ if(fs.existsSync(config_connections, 'utf8')){
 // holds the mongoDB connections
 nconf.add('connections', {type: 'file', file: config_connections});
 nconf.add('app', {type: 'file', file: config_app});
+
 
 // set app defaults
 var app_host = '0.0.0.0';
