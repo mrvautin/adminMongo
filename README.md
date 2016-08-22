@@ -167,6 +167,7 @@ For example:
 Note: The connection can be either local or remote hosted on VPS or MongoDB service such as mLab.
 
 The connection can also be automatically initiated through the environment (or with the docker -e parameters)
+
 |Env-variable|Description|
 |--- |--- |
 |`CONN_NAME`|The name of the connection to create on boot|
