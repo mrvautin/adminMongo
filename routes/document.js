@@ -34,19 +34,35 @@ router.post('/document/:conn/:db/:coll/insert_doc', function (req, res, next){
         return;
     }
 
-    // adding a new doc
-    mongo_db.collection(req.params.coll).save(eJsonData, function (err, docs){
-        if(err){
-            console.error('Error inserting document', err);
-            res.status(400).json({'msg': req.i18n.__('Error inserting document') + ': ' + err});
-        }else{
-            var dataReturn = '';
-            if(docs.ops){
-                dataReturn = docs.ops[0]._id;
+    // if it's like an array of documents, we "insertMany"
+    if(_.isArrayLike(eJsonData) === true){
+        mongo_db.collection(req.params.coll).insertMany(eJsonData, function (err, docs){
+            if(err){
+                console.error('Error inserting document', err);
+                res.status(400).json({'msg': req.i18n.__('Error inserting document') + ': ' + err});
+            }else{
+                var dataReturn = '';
+                if(docs.ops){
+                    dataReturn = docs.ops[0]._id;
+                }
+                res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': dataReturn});
             }
-            res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': dataReturn});
-        }
-    });
+        });
+    }else{
+        // just the one document it seems so we call "save"
+        mongo_db.collection(req.params.coll).save(eJsonData, function (err, docs){
+            if(err){
+                console.error('Error inserting document', err);
+                res.status(400).json({'msg': req.i18n.__('Error inserting document') + ': ' + err});
+            }else{
+                var dataReturn = '';
+                if(docs.ops){
+                    dataReturn = docs.ops[0]._id;
+                }
+                res.status(200).json({'msg': req.i18n.__('Document successfully added'), 'doc_id': dataReturn});
+            }
+        });
+    }
 });
 
 // Edits/updates an existing document
