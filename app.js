@@ -1,10 +1,8 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var MongoClient = require('mongodb').MongoClient;
 var handlebars = require('express-handlebars');
 var nconf = require('nconf');
 var session = require('express-session');
@@ -89,31 +87,30 @@ var config_app = path.join(dir_config, 'app.json');
 // Check existence of config dir and config files, create if nothing
 if(!fs.existsSync(dir_config)) fs.mkdirSync(dir_config);
 
-
-//The base of the /config/app.json file, will check against environment values
+// The base of the /config/app.json file, will check against environment values
 var configApp = {
     app: {}
 };
-if (process.env.HOST) configApp.app.host = process.env.HOST;
-if (process.env.PORT) configApp.app.port = process.env.PORT;
-if (process.env.DOCS_PER_PAGE) configApp.app.docs_per_page = process.env.DOCS_PER_PAGE;
-if (process.env.PASSWORD) configApp.app.password = process.env.PASSWORD;
-if (process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
-if (process.env.CONTEXT) configApp.app.locale = process.env.CONTEXT;
-if (process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
+if(process.env.HOST) configApp.app.host = process.env.HOST;
+if(process.env.PORT) configApp.app.port = process.env.PORT;
+if(process.env.DOCS_PER_PAGE) configApp.app.docs_per_page = process.env.DOCS_PER_PAGE;
+if(process.env.PASSWORD) configApp.app.password = process.env.PASSWORD;
+if(process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
+if(process.env.CONTEXT) configApp.app.locale = process.env.CONTEXT;
+if(process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
 
 if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(configApp));
 
-//Check the env for a connection to initiate
+// Check the env for a connection to initiate
 var configConnection = {
     connections: {}
 };
-if (process.env.CONN_NAME && process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_HOST) {
-    if (!process.env.DB_PORT) process.env.DB_PORT = '27017'; //Use the default mongodb port when DB_PORT is not set
+if(process.env.CONN_NAME && process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_HOST){
+    if(!process.env.DB_PORT) process.env.DB_PORT = '27017'; // Use the default mongodb port when DB_PORT is not set
     configConnection.connections[process.env.CONN_NAME] = {
         connection_options: {},
-        connection_string: "mongodb://" + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT
-    }
+        connection_string: 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT
+    };
 }
 
 if(!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, JSON.stringify(configConnection));
@@ -134,7 +131,6 @@ if(fs.existsSync(config_connections, 'utf8')){
 // holds the mongoDB connections
 nconf.add('connections', {type: 'file', file: config_connections});
 nconf.add('app', {type: 'file', file: config_app});
-
 
 // set app defaults
 var app_host = '0.0.0.0';
@@ -261,7 +257,7 @@ async.forEachOf(connection_list, function (value, key, callback){
     var MongoURI = require('mongo-uri');
 
     try{
-        uri = MongoURI.parse(value.connection_string);
+        MongoURI.parse(value.connection_string);
         connPool.addConnection({connName: key, connString: value.connection_string, connOptions: value.connection_options}, app, function (err, data){
             if(err)delete connection_list[key];
             callback();
