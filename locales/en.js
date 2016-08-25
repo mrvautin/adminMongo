@@ -111,5 +111,6 @@
 	"Error creating collection": "Error creating collection",
 	"Monitoring": "Monitoring",
 	"Connection": "Connection",
-	"Error inserting document": "Error inserting document"
+	"Error inserting document": "Error inserting document",
+	"Documents successfully added": "Documents successfully added"
 }
