@@ -93,17 +93,20 @@ adminMongo will listen on host: `localhost` and  port: `1234` by default. This c
 
 > Note: Any changes to the config file requires a restart of the application
 
+All above parameters are usable through the environment which makes it very handy to when using adminMongo as a docker container!
+just run `docker run -e HOST=yourchoice -e PORT=1234 ...`
+
 The config file (optional) options are:
 
-|Option|Definition|
-|--- |--- |
-|`host`|The IP address  `adminMongo`  will listen on|
-|`port`|The Port `adminMongo` will listen on|
-|`docs_per_page`|When viewing docs you can specify how many are shown per page|
-|`password`|An application level password to add simply authentication|
-|`locale`|The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. This setting overrides the default/detected value|
-|`context`|Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.|
-|`monitoring`|Whether to run monitoring at regular intervals. Defaults to true or on|
+|Option|Env-variable|Definition|
+|--- |--- |--- |
+|`host`|`HOST`|The IP address  `adminMongo`  will listen on|
+|`port`|`PORT`|The Port `adminMongo` will listen on|
+|`docs_per_page`|`DOCS_PER_PAGE`|When viewing docs you can specify how many are shown per page|
+|`password`|`PASSWORD`|An application level password to add simply authentication|
+|`locale`|`LOCALE`|The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. This setting overrides the default/detected value|
+|`context`|`CONTEXT`|Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.|
+|`monitoring`|`MONITORING`|Whether to run monitoring at regular intervals. Defaults to true or on|
 
 ### Setting a context path
 
@@ -162,6 +165,16 @@ For example:
 ```
 
 Note: The connection can be either local or remote hosted on VPS or MongoDB service such as mLab.
+
+The connection can also be automatically initiated through the environment (or with the docker -e parameters)
+
+|Env-variable|Description|
+|--- |--- |
+|`CONN_NAME`|The name of the connection to create on boot|
+|`DB_USERNAME`|The username for the database connection|
+|`DB_PASSWORD`|The password fot the database user|
+|`DB_HOST`|The host IP address or DNS name without the port!|
+|`DB_PORT`|The port of the mongoDB database, if not provided the default 27017 will be used|
 
 *The Connection setup screen*
 ![adminMongo connections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_connections.png "adminMongo connections screen")
