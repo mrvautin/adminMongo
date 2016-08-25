@@ -110,5 +110,6 @@
 	"Error creating database": "Error creating database",
 	"Error creating collection": "Error creating collection",
 	"Monitoring": "Monitoring",
-	"Connection": "Connection"
+	"Connection": "Connection",
+	"Error inserting document": "Error inserting document"
 }
