@@ -1,6 +1,6 @@
 {
   "name": "admin-mongo",
-  "version": "0.0.17",
+  "version": "0.0.19",
   "description": "A Web user interface to administer MongoDB databases built using Express",
   "author": "Mark Moffat <mrvautin@gmail.com>",
   "private": false,
@@ -41,7 +41,9 @@
     "express",
     "electron",
     "cross platform",
-    "open source"
+    "open source",
+    "admin-mongo",
+    "adminmongo"
   ],
   "dependencies": {
     "async": "^2.0.0",

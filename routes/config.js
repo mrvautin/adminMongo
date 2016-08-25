@@ -15,6 +15,8 @@ router.post('/config/add_config', function (req, res, next){
     var connPool = require('../connections');
     var connection_list = req.nconf.connections.get('connections');
 
+
+
     // check if name already exists
     if(connection_list !== undefined){
         if(connection_list[req.body[0]] !== undefined){

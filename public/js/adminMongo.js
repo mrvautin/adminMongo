@@ -421,8 +421,10 @@ function paginate(){
 
         // clear the div first
         $('#coll_docs').empty();
+        var escaper = $('<div></div>');
         for(var i = 0; i < response.data.length; i++){
-            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block doc_view"><code class="json">' + JSON.stringify(response.data[i]) + '</code></pre></div>';
+            escaper[0].textContent = JSON.stringify(response.data[i], null, 4);
+            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block doc_view"><i class="fa fa-chevron-down code-block_expand"></i><code class="json">' + escaper[0].innerHTML + '</code></pre></div>';
             inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-right justifiedButtons">';
             inner_html += '<div class="btn-group btn-group-justified justifiedButtons" role="group" aria-label="...">';
             inner_html += '<a href="#" class="btn btn-danger btn-sm" onclick="deleteDoc(\'' + response.data[i]._id + '\')">' + response.deleteButton + '</a>';
@@ -441,11 +443,12 @@ function paginate(){
         $('#doc_load_placeholder').hide();
 
         // hook up the syntax highlight and prettify the json
+        hljs.configure({ languages: ['json'] });
         $('.code-block').each(function (i, block){
-            var jsonString = this.textContent;
-            var jsonPretty = JSON.stringify(JSON.parse(jsonString), null, 2);
-            $(this).html(jsonPretty);
             hljs.highlightBlock(block);
+            $(block).find('.code-block_expand').click(function (event){
+                $(block).toggleClass('expanded');
+            });
         });
 
         // Show extended message if API returns an invalid query
