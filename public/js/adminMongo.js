@@ -374,10 +374,15 @@ function paginate(){
     var coll_name = $('#coll_name').val();
     var conn_name = $('#conn_name').val();
     var db_name = $('#db_name').val();
+    var doc_id = $('#doc_id').val();
 
     // get the query (if any)
-    var query_string = localStorage.getItem('searchQuery');
-    query_string = toEJSON.serializeString(query_string);
+    if(doc_id){
+        query_string = toEJSON.serializeString('{"_id":ObjectId("' + doc_id + '")}');
+    }else{
+        var query_string = localStorage.getItem('searchQuery');
+        query_string = toEJSON.serializeString(query_string);
+    }
 
     // add search to the API URL if it exists
     var api_url = $('#app_context').val() + '/api/' + conn_name + '/' + db_name + '/' + coll_name + '/' + page_num;
@@ -399,12 +404,17 @@ function paginate(){
 
         var total_docs = Math.ceil(response.total_docs / page_len);
 
-        $('#pager').bootpag({
-            total: total_docs,
-            page: page_num,
-            maxVisible: 5,
-            href: pager_href
-        });
+        if(total_docs > 1){
+            $('#pager').show();
+            $('#pager').bootpag({
+                total: total_docs,
+                page: page_num,
+                maxVisible: 5,
+                href: pager_href
+            });
+        }else{
+            $('#pager').hide();
+        }
 
         var isFiltered = '';
 
@@ -428,6 +438,7 @@ function paginate(){
             inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-right justifiedButtons">';
             inner_html += '<div class="btn-group btn-group-justified justifiedButtons" role="group" aria-label="...">';
             inner_html += '<a href="#" class="btn btn-danger btn-sm" onclick="deleteDoc(\'' + response.data[i]._id + '\')">' + response.deleteButton + '</a>';
+            inner_html += '<a href="' + $('#app_context').val() + '/app/' + conn_name + '/' + db_name + '/' + coll_name + '/' + response.data[i]._id + '" class="btn btn-info btn-sm">' + response.linkButton + '</a>';
             inner_html += '<a href="' + $('#app_context').val() + '/app/' + conn_name + '/' + db_name + '/' + coll_name + '/edit/' + response.data[i]._id + '" class="btn btn-success btn-sm">' + response.editButton + '</a>';
             inner_html += '</div></div>';
             $('#coll_docs').append(inner_html);

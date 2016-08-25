@@ -112,5 +112,8 @@
 	"Monitoring": "Monitoring",
 	"Connection": "Connection",
 	"Error inserting document": "Error inserting document",
-	"Documents successfully added": "Documents successfully added"
+	"Documents successfully added": "Documents successfully added",
+	"document": "document",
+	"No such document": "No such document",
+	"Link": "Link"
 }

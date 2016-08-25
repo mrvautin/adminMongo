@@ -346,6 +346,57 @@ router.get('/app/:conn/:db/:coll/new', function (req, res, next){
     });
 });
 
+// Shows the document preview/pagination
+router.get('/app/:conn/:db/:coll/:id', function (req, res, next){
+    var connection_list = req.app.locals.dbConnections;
+    var docs_per_page = req.nconf.app.get('app:docs_per_page') !== undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+
+    // Check for existance of connection
+    if(connection_list[req.params.conn] === undefined){
+        common.render_error(res, req, req.i18n.__('Invalid connection name'), req.params.conn);
+        return;
+    }
+
+    // Validate database name
+    if(req.params.db.indexOf(' ') > -1){
+        common.render_error(res, req, req.i18n.__('Invalid database name'), req.params.conn);
+        return;
+    }
+
+    // Get DB's form pool
+    var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
+
+    // do DB stuff
+    mongo_db.listCollections().toArray(function (err, collection_list){
+        // clean up the collection list
+        collection_list = common.cleanCollections(collection_list);
+        common.get_sidebar_list(mongo_db, req.params.db, function (err, sidebar_list){
+            mongo_db.db(req.params.db).collection(req.params.coll).count(function (err, coll_count){
+                if(collection_list.indexOf(req.params.coll) === -1){
+                    common.render_error(res, req, 'Database or Collection does not exist', req.params.conn);
+                }else{
+                    res.render('doc-view', {
+                        conn_list: common.order_object(req.nconf.connections.get('connections')),
+                        conn_name: req.params.conn,
+                        db_name: req.params.db,
+                        coll_name: req.params.coll,
+                        coll_count: coll_count,
+                        doc_id: req.params.id,
+                        key_val: req.params.key_val,
+                        value_val: req.params.value_val,
+                        sidebar_list: sidebar_list,
+                        docs_per_page: docs_per_page,
+                        helpers: req.handlebars.helpers,
+                        paginate: true,
+                        editor: true,
+                        session: req.session
+                    });
+                }
+            });
+        });
+    });
+});
+
 // Shows document editor
 router.get('/app/:conn/:db/:coll/edit/:doc_id', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;

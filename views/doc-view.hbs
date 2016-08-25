@@ -1,0 +1,22 @@
+<ol class="breadcrumb">
+    <li><a href="{{app_context}}/app">{{__ "Home"}}</a></li>
+    <li><a href="{{app_context}}/app/{{conn_name}}">{{conn_name}}</a>&nbsp;({{__ "connection"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}">{{db_name}}</a>&nbsp;({{__ "database"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/view">{{coll_name}}</a>&nbsp;({{__ "collection"}})</li>
+    <li><a href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/{{doc_id}}">{{doc_id}}</a>&nbsp;({{__ "document"}})</li>
+</ol>
+<div class="row">
+    <div class="col-lg-12">
+        <div id="doc_load_placeholder" class="col-lg-12"><h3 class="text-center">{{__ "Finding docs"}} <i class="fa fa-spinner fa-spin"></i></h3></div>
+        <div id="doc_none_found" class="col-lg-12 hidden">
+            <div class="col-lg-12">
+                <h3 class="text-center">{{__ "No such document"}}</h3>
+            </div>
+        </div>
+        <div id="coll_docs"></div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div id="pager" class="text-center pagination-sm"></div>
+</div>
+<input type="hidden" id="page_num" value="1">

@@ -82,6 +82,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
                         fields: fields,
                         total_docs: doc_count,
                         deleteButton: req.i18n.__('Delete'),
+                        linkButton: req.i18n.__('Link'),
                         editButton: req.i18n.__('Edit'),
                         validQuery: validQuery,
                         queryMessage: queryMessage
