@@ -404,6 +404,7 @@ function paginate(){
 
         var total_docs = Math.ceil(response.total_docs / page_len);
 
+        var docClass = 'doc_view';
         if(total_docs > 1){
             $('#pager').show();
             $('#pager').bootpag({
@@ -414,6 +415,7 @@ function paginate(){
             });
         }else{
             $('#pager').hide();
+            docClass = '';
         }
 
         var isFiltered = '';
@@ -434,7 +436,7 @@ function paginate(){
         var escaper = $('<div></div>');
         for(var i = 0; i < response.data.length; i++){
             escaper[0].textContent = JSON.stringify(response.data[i], null, 4);
-            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block doc_view"><i class="fa fa-chevron-down code-block_expand"></i><code class="json">' + escaper[0].innerHTML + '</code></pre></div>';
+            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block ' + docClass + '"><i class="fa fa-chevron-down code-block_expand"></i><code class="json">' + escaper[0].innerHTML + '</code></pre></div>';
             inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-right justifiedButtons">';
             inner_html += '<div class="btn-group btn-group-justified justifiedButtons" role="group" aria-label="...">';
             inner_html += '<a href="#" class="btn btn-danger btn-sm" onclick="deleteDoc(\'' + response.data[i]._id + '\')">' + response.deleteButton + '</a>';
@@ -454,7 +456,7 @@ function paginate(){
         $('#doc_load_placeholder').hide();
 
         // hook up the syntax highlight and prettify the json
-        hljs.configure({ languages: ['json'] });
+        hljs.configure({languages: ['json']});
         $('.code-block').each(function (i, block){
             hljs.highlightBlock(block);
             $(block).find('.code-block_expand').click(function (event){
