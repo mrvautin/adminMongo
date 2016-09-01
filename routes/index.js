@@ -138,17 +138,20 @@ router.get('/app/:conn', function (req, res, next){
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native;
 
-    common.get_db_stats(mongo_db, uri.database, function (err, db_stats){
-        common.get_sidebar_list(mongo_db, uri.database, function (err, sidebar_list){
-            common.get_db_list(uri, mongo_db, function (err, db_list){
-                res.render('conn', {
-                    conn_list: common.order_object(connection_list),
-                    db_stats: db_stats,
-                    conn_name: req.params.conn,
-                    sidebar_list: sidebar_list,
-                    db_list: db_list,
-                    helpers: req.handlebars.helpers,
-                    session: req.session
+    common.get_db_status(mongo_db, function (err, db_status){
+        common.get_db_stats(mongo_db, uri.database, function (err, db_stats){
+            common.get_sidebar_list(mongo_db, uri.database, function (err, sidebar_list){
+                common.get_db_list(uri, mongo_db, function (err, db_list){
+                    res.render('conn', {
+                        conn_list: common.order_object(connection_list),
+                        db_stats: db_stats,
+                        db_status: db_status,
+                        conn_name: req.params.conn,
+                        sidebar_list: sidebar_list,
+                        db_list: db_list,
+                        helpers: req.handlebars.helpers,
+                        session: req.session
+                    });
                 });
             });
         });

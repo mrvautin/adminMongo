@@ -23,6 +23,16 @@ exports.checkLogin = function(req, res, next){
     }
 };
 
+exports.get_db_status = function (mongo_db, cb){
+    var adminDb = mongo_db.admin();
+    adminDb.serverStatus(function (err, status){
+        if(err){
+            cb('Error', null);
+        }
+        cb(null, status);
+    });
+};
+
 // gets the db stats
 exports.get_db_stats = function (mongo_db, db_name, cb){
     var async = require('async');

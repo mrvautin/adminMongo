@@ -115,5 +115,6 @@
 	"Documents successfully added": "Documents successfully added",
 	"document": "document",
 	"No such document": "No such document",
-	"Link": "Link"
+	"Link": "Link",
+	"Server status": "Server status"
 }

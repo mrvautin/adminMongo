@@ -1,4 +1,24 @@
 <div class="col-md-5 col-lg-5">
+    {{#if db_status}}
+        <h4>{{__ "Server status"}}</h4>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>Version: </strong>{{db_status.version}}
+            </li>
+            <li class="list-group-item">
+                <strong>Host: </strong>{{db_status.host}}
+            </li>
+            <li class="list-group-item">
+                <strong>PID: </strong>{{db_status.pid}}
+            </li>
+            <li class="list-group-item">
+                <strong>Uptime: </strong>{{formatDuration db_status.uptime}}
+            </li>
+            <li class="list-group-item">
+                <strong>Local time: </strong>{{db_status.localTime}}
+            </li>
+        </ul>
+    {{/if}}
     <h4>{{__ "Database maintenance"}}</h4>
     <div class="form-group">
         <label for="new_db_name">{{__ "Create new database"}}</label>

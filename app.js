@@ -7,6 +7,7 @@ var handlebars = require('express-handlebars');
 var nconf = require('nconf');
 var session = require('express-session');
 var async = require('async');
+var moment = require('moment');
 
 // Define routes
 var indexRoute = require('./routes/index');
@@ -73,6 +74,9 @@ handlebars = handlebars.create({
             var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
             var i = Math.floor(Math.log(bytes) / Math.log(k));
             return(bytes / Math.pow(k, i)).toPrecision(dm) + ' ' + sizes[i];
+        },
+        formatDuration: function(time){
+            return moment.duration(time, 'seconds').humanize();
         }
     }
 });
