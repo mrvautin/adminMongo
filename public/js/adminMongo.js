@@ -432,6 +432,18 @@ function paginate(){
         // set the total record count
         $('#recordCount').html(response.total_docs + isFiltered);
 
+        // if filtered, change button text
+        if(query_string !== null){
+            $('#btnMassDelete').html('Delete selected');
+        }
+
+        // disable/enable the mass delete button if records are returned
+        if(total_docs === 0){
+            $('#btnMassDelete').prop('disabled', true);
+        }else{
+            $('#btnMassDelete').prop('disabled', false);
+        }
+
         // clear the div first
         $('#coll_docs').empty();
         var escaper = $('<div></div>');
@@ -491,6 +503,45 @@ function deleteDoc(doc_id){
         });
     }
 }
+
+$(document).on('click', '#btnMassDelete', function(){
+    var doc_id = $('#doc_id').val();
+    var coll_name = $('#coll_name').val();
+    var conn_name = $('#conn_name').val();
+    var db_name = $('#db_name').val();
+    var query_string;
+
+    // get the query (if any)
+    if(doc_id){
+        query_string = toEJSON.serializeString('{"_id":ObjectId("' + doc_id + '")}');
+    }else{
+        var local_query_string = localStorage.getItem('searchQuery');
+        query_string = toEJSON.serializeString(local_query_string);
+    }
+
+    // set the default confirm text
+    var confirmText = 'WARNING: Are you sure you want to delete all documents in this collection?';
+
+    // if a query is specified, show the "selection" alternative text
+    if(query_string){
+        confirmText = 'WARNING: Are you sure you want to delete the selection of documents?';
+    }
+
+    if(confirm(confirmText) === true){
+        $.ajax({
+            method: 'POST',
+            url: $('#app_context').val() + '/document/' + conn_name + '/' + db_name + '/' + coll_name + '/mass_delete',
+            data: {'query': query_string}
+        })
+        .done(function(data){
+            localStorage.removeItem('searchQuery');
+            show_notification(data.msg, 'success', true);
+        })
+        .fail(function(data){
+            show_notification(data.responseJSON.msg, 'danger');
+        });
+    }
+});
 
 $(document).on('click', '#coll_addindex', function(){
     var edit = ace.edit('json');

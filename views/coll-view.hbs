@@ -12,7 +12,7 @@
                 <a class="btn btn-info btn-sm" href="{{app_context}}/app/{{conn_name}}/{{db_name}}/{{coll_name}}/indexes">{{__ "Manage indexes"}}</a>
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 justifiedButtons">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 justifiedButtons">
             <div class="btn-group btn-group-justified" role="group" aria-label="...">
                 <a type="button" class="btn btn-warning btn-sm action_button" data-toggle="modal" data-target="#searchModal">{{__ "Simple search"}}</a>
                 <a type="button" class="btn btn-primary btn-sm" id="btnqueryDocuments" data-toggle="modal" data-target="#queryDocuments">{{__ "Query documents"}}</a>
@@ -20,8 +20,11 @@
             </div>
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 text-right">
-            <div class="recordCount"><strong>{{__ "Total records"}}:</strong> <span id="recordCount">0</span></div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 text-center">
+            <div class="recordCount">
+                <strong>{{__ "Total records"}}:</strong> <span id="recordCount">0</span>
+                <button class="btn btn-sm btn-danger" id="btnMassDelete">Delete all</button>
+            </div>
         </div>
     </div>
 </div>

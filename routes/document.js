@@ -107,6 +107,49 @@ router.post('/document/:conn/:db/:coll/edit_doc', function (req, res, next){
     });
 });
 
+// Deletes a document or set of documents based on a query
+router.post('/document/:conn/:db/:coll/mass_delete', function (req, res, next){
+    var ejson = require('mongodb-extended-json');
+    var connection_list = req.app.locals.dbConnections;
+
+    // Check for existance of connection
+    if(connection_list[req.params.conn] === undefined){
+        res.status(400).json({'msg': req.i18n.__('Invalid connection name')});
+    }
+
+    // Validate database name
+    if(req.params.db.indexOf(' ') > -1){
+        res.status(400).json({'msg': req.i18n.__('Invalid database name')});
+    }
+
+    var query_obj = {};
+    var validQuery = true;
+    if(req.body.query){
+        try{
+            query_obj = ejson.parse(req.body.query);
+        }catch(e){
+            validQuery = false;
+            query_obj = {};
+        }
+    }
+
+    // Get DB's form pool
+    var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
+
+    if(validQuery){
+        mongo_db.collection(req.params.coll).remove(query_obj, true, function (err, docs){
+            if(err || docs.result.n === 0){
+                console.error('Error deleting document(s): ' + err);
+                res.status(400).json({'msg': req.i18n.__('Error deleting document(s)') + ': ' + req.i18n.__('Invalid query specified')});
+            }else{
+                res.status(200).json({'msg': req.i18n.__('Document(s) successfully deleted')});
+            }
+        });
+    }else{
+        res.status(400).json({'msg': req.i18n.__('Error deleting document(s)') + ': ' + req.i18n.__('Invalid query specified')});
+    }
+});
+
 // Deletes a document
 router.post('/document/:conn/:db/:coll/doc_delete', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;

@@ -116,5 +116,8 @@
 	"document": "document",
 	"No such document": "No such document",
 	"Link": "Link",
-	"Server status": "Server status"
+	"Server status": "Server status",
+	"Document(s) successfully deleted": "Document(s) successfully deleted",
+	"Error deleting document(s)": "Error deleting document(s)",
+	"Invalid query specified": "Invalid query specified"
 }
