@@ -411,7 +411,8 @@ function paginate(){
                 total: total_docs,
                 page: page_num,
                 maxVisible: 5,
-                href: pager_href
+                href: pager_href,
+                firstLastUse: true
             });
         }else{
             $('#pager').hide();
