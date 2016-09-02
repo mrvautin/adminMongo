@@ -103,7 +103,7 @@ if(process.env.PORT) configApp.app.port = process.env.PORT;
 if(process.env.DOCS_PER_PAGE) configApp.app.docs_per_page = process.env.DOCS_PER_PAGE;
 if(process.env.PASSWORD) configApp.app.password = process.env.PASSWORD;
 if(process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
-if(process.env.CONTEXT) configApp.app.locale = process.env.CONTEXT;
+if(process.env.CONTEXT) configApp.app.context = process.env.CONTEXT;
 if(process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
 
 if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(configApp));
