@@ -1,4 +1,6 @@
 var _ = require('lodash');
+var fs = require('fs');
+var path = require('path');
 
 // checks for the password in the /config/app.json file if it's set
 exports.checkLogin = function(req, res, next){
@@ -23,6 +25,7 @@ exports.checkLogin = function(req, res, next){
     }
 };
 
+// gets some db stats
 exports.get_db_status = function (mongo_db, cb){
     var adminDb = mongo_db.admin();
     adminDb.serverStatus(function (err, status){
@@ -30,6 +33,16 @@ exports.get_db_status = function (mongo_db, cb){
             cb('Error', null);
         }
         cb(null, status);
+    });
+};
+
+// gets the backup dirs
+exports.get_backups = function(cb){
+    var junk = require('junk');
+    var backupPath = path.join(__dirname, '../backups');
+
+    fs.readdir(backupPath, function (err, files){
+        cb(null, files.filter(junk.not));
     });
 };
 

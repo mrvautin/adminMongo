@@ -5,7 +5,6 @@
 [![Build Status](https://travis-ci.org/mrvautin/adminMongo.svg?branch=master)](https://travis-ci.org/mrvautin/adminMongo)
 [![Github stars](https://img.shields.io/github/stars/mrvautin/adminMongo.svg?style=social&label=Star)](https://github.com/mrvautin/adminMongo)
 
-
 adminMongo is a cross platform user interface (GUI) to handle all your MongoDB connections/databases needs. adminMongo is fully responsive and should work on a range of devices.
 
 > adminMongo connection information (including username/password) is stored unencrypted in a config file, it is not recommended to run this application on a production or public facing server without proper security considerations.
@@ -18,7 +17,6 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 3. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
 
 > Inline install cmd: `mkdir adminMongo && cd adminMongo && npm i admin-mongo && npm start`
-
 
 ## Electron App
 
@@ -51,6 +49,7 @@ Prebuilt binaries can be downloaded here:
 > The Electron builds have been tested on Mac and Windows 10. Linux has not been tested. Please report any issues.
 
 ## Deploy on Heroku
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Demo (read only)
@@ -61,12 +60,14 @@ A read only demo can be seen [here](http://demo.adminmongo.com)
 
 * Manage from a connection level for easy access to multiple databases
 * Create/Delete databases
+* Backup/Restore databases
 * Create/Delete/Edit collection
 * Create/Delete/Edit documents
 * Create/Delete indexes
 * Query documents
 * Collection statistics
 * Export collections in JSON format
+* Server monitoring
 
 ### Current limitations
 

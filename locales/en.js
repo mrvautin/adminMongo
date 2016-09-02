@@ -119,5 +119,14 @@
 	"Server status": "Server status",
 	"Document(s) successfully deleted": "Document(s) successfully deleted",
 	"Error deleting document(s)": "Error deleting document(s)",
-	"Invalid query specified": "Invalid query specified"
+	"Invalid query specified": "Invalid query specified",
+	"Restore database": "Restore database",
+	"Restore": "Restore",
+	"Backup/Restore": "Backup/Restore",
+	"Database name": "Database name",
+	"Drop target": "Drop target",
+	"Restore DB": "Restore DB",
+	"Database successfully restored": "Database successfully restored",
+	"Backup": "Backup",
+	"Database successfully backed up": "Database successfully backed up"
 }

@@ -8,6 +8,7 @@ var nconf = require('nconf');
 var session = require('express-session');
 var async = require('async');
 var moment = require('moment');
+var fs = require('fs');
 
 // Define routes
 var indexRoute = require('./routes/index');
@@ -40,6 +41,9 @@ var db = new Datastore({filename: path.join(dir_base, 'data/dbStats.db'), autolo
 app.set('views', path.join(dir_base, 'views/'));
 app.engine('hbs', handlebars({extname: 'hbs', defaultLayout: path.join(dir_base, 'views/layouts/layout.hbs')}));
 app.set('view engine', 'hbs');
+
+// Check existence of backups dir, create if nothing
+if(!fs.existsSync(path.join(dir_base, 'backups'))) fs.mkdirSync(path.join(dir_base, 'backups'));
 
 // helpers for the handlebars templating platform
 handlebars = handlebars.create({
@@ -83,7 +87,6 @@ handlebars = handlebars.create({
 
 // setup nconf to read in the file
 // create config dir and blank files if they dont exist
-var fs = require('fs');
 var dir_config = path.join(dir_base, 'config/');
 var config_connections = path.join(dir_config, 'config.json');
 var config_app = path.join(dir_config, 'app.json');

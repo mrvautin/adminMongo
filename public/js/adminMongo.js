@@ -210,7 +210,7 @@ $(document).ready(function(){
             .done(function(data){
                 $("#del_db_name option:contains('" + data.db_name + "')").remove();
                 $('#del_db_name').val($('#del_db_name option:first').val());
-                show_notification(data.msg, 'success');
+                show_notification(data.msg, 'success', true);
             })
             .fail(function(data){
                 show_notification(data.responseJSON.msg, 'danger');
@@ -541,6 +541,40 @@ $(document).on('click', '#btnMassDelete', function(){
             show_notification(data.responseJSON.msg, 'danger');
         });
     }
+});
+
+// restore DB
+$(document).on('click', '#db_restore', function(){
+    if($('#restore_db_name').val() !== null){
+        if(confirm('WARNING: Are you absolutely sure you want to restore the "' + $('#restore_db_name').val() + '" database?') === true){
+            $.ajax({
+                method: 'POST',
+                url: $('#app_context').val() + '/database/' + $('#conn_name').val() + '/' + $('#restore_db_name').val() + '/db_restore/',
+                data: {'dropTarget': $('#restore_db_action').val()}
+            })
+            .done(function(data){
+                show_notification(data.msg, 'success', true);
+            })
+            .fail(function(data){
+                show_notification(data.responseJSON.msg, 'danger');
+            });
+        }
+    }
+});
+
+// backup DB
+$(document).on('click', '#db_backup', function(){
+    $.ajax({
+        method: 'POST',
+        url: $('#app_context').val() + '/database/' + $('#conn_name').val() + '/' + $('#backup_db_name').val() + '/db_backup/',
+        data: {}
+    })
+    .done(function(data){
+        show_notification(data.msg, 'success', true);
+    })
+    .fail(function(data){
+        show_notification(data.responseJSON.msg, 'danger');
+    });
 });
 
 $(document).on('click', '#coll_addindex', function(){
