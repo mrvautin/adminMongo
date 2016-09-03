@@ -362,11 +362,17 @@ h4{
 }
 
 .recordCount{
-    font-size: 18px;
+    font-size: 15px;
 }
 
 #mobile-indicator {
     display: none;
+}
+
+.paginateLabel{
+    font-weight: 500;
+    font-size: 16px;
+    padding-top: 5px;
 }
 
 #notify_message{
@@ -417,7 +423,7 @@ h4{
     .recordCount{
         text-align: center;
         padding-top: 10px;
-        padding-bottom: 10px;
+        padding-bottom: 10px; 
     }
 
     .navbar-default .navbar-toggle .icon-bar {

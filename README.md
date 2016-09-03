@@ -83,7 +83,6 @@ adminMongo will listen on host: `localhost` and  port: `1234` by default. This c
     "app": {
         "host": "10.0.0.1",
         "port": 4321,
-        "docs_per_page": 15,
         "password": "secureadminpassword",
         "locale": "de",
         "context": "dbApp",
@@ -103,7 +102,6 @@ The config file (optional) options are:
 |--- |--- |--- |
 |`host`|`HOST`|The IP address  `adminMongo`  will listen on|
 |`port`|`PORT`|The Port `adminMongo` will listen on|
-|`docs_per_page`|`DOCS_PER_PAGE`|When viewing docs you can specify how many are shown per page|
 |`password`|`PASSWORD`|An application level password to add simply authentication|
 |`locale`|`LOCALE`|The locale is automatically set to the detected locale of Nodejs. If there is not a translation, `adminMongo` will default to English. This setting overrides the default/detected value|
 |`context`|`CONTEXT`|Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.|

@@ -216,7 +216,7 @@ router.get('/app/:conn/:db/:coll/view/', function (req, res, next){
 // Shows the document preview/pagination
 router.get('/app/:conn/:db/:coll/view/:page_num', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;
-    var docs_per_page = req.nconf.app.get('app:docs_per_page') !== undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+    var docs_per_page = 5;
 
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
@@ -356,7 +356,7 @@ router.get('/app/:conn/:db/:coll/new', function (req, res, next){
 // Shows the document preview/pagination
 router.get('/app/:conn/:db/:coll/:id', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;
-    var docs_per_page = req.nconf.app.get('app:docs_per_page') !== undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+    var docs_per_page = 5;
 
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){

@@ -17,6 +17,11 @@ $(document).ready(function(){
         }
     });
 
+    // inital stage of docs per page
+    if(localStorage.getItem('docsPerPage')){
+        $('#docsPerPage').val(localStorage.getItem('docsPerPage'));
+    }
+
     // toggle the sidebar, resize the main view
     $(document).on('click', '#sidebarToggle', function(){
         $('.row-offcanvas').toggleClass('active');
@@ -82,6 +87,12 @@ $(document).ready(function(){
     $(document).on('click', '.exportLink', function(){
         $('#exportExcludeID').prop('checked', false);
         $('#export_coll').val($(this).attr('id'));
+    });
+
+    // when docs per page is changed
+    $(document).on('change', '#docsPerPage', function(){
+        localStorage.setItem('docsPerPage', $('#docsPerPage').val());
+        window.location = '/app/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#coll_name').val() + '/view/1';
     });
 
     // set the URL search parameters
@@ -376,6 +387,13 @@ function paginate(){
     var db_name = $('#db_name').val();
     var doc_id = $('#doc_id').val();
 
+    // check local storage for pagination
+    if(localStorage.getItem('docsPerPage')){
+        page_len = localStorage.getItem('docsPerPage');
+    }else{
+        localStorage.setItem('docsPerPage', page_len);
+    }
+
     // get the query (if any)
     if(doc_id){
         query_string = toEJSON.serializeString('{"_id":ObjectId("' + doc_id + '")}');
@@ -392,7 +410,7 @@ function paginate(){
         type: 'POST',
         dataType: 'json',
         url: api_url,
-        data: {'query': query_string}
+        data: {'query': query_string, 'docsPerPage': page_len}
     })
     .done(function(response){
         // show message when none are found
@@ -404,7 +422,12 @@ function paginate(){
 
         var total_docs = Math.ceil(response.total_docs / page_len);
 
+        // remove the doc class when single doc is retured
         var docClass = 'doc_view';
+        if(response.total_docs === 1){
+            docClass = '';
+        }
+
         if(total_docs > 1){
             $('#pager').show();
             $('#pager').bootpag({
@@ -416,7 +439,6 @@ function paginate(){
             });
         }else{
             $('#pager').hide();
-            docClass = '';
         }
 
         var isFiltered = '';

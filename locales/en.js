@@ -128,5 +128,7 @@
 	"Restore DB": "Restore DB",
 	"Database successfully restored": "Database successfully restored",
 	"Backup": "Backup",
-	"Database successfully backed up": "Database successfully backed up"
+	"Database successfully backed up": "Database successfully backed up",
+	"Query": "Query",
+	"Indexes": "Indexes"
 }

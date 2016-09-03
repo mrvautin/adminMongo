@@ -100,7 +100,6 @@ var configApp = {
 };
 if(process.env.HOST) configApp.app.host = process.env.HOST;
 if(process.env.PORT) configApp.app.port = process.env.PORT;
-if(process.env.DOCS_PER_PAGE) configApp.app.docs_per_page = process.env.DOCS_PER_PAGE;
 if(process.env.PASSWORD) configApp.app.password = process.env.PASSWORD;
 if(process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
 if(process.env.CONTEXT) configApp.app.context = process.env.CONTEXT;
