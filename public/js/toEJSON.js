@@ -67,17 +67,6 @@ var toEJSON = (function (){
         return bsonString;
     };
 
-    var serialize_Operators = function (bsonString){
-        // find unquoted JSON keys. This is so people can write native mongoDB queries
-        // like this without have to quote '$lt' etc like native Mongodb:
-        //   {
-        //      "integer": {$lt:2}
-        //   }
-        var objKeysRegex = /({|,)(?:\s*)(?:')?([A-Za-z_$\.][A-Za-z0-9_ \-\.$]*)(?:')?(?:\s*):/g;
-        bsonString = bsonString.replace(objKeysRegex, '$1"$2":');
-        return bsonString;
-    };
-
     var serialize_DBRef = function (bsonString){
         // TODO: possibly implement something in the future here
         return bsonString;
@@ -91,7 +80,6 @@ var toEJSON = (function (){
             bsonString = serialize_Timestamp(bsonString);
             bsonString = serialize_Regex(bsonString);
             bsonString = serialize_ObjectId(bsonString);
-            bsonString = serialize_Operators(bsonString);
             bsonString = serialize_DBRef(bsonString);
         }
 
