@@ -17,6 +17,11 @@ $(document).ready(function(){
         }
     });
 
+    // inital stage of docs per page
+    if(localStorage.getItem('docsPerPage')){
+        $('#docsPerPage').val(localStorage.getItem('docsPerPage'));
+    }
+
     // toggle the sidebar, resize the main view
     $(document).on('click', '#sidebarToggle', function(){
         $('.row-offcanvas').toggleClass('active');
@@ -82,6 +87,12 @@ $(document).ready(function(){
     $(document).on('click', '.exportLink', function(){
         $('#exportExcludeID').prop('checked', false);
         $('#export_coll').val($(this).attr('id'));
+    });
+
+    // when docs per page is changed
+    $(document).on('change', '#docsPerPage', function(){
+        localStorage.setItem('docsPerPage', $('#docsPerPage').val());
+        window.location = '/app/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#coll_name').val() + '/view/1';
     });
 
     // set the URL search parameters
@@ -210,7 +221,7 @@ $(document).ready(function(){
             .done(function(data){
                 $("#del_db_name option:contains('" + data.db_name + "')").remove();
                 $('#del_db_name').val($('#del_db_name option:first').val());
-                show_notification(data.msg, 'success');
+                show_notification(data.msg, 'success', true);
             })
             .fail(function(data){
                 show_notification(data.responseJSON.msg, 'danger');
@@ -376,6 +387,13 @@ function paginate(){
     var db_name = $('#db_name').val();
     var doc_id = $('#doc_id').val();
 
+    // check local storage for pagination
+    if(localStorage.getItem('docsPerPage')){
+        page_len = localStorage.getItem('docsPerPage');
+    }else{
+        localStorage.setItem('docsPerPage', page_len);
+    }
+
     // get the query (if any)
     if(doc_id){
         query_string = toEJSON.serializeString('{"_id":ObjectId("' + doc_id + '")}');
@@ -392,7 +410,7 @@ function paginate(){
         type: 'POST',
         dataType: 'json',
         url: api_url,
-        data: {'query': query_string}
+        data: {'query': query_string, 'docsPerPage': page_len}
     })
     .done(function(response){
         // show message when none are found
@@ -404,13 +422,20 @@ function paginate(){
 
         var total_docs = Math.ceil(response.total_docs / page_len);
 
+        // remove the doc class when single doc is retured
+        var docClass = 'doc_view';
+        if(response.total_docs === 1){
+            docClass = '';
+        }
+
         if(total_docs > 1){
             $('#pager').show();
             $('#pager').bootpag({
                 total: total_docs,
                 page: page_num,
                 maxVisible: 5,
-                href: pager_href
+                href: pager_href,
+                firstLastUse: true
             });
         }else{
             $('#pager').hide();
@@ -429,12 +454,24 @@ function paginate(){
         // set the total record count
         $('#recordCount').html(response.total_docs + isFiltered);
 
+        // if filtered, change button text
+        if(query_string !== null){
+            $('#btnMassDelete').html('Delete selected');
+        }
+
+        // disable/enable the mass delete button if records are returned
+        if(total_docs === 0){
+            $('#btnMassDelete').prop('disabled', true);
+        }else{
+            $('#btnMassDelete').prop('disabled', false);
+        }
+
         // clear the div first
         $('#coll_docs').empty();
         var escaper = $('<div></div>');
         for(var i = 0; i < response.data.length; i++){
             escaper[0].textContent = JSON.stringify(response.data[i], null, 4);
-            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block doc_view"><i class="fa fa-chevron-down code-block_expand"></i><code class="json">' + escaper[0].innerHTML + '</code></pre></div>';
+            var inner_html = '<div class="col-xs-12 col-md-10 col-lg-10 no-side-pad"><pre class="code-block ' + docClass + '"><i class="fa fa-chevron-down code-block_expand"></i><code class="json">' + escaper[0].innerHTML + '</code></pre></div>';
             inner_html += '<div class="col-md-2 col-lg-2 pad-bottom no-pad-right justifiedButtons">';
             inner_html += '<div class="btn-group btn-group-justified justifiedButtons" role="group" aria-label="...">';
             inner_html += '<a href="#" class="btn btn-danger btn-sm" onclick="deleteDoc(\'' + response.data[i]._id + '\')">' + response.deleteButton + '</a>';
@@ -454,7 +491,7 @@ function paginate(){
         $('#doc_load_placeholder').hide();
 
         // hook up the syntax highlight and prettify the json
-        hljs.configure({ languages: ['json'] });
+        hljs.configure({languages: ['json']});
         $('.code-block').each(function (i, block){
             hljs.highlightBlock(block);
             $(block).find('.code-block_expand').click(function (event){
@@ -488,6 +525,79 @@ function deleteDoc(doc_id){
         });
     }
 }
+
+$(document).on('click', '#btnMassDelete', function(){
+    var doc_id = $('#doc_id').val();
+    var coll_name = $('#coll_name').val();
+    var conn_name = $('#conn_name').val();
+    var db_name = $('#db_name').val();
+    var query_string;
+
+    // get the query (if any)
+    if(doc_id){
+        query_string = toEJSON.serializeString('{"_id":ObjectId("' + doc_id + '")}');
+    }else{
+        var local_query_string = localStorage.getItem('searchQuery');
+        query_string = toEJSON.serializeString(local_query_string);
+    }
+
+    // set the default confirm text
+    var confirmText = 'WARNING: Are you sure you want to delete all documents in this collection?';
+
+    // if a query is specified, show the "selection" alternative text
+    if(query_string){
+        confirmText = 'WARNING: Are you sure you want to delete the selection of documents?';
+    }
+
+    if(confirm(confirmText) === true){
+        $.ajax({
+            method: 'POST',
+            url: $('#app_context').val() + '/document/' + conn_name + '/' + db_name + '/' + coll_name + '/mass_delete',
+            data: {'query': query_string}
+        })
+        .done(function(data){
+            localStorage.removeItem('searchQuery');
+            show_notification(data.msg, 'success', true);
+        })
+        .fail(function(data){
+            show_notification(data.responseJSON.msg, 'danger');
+        });
+    }
+});
+
+// restore DB
+$(document).on('click', '#db_restore', function(){
+    if($('#restore_db_name').val() !== null){
+        if(confirm('WARNING: Are you absolutely sure you want to restore the "' + $('#restore_db_name').val() + '" database?') === true){
+            $.ajax({
+                method: 'POST',
+                url: $('#app_context').val() + '/database/' + $('#conn_name').val() + '/' + $('#restore_db_name').val() + '/db_restore/',
+                data: {'dropTarget': $('#restore_db_action').val()}
+            })
+            .done(function(data){
+                show_notification(data.msg, 'success', true);
+            })
+            .fail(function(data){
+                show_notification(data.responseJSON.msg, 'danger');
+            });
+        }
+    }
+});
+
+// backup DB
+$(document).on('click', '#db_backup', function(){
+    $.ajax({
+        method: 'POST',
+        url: $('#app_context').val() + '/database/' + $('#conn_name').val() + '/' + $('#backup_db_name').val() + '/db_backup/',
+        data: {}
+    })
+    .done(function(data){
+        show_notification(data.msg, 'success', true);
+    })
+    .fail(function(data){
+        show_notification(data.responseJSON.msg, 'danger');
+    });
+});
 
 $(document).on('click', '#coll_addindex', function(){
     var edit = ace.edit('json');

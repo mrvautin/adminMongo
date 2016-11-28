@@ -12,7 +12,7 @@ router.all('/api/*', common.checkLogin, function (req, res, next){
 router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;
     var ejson = require('mongodb-extended-json');
-    var docs_per_page = req.nconf.app.get('app:docs_per_page') !== undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+    var docs_per_page = parseInt(req.body.docsPerPage) !== undefined ? parseInt(req.body.docsPerPage) : 5;
 
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
@@ -53,6 +53,8 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
             query_obj = {};
         }
     }
+
+    console.log(skip, limit);
 
     mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function (err, result){
         if(err){

@@ -7,6 +7,8 @@ var handlebars = require('express-handlebars');
 var nconf = require('nconf');
 var session = require('express-session');
 var async = require('async');
+var moment = require('moment');
+var fs = require('fs');
 
 // Define routes
 var indexRoute = require('./routes/index');
@@ -39,6 +41,9 @@ var db = new Datastore({filename: path.join(dir_base, 'data/dbStats.db'), autolo
 app.set('views', path.join(dir_base, 'views/'));
 app.engine('hbs', handlebars({extname: 'hbs', defaultLayout: path.join(dir_base, 'views/layouts/layout.hbs')}));
 app.set('view engine', 'hbs');
+
+// Check existence of backups dir, create if nothing
+if(!fs.existsSync(path.join(dir_base, 'backups'))) fs.mkdirSync(path.join(dir_base, 'backups'));
 
 // helpers for the handlebars templating platform
 handlebars = handlebars.create({
@@ -73,13 +78,15 @@ handlebars = handlebars.create({
             var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
             var i = Math.floor(Math.log(bytes) / Math.log(k));
             return(bytes / Math.pow(k, i)).toPrecision(dm) + ' ' + sizes[i];
+        },
+        formatDuration: function(time){
+            return moment.duration(time, 'seconds').humanize();
         }
     }
 });
 
 // setup nconf to read in the file
 // create config dir and blank files if they dont exist
-var fs = require('fs');
 var dir_config = path.join(dir_base, 'config/');
 var config_connections = path.join(dir_config, 'config.json');
 var config_app = path.join(dir_config, 'app.json');
@@ -93,10 +100,9 @@ var configApp = {
 };
 if(process.env.HOST) configApp.app.host = process.env.HOST;
 if(process.env.PORT) configApp.app.port = process.env.PORT;
-if(process.env.DOCS_PER_PAGE) configApp.app.docs_per_page = process.env.DOCS_PER_PAGE;
 if(process.env.PASSWORD) configApp.app.password = process.env.PASSWORD;
 if(process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
-if(process.env.CONTEXT) configApp.app.locale = process.env.CONTEXT;
+if(process.env.CONTEXT) configApp.app.context = process.env.CONTEXT;
 if(process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
 
 if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(configApp));

@@ -1,4 +1,24 @@
 <div class="col-md-5 col-lg-5">
+    {{#if db_status}}
+        <h4>{{__ "Server status"}}</h4>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>Version: </strong>{{db_status.version}}
+            </li>
+            <li class="list-group-item">
+                <strong>Host: </strong>{{db_status.host}}
+            </li>
+            <li class="list-group-item">
+                <strong>PID: </strong>{{db_status.pid}}
+            </li>
+            <li class="list-group-item">
+                <strong>Uptime: </strong>{{formatDuration db_status.uptime}}
+            </li>
+            <li class="list-group-item">
+                <strong>Local time: </strong>{{db_status.localTime}}
+            </li>
+        </ul>
+    {{/if}}
     <h4>{{__ "Database maintenance"}}</h4>
     <div class="form-group">
         <label for="new_db_name">{{__ "Create new database"}}</label>
@@ -10,7 +30,7 @@
         </div>
     </div>
     <div class="formBreak"></div>
-    <label for="exampleInputEmail1">{{__ "Delete database"}}</label>
+    <label>{{__ "Delete database"}}</label>
     <div class="input-group">
         <select class="form-control input-sm" id="del_db_name">
             {{#each db_list}}
@@ -20,8 +40,38 @@
         <span class="input-group-btn">
             <button class="btn btn-danger btn-sm" id="db_delete">{{__ "Delete"}}</button>
         </span>	
-    </div>   
-</div>
+    </div>
+    <div class="formBreak"></div>
+    <h5>Restore database</h5>
+    <label>{{__ "Drop target"}}</label>
+    <select class="form-control input-sm" id="restore_db_action">
+        <option>true</option>
+        <option>false</option>
+    </select>
+    <label>{{__ "Database name"}}</label>
+    <div class="input-group">
+        <select class="form-control input-sm" id="restore_db_name">
+            {{#each backup_list}}
+                <option>{{this}}</option>
+            {{/each}}
+        </select>
+        <span class="input-group-btn">
+            <button class="btn btn-danger btn-sm" id="db_restore">{{__ "Restore DB"}}</button>
+        </span>	
+    </div>
+    <div class="formBreak"></div>
+    <h5>Backup database</h5>
+    <div class="input-group">
+        <select class="form-control input-sm" id="backup_db_name">
+            {{#each db_list}}
+                <option>{{this}}</option>
+            {{/each}}
+        </select>
+        <span class="input-group-btn">
+            <button class="btn btn-success btn-sm" id="db_backup">{{__ "Backup"}}</button>
+        </span>	
+    </div>
+ </div>
 <div class="col-md-7 col-lg-7">
     <h4>{{__ "Connection statistics"}}</h4>
     <div id="collection_chart"></div>

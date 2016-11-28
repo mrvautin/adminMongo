@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
+var path = require('path');
 var common = require('./common');
 
 // runs on all routes and checks password if one is setup
@@ -138,17 +139,23 @@ router.get('/app/:conn', function (req, res, next){
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native;
 
-    common.get_db_stats(mongo_db, uri.database, function (err, db_stats){
-        common.get_sidebar_list(mongo_db, uri.database, function (err, sidebar_list){
-            common.get_db_list(uri, mongo_db, function (err, db_list){
-                res.render('conn', {
-                    conn_list: common.order_object(connection_list),
-                    db_stats: db_stats,
-                    conn_name: req.params.conn,
-                    sidebar_list: sidebar_list,
-                    db_list: db_list,
-                    helpers: req.handlebars.helpers,
-                    session: req.session
+    common.get_db_status(mongo_db, function (err, db_status){
+        common.get_backups(function(err, backup_list){
+            common.get_db_stats(mongo_db, uri.database, function (err, db_stats){
+                common.get_sidebar_list(mongo_db, uri.database, function (err, sidebar_list){
+                    common.get_db_list(uri, mongo_db, function (err, db_list){
+                        res.render('conn', {
+                            conn_list: common.order_object(connection_list),
+                            db_stats: db_stats,
+                            db_status: db_status,
+                            conn_name: req.params.conn,
+                            sidebar_list: sidebar_list,
+                            db_list: db_list,
+                            backup_list: backup_list,
+                            helpers: req.handlebars.helpers,
+                            session: req.session
+                        });
+                    });
                 });
             });
         });
@@ -209,7 +216,7 @@ router.get('/app/:conn/:db/:coll/view/', function (req, res, next){
 // Shows the document preview/pagination
 router.get('/app/:conn/:db/:coll/view/:page_num', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;
-    var docs_per_page = req.nconf.app.get('app:docs_per_page') !== undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+    var docs_per_page = 5;
 
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
@@ -349,7 +356,7 @@ router.get('/app/:conn/:db/:coll/new', function (req, res, next){
 // Shows the document preview/pagination
 router.get('/app/:conn/:db/:coll/:id', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;
-    var docs_per_page = req.nconf.app.get('app:docs_per_page') !== undefined ? req.nconf.app.get('app:docs_per_page') : 5;
+    var docs_per_page = 5;
 
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
