@@ -1,30 +1,31 @@
-$(document).ready(function () {
+$(document).ready(function (){
     // initial render
     renderCharts();
 
     // update every 30 secs
-    setInterval(function () {
+    setInterval(function (){
         renderCharts();
     }, 30000);
 
-    function renderCharts() {
+    function renderCharts(){
         $.ajax({
             method: 'GET',
             url: $('#app_context').val() + '/api/monitoring/' + $('#conn_name').val(),
             data: {}
         })
-            .done(function (result) {
+            .done(function (result){
+                var Chart = window.Chart;
                 var scrollLocation = $(window).scrollTop();
                 // clear chart canvas
                 clearCharts();
 
                 // show the db data
-                if (result.dataRetrieved === true) {
+                if(result.dataRetrieved === true){
                     $('#chartsWrapper').removeClass('hidden');
                     $('#monitorPid').text(result.pid);
                     $('#monitorVersion').text(result.version);
                     $('#monitorUptime').text(result.uptime);
-                } else {
+                }else{
                     $('#chartsMessage').html("<p class='text-danger'>There was an error retrieving the monitoring data. Please ensure you are authenticated with a user who has 'admin' role assigned to the server.</p>");
                     $('#chartsMessage').removeClass('hidden');
                 }
@@ -144,8 +145,7 @@ $(document).ready(function () {
 
                 // charts
                 Chart.defaults.global.showTooltips = false;
-                var ctx = document.getElementById('connectionsChart');
-                var connectionsChart = new Chart(ctx, {
+                new Chart(document.getElementById('connectionsChart'), {
                     type: 'line',
                     data: connectionsChartData,
                     options: {
@@ -173,8 +173,7 @@ $(document).ready(function () {
                     }
                 });
 
-                var ctx = document.getElementById('clientsChart');
-                var clientsChart = new Chart(ctx, {
+                new Chart(document.getElementById('clientsChart'), {
                     type: 'line',
                     data: clientsChartData,
                     options: {
@@ -202,8 +201,7 @@ $(document).ready(function () {
                     }
                 });
 
-                var ctx = document.getElementById('memoryChart');
-                var memoryChart = new Chart(ctx, {
+                new Chart(document.getElementById('memoryChart'), {
                     type: 'line',
                     data: memoryChartData,
                     options: {
@@ -231,8 +229,7 @@ $(document).ready(function () {
                     }
                 });
 
-                var ctx = document.getElementById('docsChart');
-                var docsChart = new Chart(ctx, {
+                new Chart(document.getElementById('docsChart'), {
                     type: 'line',
                     data: docsChartData,
                     options: {
@@ -262,13 +259,13 @@ $(document).ready(function () {
                 // charts
                 $(window).scrollTop(scrollLocation);
             })
-            .fail(function (data) {
+            .fail(function (data){
                 $('#chartsMessage').html("<p class='text-danger'>There was an error retrieving the monitoring data. Please ensure you are authenticated with a user who has 'admin' role assigned to the server.</p>");
                 $('#chartsMessage').removeClass('hidden');
             });
     }
 
-    function clearCharts() {
+    function clearCharts(){
         $('#memoryChart').replaceWith('<canvas id="memoryChart" height="200"></canvas>');
         $('#connectionsChart').replaceWith('<canvas id="connectionsChart" height="200"></canvas>');
         $('#clientsChart').replaceWith('<canvas id="clientsChart" height="200"></canvas>');

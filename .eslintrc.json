@@ -19,6 +19,7 @@
         "semi"             : [1, "always"],
         "space-unary-ops"  : 2,
         "no-undef": 1,
+        "no-new": 0,
         "no-unused-vars": 1,
         "keyword-spacing": ["error", { "before": false, "after": false }],
         "space-before-function-paren": 0,
