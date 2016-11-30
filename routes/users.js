@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var _ = require('lodash');
 var common = require('./common');
 
 // runs on all routes and checks password if one is setup

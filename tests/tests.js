@@ -1,15 +1,16 @@
+/* global it, describe, toEJSON */
+
 var request = require('supertest');
 var assert = require('chai').assert;
 var jsdom = require('mocha-jsdom');
 var fs = require('fs');
-var colors = require('colors');
 
 var conn_name = 'TestConnection';
 var db_name = 'NewTestDB';
 var coll_name = 'NewTestCollection';
 var user_name = 'TestNewUser';
 
-app = require('../app');
+const app = require('../app');
 var agent = request.agent(app);
 
 describe('Add connection, database and collection', function(){
@@ -66,14 +67,10 @@ describe('User tests', function(){
 if(process.version.substring(1, 2) >= 4){
     describe('Document tests', function(){
         var oid_doc_id = '';
-        var $;
+        var doc_id;
 
         jsdom({
             src: fs.readFileSync('./public/js/toEJSON.js', 'utf-8')
-        });
-
-        before(function (){
-            $ = require('jquery');
         });
 
         it('Add a document', function(done){

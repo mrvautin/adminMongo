@@ -54,8 +54,6 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
         }
     }
 
-    console.log(skip, limit);
-
     mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function (err, result){
         if(err){
             console.error(err);

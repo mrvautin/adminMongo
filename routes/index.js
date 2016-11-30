@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
-var path = require('path');
 var common = require('./common');
 
 // runs on all routes and checks password if one is setup
@@ -92,8 +91,6 @@ router.get('/app/connection_list', function (req, res, next){
 
 // Show server monitoring
 router.get('/app/monitoring/:conn/', function (req, res, next){
-    var connection_list = req.app.locals.dbConnections;
-
     var monitoringMessage = '';
     var monitoringRequired = true;
     if(req.nconf.app.get('app:monitoring') === false){

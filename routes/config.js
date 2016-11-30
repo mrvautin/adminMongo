@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var _ = require('lodash');
 var common = require('./common');
 
 // runs on all routes and checks password if one is setup
@@ -15,8 +14,6 @@ router.post('/config/add_config', function (req, res, next){
     var connPool = require('../connections');
     var connection_list = req.nconf.connections.get('connections');
 
-
-
     // check if name already exists
     if(connection_list !== undefined){
         if(connection_list[req.body[0]] !== undefined){
@@ -27,12 +24,12 @@ router.post('/config/add_config', function (req, res, next){
 
     // try parse uri string. If pass, add, else throw an error
     try{
-        uri = MongoURI.parse(req.body[1]);
+        MongoURI.parse(req.body[1]);
         var options = {};
         try{
             options = JSON.parse(req.body[2]);
         }catch(err){
-            res.status(400).json({'msg': req.i18n.__('Error in connection options') + ': ' + er});
+            res.status(400).json({'msg': req.i18n.__('Error in connection options') + ': ' + err});
             return;
         }
 
@@ -70,7 +67,7 @@ router.post('/config/update_config', function (req, res, next){
 
     // try parse uri string. If pass, add, else throw an error
     try{
-        uri = MongoURI.parse(req.body.conn_string);
+        MongoURI.parse(req.body.conn_string);
 
         // var get current options
         var current_options = nconf.store.connections[req.body.curr_config].connection_options;
@@ -99,7 +96,7 @@ router.post('/config/update_config', function (req, res, next){
             }
         });
     }catch(err){
-        console.error('Config error2: ' + err);
+        console.error('Config error: ' + err);
         res.status(400).json({'msg': req.i18n.__('Config error') + ': ' + err});
     }
 });
