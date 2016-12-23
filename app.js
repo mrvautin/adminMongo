@@ -118,8 +118,8 @@ if(process.env.CONN_NAME && process.env.DB_USERNAME && process.env.DB_PASSWORD &
         connection_string: 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT
     };
 }
-
-if(!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, JSON.stringify(configConnection));
+if (!fs.existsSync(config_connections) || fs.readFileSync(config_connections, 'utf8') === '{}')
+    fs.writeFileSync(config_connections, JSON.stringify(configConnection));
 
 // if config files exist but are blank we write blank files for nconf
 if(fs.existsSync(config_app, 'utf8')){
