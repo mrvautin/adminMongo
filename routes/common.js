@@ -31,8 +31,9 @@ exports.get_db_status = function (mongo_db, cb){
     adminDb.serverStatus(function (err, status){
         if(err){
             cb('Error', null);
+        }else{
+            cb(null, status);
         }
-        cb(null, status);
     });
 };
 
