@@ -212,7 +212,7 @@ $(document).ready(function(){
     });
 
     $(document).on('click', '#db_delete', function(){
-        if(confirm('WARNING: Are you sure you want to delete this collection and all documents?') === true){
+        if(confirm('WARNING: Are you sure you want to delete this database and all collections?') === true){
             $.ajax({
                 method: 'POST',
                 url: $('#app_context').val() + '/database/' + $('#conn_name').val() + '/db_delete',
