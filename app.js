@@ -111,15 +111,21 @@ if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(confi
 var configConnection = {
     connections: {}
 };
-if(process.env.CONN_NAME && process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_HOST){
+if(process.env.CONN_NAME && process.env.DB_HOST) {
     if(!process.env.DB_PORT) process.env.DB_PORT = '27017'; // Use the default mongodb port when DB_PORT is not set
+    var connectionString = 'mongodb://';
+    if(process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_NAME) {
+        connectionString += process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT + '/' + process.env.DB_NAME;
+    }else{
+        connectionString += process.env.DB_HOST + ':' + process.env.DB_PORT
+    }
     configConnection.connections[process.env.CONN_NAME] = {
         connection_options: {},
-        connection_string: 'mongodb://' + process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT
+        connection_string: connectionString
     };
 }
-
-if(!fs.existsSync(config_connections)) fs.writeFileSync(config_connections, JSON.stringify(configConnection));
+if (!fs.existsSync(config_connections) || fs.readFileSync(config_connections, 'utf8') === '{}')
+    fs.writeFileSync(config_connections, JSON.stringify(configConnection));
 
 // if config files exist but are blank we write blank files for nconf
 if(fs.existsSync(config_app, 'utf8')){
@@ -139,7 +145,7 @@ nconf.add('connections', {type: 'file', file: config_connections});
 nconf.add('app', {type: 'file', file: config_app});
 
 // set app defaults
-var app_host = '0.0.0.0';
+var app_host = process.env.HOST || '0.0.0.0';
 var app_port = process.env.PORT || 1234;
 
 // get the app configs and override if present
