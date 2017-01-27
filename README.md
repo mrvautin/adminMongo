@@ -11,12 +11,10 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 
 ## Installation
 
-1. Create folder for adminMongo: `mkdir adminMongo`
-2. Navigate to folder & install adminMongo: `cd adminMongo && npm i admin-mongo`
-2. Start application: `npm start` or `node app`
-3. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
-
-> Inline install cmd: `mkdir adminMongo && cd adminMongo && npm i admin-mongo && npm start`
+1. Navigate to folder & install adminMongo: `git clone https://github.com/mrvautin/adminMongo.git && cd adminMongo`
+2. Install dependencies: `npm install`
+3. Start application: `npm start` or `node app`
+4. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
 
 ## Electron App
 
