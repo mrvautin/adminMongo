@@ -16,6 +16,8 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 3. Start application: `npm start` or `node app`
 4. Visit [http://127.0.0.1:1234](http://127.0.0.1:1234) in your browser
 
+> Note: Node.js version 4.x or above is required
+
 ## Electron App
 
 adminMongo can also be used as a cross platform Electron application. Due to the size of Electron it will need to be built manually.
