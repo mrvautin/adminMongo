@@ -152,7 +152,7 @@ router.post('/collection/:conn/:db/:coll/create_index', function (req, res, next
     var unique_bool = (req.body[1] === 'true');
     var sparse_bool = (req.body[2] === 'true');
     var options = {unique: unique_bool, background: true, sparse: sparse_bool};
-    mongo_db.collection(req.params.coll).createIndex(JSON.stringify(req.body[0]), options, function (err, index){
+    mongo_db.collection(req.params.coll).createIndex(JSON.parse(req.body[0]), options, function (err, index){
         if(err){
             console.error('Error creating index: ' + err);
             res.status(400).json({'msg': req.i18n.__('Error creating Index') + ': ' + err});
