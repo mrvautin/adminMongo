@@ -77,12 +77,12 @@
     <div id="collection_chart"></div>
     <ul class="list-group">
         {{#each db_stats}}
-            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{../conn_name}}/{{@key}}">{{@key}}</a></li>
+            <li class="list-group-item"><i class="fa fa-database"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{@root.conn_name}}/{{@key}}">{{@key}}</a></li>
             {{#each this}}
                 <li class="list-group-item coll_indent">
                     <div class="row">
                         <div class='col-lg-4 col-sm-12'>
-                            <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{../../conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
+                            <i class="fa fa-table"></i>&nbsp;&nbsp; <a href="{{app_context}}/app/{{@root.conn_name}}/{{@../key}}/{{@key}}/view">{{@key}}</a>
                         </div>
                         <div class='col-lg-4 col-sm-6'>
                             <i class="fa fa-hdd-o"></i>&nbsp; {{__ "Storage"}}: {{formatBytes this.Storage}}
