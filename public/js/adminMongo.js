@@ -92,7 +92,7 @@ $(document).ready(function(){
     // when docs per page is changed
     $(document).on('change', '#docsPerPage', function(){
         localStorage.setItem('docsPerPage', $('#docsPerPage').val());
-        window.location = '/app/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#coll_name').val() + '/view/1';
+        window.location = $('#app_context').val() + '/app/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#coll_name').val() + '/view/1';
     });
 
     // set the URL search parameters
