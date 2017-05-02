@@ -54,7 +54,7 @@ Prebuilt binaries can be downloaded here:
 
 ## Demo (read only)
 
-A read only demo can be seen [here](http://demo.adminmongo.com) 
+A read only demo can be seen [here](http://demo.adminmongo.markmoffat.com) 
 
 ## Features
 
