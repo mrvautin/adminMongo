@@ -71,7 +71,7 @@
     "ncp": "^2.0.0",
     "nedb": "^1.8.0",
     "node-delete": "^0.1.2",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.4.3"
   },
   "license": "MIT",
   "devDependencies": {
