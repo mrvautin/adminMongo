@@ -9,6 +9,10 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 
 > adminMongo connection information (including username/password) is stored unencrypted in a config file, it is not recommended to run this application on a production or public facing server without proper security considerations.
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/nNhTCmpgciWZ2xLwGrTE61o7/mrvautin/adminMongo'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/nNhTCmpgciWZ2xLwGrTE61o7/mrvautin/adminMongo.svg' />
+</a>
+
 ## Installation
 
 1. Navigate to folder & install adminMongo: `git clone https://github.com/mrvautin/adminMongo.git && cd adminMongo`
@@ -40,11 +44,11 @@ Once built, the executable will be in the `/releases` folder.
 
 Prebuilt binaries can be downloaded here:
 
-[Mac 64bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Mac.zip) 
+[Mac 64bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Mac.zip)
 
-[Windows 32bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Win32.zip) 
+[Windows 32bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Win32.zip)
 
-[Windows 64bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Win64.zip) 
+[Windows 64bit](https://github.com/mrvautin/adminMongo/releases/download/1.0.0/adminMongo_Win64.zip)
 
 > The Electron builds have been tested on Mac and Windows 10. Linux has not been tested. Please report any issues.
 
@@ -54,7 +58,7 @@ Prebuilt binaries can be downloaded here:
 
 ## Demo (read only)
 
-A read only demo can be seen [here](http://demo.adminmongo.markmoffat.com) 
+A read only demo can be seen [here](http://demo.adminmongo.markmoffat.com)
 
 ## Features
 
@@ -109,10 +113,10 @@ The config file (optional) options are:
 
 ### Setting a context path
 
-Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on 
+Setting a `context` of "dbApp" is like changing the base URL of the app and will mean the app will listen on `http://10.0.0.1:4321/dbApp`. Ommiting a context will mean the application will listen on
 root. Eg: `http://10.0.0.1:4321`. This setting can be useful when running `adminMongo` behind Nginx etc.
 
-An example Nginx server block. Note the `location /dbApp {` and `proxy_pass http://10.0.0.1:4321/dbApp;` lines match 
+An example Nginx server block. Note the `location /dbApp {` and `proxy_pass http://10.0.0.1:4321/dbApp;` lines match
 the `context` set in the `/config/app.json` file.
 
 ```
@@ -141,7 +145,7 @@ a setting can be added to the `app.json` file. See Configuration section for a "
 
 ### Authentication
 
-By default `adminMongo` is not password protected. You can add password authentication by adding a `password` value to the `/config/app.json` file 
+By default `adminMongo` is not password protected. You can add password authentication by adding a `password` value to the `/config/app.json` file
 (See the Configuration section). Once added you will need to restart `adminMongo` and all routes will be protected until the correct password is added. You
 will then be authenticated for the life of the session (60 mins by default) or if the "Logout" link is clicked.
 
@@ -151,7 +155,7 @@ will then be authenticated for the life of the session (60 mins by default) or i
 
 After visiting [http://127.0.0.1:1234](http://127.0.0.1:1234) you will be presented with a connection screen. You need to give your connection a unique name as a reference when using adminMongo and a MongoDB formatted connection string. The format of a MongoDB connection string can form: `mongodb://<user>:<password>@127.0.0.1:<port>/<db>` where specifying to the `<db>` level is optional. For more information on MongoDB connection strings, see the [official MongoDB documentation](http://docs.mongodb.org/manual/reference/connection-string/).
 
-You can supply a connection options object (see [docs](http://mongodb.github.io/node-mongodb-native/2.1/reference/connecting/connection-settings/)) with each connection. 
+You can supply a connection options object (see [docs](http://mongodb.github.io/node-mongodb-native/2.1/reference/connecting/connection-settings/)) with each connection.
 
 For example:
 
@@ -203,15 +207,15 @@ You can perform searches of documents using the `Search documents` button on the
 ![adminMongo search documents](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_searchdocuments.png "adminMongo search documents")
 
 Complex querying of documents is done through the "Query documents" button. This allows a query Object to be passed to MongoDB to return results.
-Queries can be written in full BSON format or EJSON format. For example these queries should return the same results: 
+Queries can be written in full BSON format or EJSON format. For example these queries should return the same results:
 
 ```
-{ 
+{
     ObjectId("56a97ed3f718fe9a4f599489")
 }
-``` 
+```
 
-is equivalent to: 
+is equivalent to:
 
 ```
 {
@@ -239,7 +243,7 @@ Documents with Media embedded show previews
 
 *Functionality currently in Beta*
 
-Selected server monitoring is done at regular intervals and stored in local database store for 24hrs. 
+Selected server monitoring is done at regular intervals and stored in local database store for 24hrs.
 
 *New connections require an app restart for monitoring to commence*
 
