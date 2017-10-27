@@ -116,7 +116,9 @@ if(process.env.CONN_NAME && process.env.DB_HOST) {
     var connectionString = 'mongodb://';
     if(process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_NAME) {
         connectionString += process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT + '/' + process.env.DB_NAME;
-    }else{
+    }else if (process.env.DB_USERNAME && process.env.DB_PASSWORD) {
+        connectionString += process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT + '/'
+    } else {    
         connectionString += process.env.DB_HOST + ':' + process.env.DB_PORT
     }
     configConnection.connections[process.env.CONN_NAME] = {
