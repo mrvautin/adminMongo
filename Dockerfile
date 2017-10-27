@@ -1,7 +1,8 @@
-FROM node:latest
-
-COPY . /app/user
-
+FROM node:alpine
 WORKDIR /app/user
-RUN npm install
+
+COPY package.json .
+RUN npm install --production
+
+COPY . .
 CMD node app.js
