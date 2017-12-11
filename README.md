@@ -9,10 +9,6 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 
 > adminMongo connection information (including username/password) is stored unencrypted in a config file, it is not recommended to run this application on a production or public facing server without proper security considerations.
 
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/nNhTCmpgciWZ2xLwGrTE61o7/mrvautin/adminMongo'>
-  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/nNhTCmpgciWZ2xLwGrTE61o7/mrvautin/adminMongo.svg' />
-</a>
-
 ## Installation
 
 1. Navigate to folder & install adminMongo: `git clone https://github.com/mrvautin/adminMongo.git && cd adminMongo`
