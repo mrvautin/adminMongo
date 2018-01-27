@@ -11,7 +11,7 @@ adminMongo is a cross platform user interface (GUI) to handle all your MongoDB c
 
 ## Support
 
-If my work helps you, please consider [buying me a coffee]()! [![buying me a coffee](https://cdn-images-1.medium.com/max/738/1*G95uyokAH4JC5Ppvx4LmoQ@2x.png)](https://www.buymeacoffee.com/mrvautin)
+If my work helps you, please consider [![buying me a coffee](https://cdn-images-1.medium.com/max/738/1*G95uyokAH4JC5Ppvx4LmoQ@2x.png)](https://www.buymeacoffee.com/mrvautin)
 
 ## Installation
 
