@@ -121,6 +121,13 @@ $(document).ready(function(){
             // set the object to local storage to be used if page changes
             localStorage.setItem('searchQuery', JSON.stringify(qry_obj));
 
+            // check if the key_name is "_id"
+            if (key_name == '_id')
+            {
+                var query_string = toEJSON.serializeString('{"_id":ObjectId("' + val + '")}');
+                localStorage.setItem('searchQuery', query_string);
+            }
+            
             // go to page 1 to remove any issues being on page X from another query/view
             window.location.href = $('#app_context').val() + '/app/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#coll_name').val() + '/view/1';
 
