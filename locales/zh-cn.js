@@ -109,7 +109,7 @@
 	"Invalid database name": "数据库名称不合法",
 	"Error creating database": "创建数据库失败",
 	"Error creating collection": "创建集合失败",
-	"Monitoring": "监控中",
+	"Monitoring": "监控",
 	"Connection": "连接",
 	"Error inserting document": "添加文档失败",
 	"Documents successfully added": "添加文档成功",
