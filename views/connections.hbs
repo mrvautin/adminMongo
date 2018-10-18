@@ -7,26 +7,39 @@
             <thead>
                 <tr>
                     <th class="col-md-2 text-center">{{__ "Connection name"}}</th>
+                    {{#if editable}}
                     <th class="col-md-4 text-center">{{__ "Connection string"}}</th>
                     <th class="col-md-3 text-center">{{__ "Connection options"}}</th>
+                    {{/if}}
                     <th class="col-md-4 text-center">{{__ "Action"}}</th>
                 </tr>
             </thead>
                 <tr class="connectionRow">
-                    <td><input type="text" class="form-control input-sm conf_conn_name" value="{{@key}}"></td>
-                    <td><input type="text" class="form-control input-sm conf_conn_string" value="{{this.connection_string}}"></td>
-                    <td><pre class="code-block conectionOptions"><code class="json">{{{toJSON this.connection_options}}}</code></pre></td>
+                    <td><input type="text" class="form-control input-sm conf_conn_name" {{#if editable}}{{else}}readonly{{/if}} value="{{@key}}"></td>
+                    {{#if editable}}
+                        <td><input type="text" class="form-control input-sm conf_conn_string" value="{{this.connection_string}}"></td>
+                        <td><pre class="code-block conectionOptions"><code class="json">{{{toJSON this.connection_options}}}</code></pre></td>
+                    {{/if}}
                     <td class="text-center conn_id" id="{{@key}}">
                         <div class="btn-group" role="group" aria-label="ConnButtons">
+                            {{#if editable}}
                             <button class="btn btn-danger btn-sm pull-left btnConnDelete">{{__ "Delete"}}</button>
+                            {{/if}}
                             <button class="btn btn-primary btn-sm btnConnConnect" id="{{@index}}">{{__ "Connect"}}</button>
+                            {{#if editable}}
                             <button class="btn btn-success btn-sm pull-right btnConnUpdate">{{__ "Update"}}</button>
+                            {{/if}}
                         </div>
                     </td>
                 </tr>
             {{else}}
+                {{#if editable}}
                 <h3 class="text-center text-warning">No connections. Please add one below</h3>
+                {{else}}
+                <h3 class="text-center text-warning">No connections.</h3>
+                {{/if}}
             {{/each}}
+            {{#if editable}}
             <tr><td>&nbsp;</td></tr>
             <tr>
                 <td class="text-center"><strong>{{__ "Connection name"}}</strong></td>
@@ -48,6 +61,7 @@
                     <button class="btn btn-success btn-sm" id="add_config">{{__ "Add connection"}}</button>
                 </td>
             </tr>
+            {{/if}}
         </table>
     </div>
 </div>
