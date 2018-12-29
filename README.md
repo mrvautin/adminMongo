@@ -174,11 +174,8 @@ The connection can also be automatically initiated through the environment (or w
 |Env-variable|Description|
 |--- |--- |
 |`CONN_NAME`|The name of the connection to create on boot|
-|`DB_USERNAME`|The username for the database connection|
-|`DB_PASSWORD`|The password for the database user|
-|`DB_HOST`|The host IP address or DNS name without the port!|
-|`DB_PORT`|The port of the mongoDB database, if not provided the default 27017 will be used|
-|`DB_NAME`|The name of the database|
+|`CONN_URI`|Full connection URI (should include `mongo://`)|
+|`CONN_OPTS`|Connection options in (e.g., `{"replicaSet": "rs0"}`|
 
 *The Connection setup screen*
 ![adminMongo connections screen](https://raw.githubusercontent.com/mrvautin/mrvautin.github.io/master/images/adminMongo/adminMongo_connections.png "adminMongo connections screen")
