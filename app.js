@@ -113,7 +113,7 @@ var configConnection = {
 };
 if(process.env.CONN_NAME && process.env.CONN_URI) {
     configConnection.connections[process.env.CONN_NAME] = {
-        connection_options: process.env.CONN_OPTS,
+        connection_options: JSON.parse(process.env.CONN_OPTS),
         connection_string: process.env.CONN_URI
     };
 }
