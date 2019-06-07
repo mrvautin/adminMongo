@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
 var common = require('./common');
+var connections = require('../connections')
 
 // runs on all routes and checks password if one is setup
 router.all('/document/*', common.checkLogin, function (req, res, next) {
@@ -10,13 +11,7 @@ router.all('/document/*', common.checkLogin, function (req, res, next) {
 
 // Inserts a new document
 router.post('/document/:conn/:db/:coll/insert_doc', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
     var ejson = require('mongodb-extended-json');
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection name') });
-    }
 
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
@@ -24,7 +19,7 @@ router.post('/document/:conn/:db/:coll/insert_doc', function (req, res, next) {
     }
 
     // Get DB form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
@@ -73,13 +68,7 @@ router.post('/document/:conn/:db/:coll/insert_doc', function (req, res, next) {
 
 // Edits/updates an existing document
 router.post('/document/:conn/:db/:coll/edit_doc', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
     var ejson = require('mongodb-extended-json');
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection name') });
-    }
 
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
@@ -87,7 +76,7 @@ router.post('/document/:conn/:db/:coll/edit_doc', function (req, res, next) {
     }
 
     // Get DB's form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
@@ -120,12 +109,6 @@ router.post('/document/:conn/:db/:coll/edit_doc', function (req, res, next) {
 // Deletes a document or set of documents based on a query
 router.post('/document/:conn/:db/:coll/mass_delete', function (req, res, next) {
     var ejson = require('mongodb-extended-json');
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection name') });
-    }
 
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
@@ -144,7 +127,7 @@ router.post('/document/:conn/:db/:coll/mass_delete', function (req, res, next) {
     }
 
     // Get DB's form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
@@ -167,12 +150,6 @@ router.post('/document/:conn/:db/:coll/mass_delete', function (req, res, next) {
 
 // Deletes a document
 router.post('/document/:conn/:db/:coll/doc_delete', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection name') });
-    }
 
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
@@ -180,7 +157,7 @@ router.post('/document/:conn/:db/:coll/doc_delete', function (req, res, next) {
     }
 
     // Get DB's form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }

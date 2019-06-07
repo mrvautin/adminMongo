@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
 var common = require('./common');
+var connections = require('../connections')
 
 // runs on all routes and checks password if one is setup
 router.all('/api/*', common.checkLogin, function (req, res, next){
@@ -10,14 +11,8 @@ router.all('/api/*', common.checkLogin, function (req, res, next){
 
 // pagination API
 router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
-    var connection_list = req.app.locals.dbConnections;
     var ejson = require('mongodb-extended-json');
     var docs_per_page = parseInt(req.body.docsPerPage) !== undefined ? parseInt(req.body.docsPerPage) : 5;
-
-    // Check for existance of connection
-    if(connection_list[req.params.conn] === undefined){
-        res.status(400).json({'msg': req.i18n.__('Invalid connection name')});
-    }
 
     // Validate database name
     if(req.params.db.indexOf(' ') > -1){
@@ -25,7 +20,7 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
     }
 
     // Get DB's form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if(err){
             return next(err);
         }

@@ -73,6 +73,7 @@
 	"Confirm": "Confirm",
 	"Optional: comma separated user roles": "Optional: comma separated user roles",
 	"Invalid connection name": "Invalid connection name",
+	"Insufficient permissions": "Insufficient permissions",
 	"Add document": "Add document",
 	"Config successfully updated": "Config successfully updated",
 	"User successfully created": "User successfully created",

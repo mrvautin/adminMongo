@@ -8,7 +8,7 @@ router.all('/config/*', common.checkLogin, function (req, res, next) {
 });
 
 // Add a new connection config
-if (!process.env.CONN_NAME || !process.env.DB_HOST) {
+if (!process.env.CONN_NAME) {
     router.post('/config/add_config', function (req, res, next) {
         var nconf = req.nconf.connections;
         var MongoURI = require('mongo-uri');

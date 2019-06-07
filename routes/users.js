@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var common = require('./common');
+var connections = require('../connections')
 
 // runs on all routes and checks password if one is setup
 router.all('/users/*', common.checkLogin, function (req, res, next) {
@@ -9,13 +10,6 @@ router.all('/users/*', common.checkLogin, function (req, res, next) {
 
 // Creates a new user
 router.post('/users/:conn/:db/user_create', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection') });
-        return;
-    }
 
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
@@ -23,7 +17,7 @@ router.post('/users/:conn/:db/user_create', function (req, res, next) {
     }
 
     // Get DB's form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
@@ -46,13 +40,6 @@ router.post('/users/:conn/:db/user_create', function (req, res, next) {
 
 // Deletes a user
 router.post('/users/:conn/:db/user_delete', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection') });
-        return;
-    }
 
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
@@ -60,7 +47,7 @@ router.post('/users/:conn/:db/user_delete', function (req, res, next) {
     }
 
     // Get DB form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
