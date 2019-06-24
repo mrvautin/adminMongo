@@ -80,7 +80,8 @@ $(document).ready(function(){
     // redirect to export
     $(document).on('click', '#exportModalAction', function(){
         var exportId = $('#exportExcludeID').is(':checked') ? 'true' : 'false';
-        window.location.href = $('#app_context').val() + '/collection/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#export_coll').val() + '/export/' + exportId;
+        var exportType = $('#exportTypeBtnContainer').find('.btn.active').data('value');
+        window.location.href = $('#app_context').val() + '/collection/' + $('#conn_name').val() + '/' + $('#db_name').val() + '/' + $('#export_coll').val() + '/export/' + exportId+'/'+exportType;
     });
 
     // sets the collection name to be used later to export entire collection
@@ -662,3 +663,22 @@ function show_notification(msg, type, reload_page, timeout){
         }
     });
 }
+$(document).on('click', '.btn-toggle', function(){ 
+    $(this).find('.btn').toggleClass('active');  
+    
+    if ($(this).find('.btn-primary').length > 0) {
+    	$(this).find('.btn').toggleClass('btn-primary');
+    }
+    if ($(this).find('.btn-danger').length > 0) {
+    	$(this).find('.btn').toggleClass('btn-danger');
+    }
+    if ($(this).find('.btn-success').length > 0) {
+    	$(this).find('.btn').toggleClass('btn-success');
+    }
+    if ($(this).find('.btn-info').length > 0) {
+    	$(this).find('.btn').toggleClass('btn-info');
+    }
+    
+    $(this).find('.btn').toggleClass('btn-default');
+       
+});

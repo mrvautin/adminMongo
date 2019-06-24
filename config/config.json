@@ -1,1 +1,8 @@
-{}
+{
+  "connections": {
+    "localhost": {
+      "connection_string": "mongodb://localhost",
+      "connection_options": {}
+    }
+  }
+}

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
 var common = require('./common');
-
+var json2csv = require('json2csv');
 // runs on all routes and checks password if one is setup
 router.all('/collection/*', common.checkLogin, function (req, res, next){
     next();
@@ -96,9 +96,11 @@ router.post('/collection/:conn/:db/coll_delete', function (req, res, next){
 });
 
 // Exports a collection
-router.get('/collection/:conn/:db/:coll/export/:excludedID?', function (req, res, next){
-    var connection_list = req.app.locals.dbConnections;
+router.get('/collection/:conn/:db/:coll/export/:excludedID?/:exportType?', function (req, res, next){
 
+    var connection_list = req.app.locals.dbConnections;
+    var exportType = req.params.exportType || 'json'; 
+    
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
         common.render_error(res, req, req.i18n.__('Invalid connection name'), req.params.conn);
@@ -122,8 +124,29 @@ router.get('/collection/:conn/:db/:coll/export/:excludedID?', function (req, res
 
     mongo_db.collection(req.params.coll).find({}, exportID).toArray(function (err, data){
         if(data !== ''){
-            res.set({'Content-Disposition': 'attachment; filename=' + req.params.coll + '.json'});
-            res.send(JSON.stringify(data, null, 2));
+            if(exportType == 'json')
+            {
+                res.set({'Content-Disposition': 'attachment; filename=' + req.params.coll + '.json'});
+                res.send(JSON.stringify(data, null, 2));
+            }
+            else{
+                //csv
+                var json = JSON.stringify(data, null, 2);
+                //var columnHeaders = 
+                
+                try {
+                    var result = json2csv({ data: data});
+                    console.log(result);
+                    res.set({'Content-Disposition': 'attachment; filename=' + req.params.coll + '.csv'});
+                    res.set('Content-Type', 'text/csv');
+                    res.send(result);
+
+                  } catch (err) {
+                    common.render_error(res, req, req.i18n.__('Export error: Collection not found'), req.params.conn);                    
+                  }
+            }
+            
+
         }else{
             common.render_error(res, req, req.i18n.__('Export error: Collection not found'), req.params.conn);
         }

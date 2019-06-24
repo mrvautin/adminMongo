@@ -221,11 +221,19 @@
                     <h4 class="modal-title" id="collectionNameLabel">{{__ "Export collection"}}</h4>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="checkbox">
-                            <label>
-                                <input id="exportExcludeID" type="checkbox"> {{__ "Exclude"}} "_id" {{__ "field"}}?
-                            </label>
+                    <form onsubmit="return false;">
+                        <div class="form-group"> 
+                            <div class="checkbox">
+                                <label>
+                                    <input id="exportExcludeID" type="checkbox"> {{__ "Exclude"}} "_id" {{__ "field"}}?
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group"> 
+                            <div class="btn-group btn-toggle" id="exportTypeBtnContainer"> 
+                                <button class="btn btn-sm btn-default" data-value="json">JSON</button>
+                                <button class="btn btn-sm btn-info active" data-value="csv">CSV</button>
+                            </div>
                         </div>
                     </form>
                 </div>
