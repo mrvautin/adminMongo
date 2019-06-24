@@ -54,12 +54,12 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
         }
     }
 
-    mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function (err, result){
+    mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).sort({_id:-1}).toArray(function (err, result){
         if(err){
             console.error(err);
             res.status(500).json(err);
         }else{
-            mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).toArray(function (err, simpleSearchFields){
+            mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).sort({_id:-1}).toArray(function (err, simpleSearchFields){
                 // get field names/keys of the Documents in collection
                 var fields = [];
                 for(var i = 0; i < simpleSearchFields.length; i++){
