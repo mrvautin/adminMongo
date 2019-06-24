@@ -1,0 +1,8 @@
+FROM resin/raspberry-pi-alpine-node:8-slim
+WORKDIR /app/user
+
+COPY package.json .
+RUN npm install --production
+
+COPY . .
+CMD node app.js
