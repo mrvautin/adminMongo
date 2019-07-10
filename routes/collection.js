@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
 var common = require('./common');
+var connections = require('../connections')
 
 // runs on all routes and checks password if one is setup
 router.all('/collection/*', common.checkLogin, function (req, res, next) {
@@ -10,22 +11,13 @@ router.all('/collection/*', common.checkLogin, function (req, res, next) {
 
 // Create a new collection
 router.post('/collection/:conn/:db/coll_create', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection') });
-        return;
-    }
-
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
         res.status(400).json({ 'msg': req.i18n.__('Invalid database name') });
     }
 
     // Get DB form pool
-
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
@@ -45,21 +37,13 @@ router.post('/collection/:conn/:db/coll_create', function (req, res, next) {
 
 // Rename an existing collection
 router.post('/collection/:conn/:db/:coll/coll_name_edit', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection') });
-        return;
-    }
-
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
         res.status(400).json({ 'msg': req.i18n.__('Invalid database name') });
     }
 
     // Get DB form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }
@@ -79,21 +63,13 @@ router.post('/collection/:conn/:db/:coll/coll_name_edit', function (req, res, ne
 
 // Delete a collection
 router.post('/collection/:conn/:db/coll_delete', function (req, res, next) {
-    var connection_list = req.app.locals.dbConnections;
-
-    // Check for existance of connection
-    if (connection_list[req.params.conn] === undefined) {
-        res.status(400).json({ 'msg': req.i18n.__('Invalid connection') });
-        return;
-    }
-
     // Validate database name
     if (req.params.db.indexOf(' ') > -1) {
         res.status(400).json({ 'msg': req.i18n.__('Invalid database name') });
     }
 
     // Get DB form pool
-    connection_list[req.params.conn].connect((err, database) => {
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if (err) {
             return next(err);
         }

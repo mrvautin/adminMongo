@@ -9,6 +9,7 @@ var session = require('express-session');
 var async = require('async');
 var moment = require('moment');
 var fs = require('fs');
+var mongoUri = require('mongodb-uri');
 
 // Define routes
 var indexRoute = require('./routes/index');
@@ -29,7 +30,7 @@ var app = express();
 
 // setup the translation
 var i18n = new (require('i18n-2'))({
-    locales: ['en', 'de', 'es', 'ru', 'zh-cn'],
+    locales: ['en', 'de', 'es', 'ru', 'zh-cn', 'it'],
     directory: path.join(dir_base, 'locales/')
 });
 
@@ -111,20 +112,60 @@ if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(confi
 var configConnection = {
     connections: {}
 };
-if(process.env.CONN_NAME && process.env.DB_HOST) {
-    if(!process.env.DB_PORT) process.env.DB_PORT = '27017'; // Use the default mongodb port when DB_PORT is not set
-    var connectionString = 'mongodb://';
-    if(process.env.DB_USERNAME && process.env.DB_PASSWORD && process.env.DB_NAME) {
-        connectionString += process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT + '/' + process.env.DB_NAME;
-    }else if (process.env.DB_USERNAME && process.env.DB_PASSWORD) {
-        connectionString += process.env.DB_USERNAME + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST + ':' + process.env.DB_PORT + '/'
-    } else {    
-        connectionString += process.env.DB_HOST + ':' + process.env.DB_PORT
+if(process.env.CONN_NAME && (process.env.DB_HOST || process.env.DB_URI)) {
+    var defaultPort = 27017;
+    
+    let roles = process.env.USER_ROLES && process.env.USER_ROLES.split(",").map(role => role.trim());
+    if(!roles || roles.length === 0){
+        roles = [""]
     }
-    configConnection.connections[process.env.CONN_NAME] = {
-        connection_options: {},
-        connection_string: connectionString
-    };
+
+    roles.map(role => role.toUpperCase()).forEach(role => {
+        var connectionObject = {
+            hosts: [{host: "127.0.0.1", port: defaultPort}]
+        };
+        if(process.env[`${role}_DB_URI`]){
+            connectionObject = mongoUri.parse(process.env[`${role}_DB_URI`]);
+        } else if(process.env.DB_URI){
+            connectionObject = mongoUri.parse(process.env.DB_URI);
+        }
+        if(process.env[`${role}_DB_HOST`]){
+            connectionObject.hosts = process.env[`${role}_DB_HOST`].split(",").map(host => {
+                return {host: host, port: defaultPort};
+            });
+        } else if(process.env.DB_HOST){
+            connectionObject.hosts = process.env.DB_HOST.split(",").map(host => {
+                return {host: host, port: defaultPort};
+            });
+        }
+        if(process.env[`${role}_DB_PORT`]){
+            connectionObject.hosts.forEach(host => host.port = parseInt([`${role}_DB_PORT`]));
+        } else 
+        if(process.env.DB_PORT){
+            connectionObject.hosts.forEach(host => host.port = parseInt(process.env.DB_PORT));
+        }
+        if(process.env[`${role}_DB_NAME`]){
+            connectionObject.database = process.env[`${role}_DB_NAME`];
+        } else if(process.env.DB_NAME){
+            connectionObject.database = process.env.DB_NAME;
+        }
+        if(process.env[`${role}_DB_USERNAME`]){
+            connectionObject.username = process.env[`${role}_DB_USERNAME`];
+        } else if(process.env.DB_USERNAME){
+            connectionObject.username = process.env.DB_USERNAME;
+        }
+        if(process.env[`${role}_DB_PASSWORD`]){
+            connectionObject.password = process.env[`${role}_DB_PASSWORD`];
+        } else if(process.env.DB_PASSWORD){
+            connectionObject.password = process.env.DB_PASSWORD;
+        }
+
+        configConnection.connections[(role ? `${role}-` : '') + process.env.CONN_NAME] = {
+            connection_options: {},
+            connection_string: mongoUri.format(connectionObject),
+            requiredRoles: role ? [role.toLowerCase()] : []
+        };
+    });
 }
 if (!fs.existsSync(config_connections) || fs.readFileSync(config_connections, 'utf8') === '{}')
     fs.writeFileSync(config_connections, JSON.stringify(configConnection));
@@ -147,7 +188,7 @@ nconf.add('connections', {type: 'file', file: config_connections});
 nconf.add('app', {type: 'file', file: config_app});
 
 // set app defaults
-var app_host = process.env.HOST || '0.0.0.0';
+var app_host = process.env.HOST || 'localhost';
 var app_port = process.env.PORT || 1234;
 
 // get the app configs and override if present
@@ -272,8 +313,9 @@ async.forEachOf(connection_list, function (value, key, callback){
 
     try{
         MongoURI.parse(value.connection_string);
-        connPool.addConnection({connName: key, connString: value.connection_string, connOptions: value.connection_options}, app, function (err, data){
+        connPool.addConnection({connName: key, connString: value.connection_string, connOptions: value.connection_options, requiredRoles: value.requredRoles}, app, function (err, data){
             if(err){
+                delete connection_list[key];
                 console.error(err);
             }
             callback();
