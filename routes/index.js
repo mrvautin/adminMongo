@@ -113,8 +113,13 @@ router.get('/app/:conn', function (req, res, next){
     var MongoURI = require('mongo-uri');
 
     // if no connection found
+<<<<<<< HEAD
     if(Object.keys(connection_list).length === 0){
         res.redirect(req.app_context + '/app/connection_list');
+=======
+    if(!connection_list || Object.keys(connection_list).length === 0){
+        res.redirect(req.app_context + '/app');
+>>>>>>> 9ab2e989e90c477d395b2327b6eaa238f08d03b7
         return;
     }
 
