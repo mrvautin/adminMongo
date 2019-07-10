@@ -112,6 +112,12 @@ router.get('/app/monitoring/:conn/', function (req, res, next){
 router.get('/app/:conn', function (req, res, next){
     var MongoURI = require('mongo-uri');
 
+    // if no connection found
+    if(Object.keys(connection_list).length === 0){
+        res.redirect(req.app_context + '/app/connection_list');
+        return;
+    }
+
     // Check for existance of connection
     if(connection_list[req.params.conn] === undefined){
         common.render_error(res, req, req.i18n.__('Invalid connection name'), req.params.conn);

@@ -2,7 +2,10 @@ var MongoClient = require('mongodb').MongoClient;
 
 exports.addConnection = function (connection, app, callback){
     if(!app.locals.dbConnections){
-        app.locals.dbConnections = [];
+        app.locals.dbConnections = {};
+    }
+    if(app.locals.dbConnections[connection.name]){
+        return callback(null, app.locals.dbConnections[connection.name].connection);
     }
 
     if(!connection.connOptions){
@@ -12,11 +15,11 @@ exports.addConnection = function (connection, app, callback){
     var dbObj = {};
     dbObj.connection = null;
     dbObj.connect = (callback) => {
-        if(dbObj.connection && dbObj.connect.isConnected()){
+        if(dbObj.connection){
             callback(null, dbObj.connection);
         } else {
             MongoClient.connect(dbObj.connString, dbObj.connOptions, function(err, database){
-                connection = database;
+                dbObj.connection = database;
                 callback(err, database);
             });
         }
