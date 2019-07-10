@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
 var common = require('./common');
+var connections = require('../connections')
 
 // runs on all routes and checks password if one is setup
 router.all('/api/*', common.checkLogin, function (req, res, next){
@@ -10,14 +11,8 @@ router.all('/api/*', common.checkLogin, function (req, res, next){
 
 // pagination API
 router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
-    var connection_list = req.app.locals.dbConnections;
     var ejson = require('mongodb-extended-json');
     var docs_per_page = parseInt(req.body.docsPerPage) !== undefined ? parseInt(req.body.docsPerPage) : 5;
-
-    // Check for existance of connection
-    if(connection_list[req.params.conn] === undefined){
-        res.status(400).json({'msg': req.i18n.__('Invalid connection name')});
-    }
 
     // Validate database name
     if(req.params.db.indexOf(' ') > -1){
@@ -25,72 +20,77 @@ router.post('/api/:conn/:db/:coll/:page', function (req, res, next){
     }
 
     // Get DB's form pool
-    var mongo_db = connection_list[req.params.conn].native.db(req.params.db);
-
-    var page_size = docs_per_page;
-    var page = 1;
-
-    if(req.params.page !== undefined){
-        page = parseInt(req.params.page);
-    }
-
-    var skip = 0;
-    if(page > 1){
-        skip = (page - 1) * page_size;
-    }
-
-    var limit = page_size;
-
-    var query_obj = {};
-    var validQuery = true;
-    var queryMessage = '';
-    if(req.body.query){
-        try{
-            query_obj = ejson.parse(req.body.query);
-        }catch(e){
-            validQuery = false;
-            queryMessage = e.toString();
-            query_obj = {};
-        }
-    }
-
-    mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function (err, result){
+    connections.getConnection(req, res, req.params.conn).connect((err, database) => {
         if(err){
-            console.error(err);
-            res.status(500).json(err);
-        }else{
-            mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).toArray(function (err, simpleSearchFields){
-                // get field names/keys of the Documents in collection
-                var fields = [];
-                for(var i = 0; i < simpleSearchFields.length; i++){
-                    var doc = simpleSearchFields[i];
-
-                    for(var key in doc){
-                        if(key === '__v')continue;
-                        fields.push(key);
-                    }
-                };
-
-                fields = fields.filter(function (item, pos){
-                    return fields.indexOf(item) === pos;
-                });
-
-                // get total num docs in query
-                mongo_db.collection(req.params.coll).count(query_obj, function (err, doc_count){
-                    var return_data = {
-                        data: result,
-                        fields: fields,
-                        total_docs: doc_count,
-                        deleteButton: req.i18n.__('Delete'),
-                        linkButton: req.i18n.__('Link'),
-                        editButton: req.i18n.__('Edit'),
-                        validQuery: validQuery,
-                        queryMessage: queryMessage
-                    };
-                    res.status(200).json(return_data);
-                });
-            });
+            return next(err);
         }
+        var mongo_db = database.db(req.params.db);
+
+        var page_size = docs_per_page;
+        var page = 1;
+
+        if(req.params.page !== undefined){
+            page = parseInt(req.params.page);
+        }
+
+        var skip = 0;
+        if(page > 1){
+            skip = (page - 1) * page_size;
+        }
+
+        var limit = page_size;
+
+        var query_obj = {};
+        var validQuery = true;
+        var queryMessage = '';
+        if(req.body.query){
+            try{
+                query_obj = ejson.parse(req.body.query);
+            }catch(e){
+                validQuery = false;
+                queryMessage = e.toString();
+                query_obj = {};
+            }
+        }
+
+        mongo_db.collection(req.params.coll).find(query_obj, {skip: skip, limit: limit}).toArray(function (err, result){
+            if(err){
+                console.error(err);
+                res.status(500).json(err);
+            }else{
+                mongo_db.collection(req.params.coll).find({}, {skip: skip, limit: limit}).toArray(function (err, simpleSearchFields){
+                    // get field names/keys of the Documents in collection
+                    var fields = [];
+                    for(var i = 0; i < simpleSearchFields.length; i++){
+                        var doc = simpleSearchFields[i];
+
+                        for(var key in doc){
+                            if(key === '__v')continue;
+                            fields.push(key);
+                        }
+                    };
+
+                    fields = fields.filter(function (item, pos){
+                        return fields.indexOf(item) === pos;
+                    });
+
+                    // get total num docs in query
+                    mongo_db.collection(req.params.coll).count(query_obj, function (err, doc_count){
+                        var return_data = {
+                            data: result,
+                            fields: fields,
+                            total_docs: doc_count,
+                            deleteButton: req.i18n.__('Delete'),
+                            linkButton: req.i18n.__('Link'),
+                            editButton: req.i18n.__('Edit'),
+                            validQuery: validQuery,
+                            queryMessage: queryMessage
+                        };
+                        res.status(200).json(return_data);
+                    });
+                });
+            }
+        });
     });
 });
 

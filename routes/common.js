@@ -200,7 +200,7 @@ exports.get_sidebar_list = function (mongo_db, db_name, cb){
     var db_obj = {};
 
     // if no DB is specified, we get all DBs and collections
-    if(db_name == null){
+    // if(db_name == null){
         var adminDb = mongo_db.admin();
         adminDb.listDatabases(function (err, db_list){
             if(db_list){
@@ -224,14 +224,14 @@ exports.get_sidebar_list = function (mongo_db, db_name, cb){
                 cb(null, exports.order_object(db_obj));
             }
         });
-    }else{
-        mongo_db.db(db_name).listCollections().toArray(function (err, collections){
-            collections = exports.cleanCollections(collections);
-            exports.order_array(collections);
-            db_obj[db_name] = collections;
-            cb(null, db_obj);
-        });
-    }
+    // }else{
+    //     mongo_db.db(db_name).listCollections().toArray(function (err, collections){
+    //         collections = exports.cleanCollections(collections);
+    //         exports.order_array(collections);
+    //         db_obj[db_name] = collections;
+    //         cb(null, db_obj);
+    //     });
+    // }
 };
 
 // order the object by alpha key
