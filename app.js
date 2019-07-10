@@ -116,7 +116,7 @@ if(process.env.CONN_NAME && (process.env.DB_HOST || process.env.DB_URI)) {
     var defaultPort = 27017;
     
     let roles = process.env.USER_ROLES && process.env.USER_ROLES.split(",").map(role => role.trim());
-    if(roles.length === 0){
+    if(!roles || roles.length === 0){
         roles = [""]
     }
 

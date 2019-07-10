@@ -48,7 +48,7 @@ exports.getConnection = function(request, response, connectionName) {
         }
     }
 
-    callback(null, connection);
+    return connection
 }
 
 exports.getConnections = function(request, response){

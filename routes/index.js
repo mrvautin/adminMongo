@@ -110,6 +110,7 @@ router.get('/app/monitoring/:conn/', function (req, res, next){
 
 // The base connection route showing all DB's for connection
 router.get('/app/:conn', function (req, res, next){
+    var connection_list = connections.getConnections(req, res)
     var MongoURI = require('mongo-uri');
 
     // if no connection found
@@ -187,7 +188,7 @@ router.get('/app/:conn/:db', function (req, res, next){
                     mongo_db.listCollections().toArray(function (err, collection_list){
                         res.render('db', {
                             conn_name: req.params.conn,
-                            conn_list: common.order_object(connection_list),
+                            conn_list: common.order_object(connections.getConnections(req, res)),
                             db_stats: db_stats,
                             conn_users: conn_users,
                             coll_list: common.cleanCollections(collection_list),
