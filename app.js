@@ -29,7 +29,7 @@ var app = express();
 
 // setup the translation
 var i18n = new (require('i18n-2'))({
-    locales: ['en', 'de', 'es', 'ru', 'zh-cn', 'it'],
+    locales: ['en', 'de', 'es', 'ru', 'zh-cn', 'it', 'nb'],
     directory: path.join(dir_base, 'locales/')
 });
 
