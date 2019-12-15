@@ -105,7 +105,7 @@ if(process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
 if(process.env.CONTEXT) configApp.app.context = process.env.CONTEXT;
 if(process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
 
-if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(configApp));
+if(!fs.existsSync(config_app) || fs.readFileSync(config_app, 'utf8') === '{}') fs.writeFileSync(config_app, JSON.stringify(configApp));
 
 // Check the env for a connection to initiate
 var configConnection = {
