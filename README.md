@@ -56,6 +56,10 @@ Prebuilt binaries can be downloaded here:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/mrvautin/adminMongo)
 
+## Docker
+
+Docker image available on [Docker Hub](https://hub.docker.com/r/mrvautin/adminmongo)
+
 ## Demo (read only)
 
 A read only demo can be seen [here](http://demo.adminmongo.markmoffat.com)
