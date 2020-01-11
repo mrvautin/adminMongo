@@ -29,7 +29,7 @@ router.post('/users/:conn/:db/user_create', function (req, res, next){
     var roles = req.body.roles_text ? req.body.roles_text.split(/\s*,\s*/) : [];
 
     // Add a user
-    mongo_db.addUser(req.body.username, req.body.user_password, {'roles': roles}, function (err, user_name){
+    mongo_db.command({ createUser: req.body.username,  pwd: req.body.user_password, 'roles': roles }, function (err, user_name){
         if(err){
             console.error('Error creating user: ' + err);
             res.status(400).json({'msg': req.i18n.__('Error creating user') + ': ' + err});
