@@ -84,7 +84,7 @@
     "eslint-plugin-standard": "^2.0.0",
     "jsdom": "^9.4.1",
     "mocha": "^2.5.3",
-    "mocha-jsdom": "^1.1.0",
+    "mocha-jsdom": "~1.1.0",
     "supertest": "^1.2.0"
   }
 }
