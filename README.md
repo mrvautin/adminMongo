@@ -22,6 +22,42 @@ If my work helps you, please consider [![buying me a coffee](https://cdn-images-
 
 > Note: Node.js version 4.x or above is required
 
+## Docker ##
+
+### With docker-compose ###
+
+`docker-compose up -d` in folder
+
+```yml
+version: '3'
+services:
+
+  admin_mongo:
+    container_name: admin_mongo
+    image: mrvautin/adminmongo
+    restart: always
+    environment:
+      - LOCALE=en
+      - MONITORING=true
+      - PASSWORD=SuperSecret
+      - PORT=1234
+    network_mode: host
+    volumes:
+      - <path to config>:/app/user/config # default path in docker-compose.yml `~/adminMongo`
+```
+
+### Without docker-compose ###
+
+```bash
+docker run -v <path to config>:/app/user/config -d \
+ --network='host' \
+ -e PASSWORD=SuperSecret \
+ -e LOCALE=en \
+ -e MONITORING=true \
+ -e PORT=1234 \
+ mrvautin/adminmongo
+```
+
 ## Electron App
 
 adminMongo can also be used as a cross platform Electron application. Due to the size of Electron it will need to be built manually.

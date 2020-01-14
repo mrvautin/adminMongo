@@ -1,0 +1,15 @@
+version: '3'
+services:
+
+  admin_mongo:
+    container_name: admin_mongo
+    image: mrvautin/adminmongo
+    restart: always
+    environment:
+      - LOCALE=en
+      - MONITORING=true
+      - PASSWORD=SuperSecret
+      - PORT=1234
+    network_mode: host
+    volumes:
+      - ~/adminMongo:/app/user/config
