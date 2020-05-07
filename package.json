@@ -18,7 +18,9 @@
     "packageOsx": "electron-packager ./ adminMongo --out=releases/ --platform=darwin --arch=x64 --prune --overwrite --ignore=releases/* --icon=public/logo.icns",
     "packageWin32": "electron-packager ./ adminMongo --out=releases/ --platform=win32 --arch=ia32 --prune --overwrite --ignore=releases/* --icon=public/logo.ico",
     "packageWin64": "electron-packager ./ adminMongo --out=releases/ --platform=win32 --arch=x64 --prune --overwrite --ignore=releases/* --icon=public/logo.ico",
-    "packageLinux": "electron-packager ./ adminMongo --out=releases/ --platform=linux --arch=ia32 --prune --overwrite --ignore=releases/* --icon=public/logo.ico"
+    "packageLinux": "electron-packager ./ adminMongo --out=releases/ --platform=linux --arch=ia32 --prune --overwrite --ignore=releases/* --icon=public/logo.ico",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "mongo",
@@ -71,7 +73,8 @@
     "ncp": "^2.0.0",
     "nedb": "^1.8.0",
     "node-delete": "^0.1.2",
-    "serve-favicon": "~2.4.3"
+    "serve-favicon": "~2.4.3",
+    "snyk": "^1.319.1"
   },
   "license": "MIT",
   "devDependencies": {
@@ -86,5 +89,6 @@
     "mocha": "^2.5.3",
     "mocha-jsdom": "^1.1.0",
     "supertest": "^1.2.0"
-  }
+  },
+  "snyk": true
 }
