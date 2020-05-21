@@ -51,6 +51,7 @@
     "bootstrap": "^3.3.7",
     "config": "^1.21.0",
     "cookie-parser": "^1.4.3",
+    "dotenv": "^8.2.0",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.14.0",
