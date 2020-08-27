@@ -65,7 +65,7 @@ router.post('/database/:conn/db_delete', function (req, res, next){
 // Backup a database
 router.post('/database/:conn/:db/db_backup', function (req, res, next){
     var mongodbBackup = require('mongodb-backup');
-    var MongoURI = require('mongo-uri');
+    var MongoURI = require('./mongouri');
     var connection_list = req.app.locals.dbConnections;
 
     // Check for existance of connection
@@ -97,7 +97,7 @@ router.post('/database/:conn/:db/db_backup', function (req, res, next){
 
 // Restore a database
 router.post('/database/:conn/:db/db_restore', function (req, res, next){
-    var MongoURI = require('mongo-uri');
+    var MongoURI = require('./mongouri');
     var mongodbRestore = require('mongodb-restore');
     var connection_list = req.app.locals.dbConnections;
     var dropTarget = false;

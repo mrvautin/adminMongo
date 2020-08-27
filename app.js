@@ -269,7 +269,7 @@ var monitoring = require('./monitoring');
 app.locals.dbConnections = null;
 
 async.forEachOf(connection_list, function (value, key, callback){
-    var MongoURI = require('mongo-uri');
+    let MongoURI = require('./routes/mongouri');
 
     try{
         MongoURI.parse(value.connection_string);

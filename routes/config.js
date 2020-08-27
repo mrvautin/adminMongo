@@ -10,7 +10,7 @@ router.all('/config/*', common.checkLogin, function (req, res, next){
 // Add a new connection config
 router.post('/config/add_config', function (req, res, next){
     var nconf = req.nconf.connections;
-    var MongoURI = require('mongo-uri');
+    var MongoURI = require('./mongouri');
     var connPool = require('../connections');
     var connection_list = req.nconf.connections.get('connections');
 
@@ -63,7 +63,7 @@ router.post('/config/add_config', function (req, res, next){
 router.post('/config/update_config', function (req, res, next){
     var nconf = req.nconf.connections;
     var connPool = require('../connections');
-    var MongoURI = require('mongo-uri');
+    var MongoURI = require('./mongouri');
 
     // try parse uri string. If pass, add, else throw an error
     try{

@@ -109,7 +109,7 @@ router.get('/app/monitoring/:conn/', function (req, res, next){
 // The base connection route showing all DB's for connection
 router.get('/app/:conn', function (req, res, next){
     var connection_list = req.app.locals.dbConnections;
-    var MongoURI = require('mongo-uri');
+    let MongoURI = require('./mongouri');
 
     // if no connection found
     if(!connection_list || Object.keys(connection_list).length === 0){
