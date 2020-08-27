@@ -12,8 +12,12 @@ exports.parse = function (uri){
     let hosts = MongoUri.pullHosts(auth[3]);
     let database = MongoUri.pullDatabase(hosts[2]);
     let options = MongoUri.pullOptions(database[2]);
-    let mongoUri = new MongoUri(scheme[1], decodeURIComponent(auth[1]), decodeURIComponent(auth[2]), hosts[1], database[1], options);
-    console.log('[DEBUG, mongouri.js, .parse] MongoUri: ' + mongoUri);
+    // overwrite database if authSource is set
+    if(options.has('authSource')){
+        database[1] = options.get('authSource');
+    }
+    let mongoUri = new MongoUri(scheme[1], decodeURIComponent(auth[1]), '***', hosts[1], database[1], options);
+    console.log('[DEBUG, mongouri.js, .parse] MongoUri: ', mongoUri);
     return new MongoUri(scheme[1], decodeURIComponent(auth[1]), decodeURIComponent(auth[2]), hosts[1], database[1], options);
 };
 
@@ -70,17 +74,20 @@ class MongoUri{
         if(uri){
             let matches = uri.match(RE_PULL_DATABASE);
             if(matches){
+                if(matches[1] === ''){
+                    matches[1] = 'admin';
+                }
                 return matches;
             }
         }
-        return [null, null];
+        return [uri, 'admin', uri];
     }
 
     static pullOptions(uri){
+        let map = new Map();
         if(uri){
             let matches = uri.match(RE_PULL_OPTIONS);
             if(matches){
-                var map = new Map();
                 let options = matches[1].split('&');
                 for(let i in options){
                     let split = options[i].split('=');
@@ -90,10 +97,9 @@ class MongoUri{
                         map.set(key, value);
                     }
                 }
-                return map;
             }
         }
-        return null;
+        return map;
     }
 }
 

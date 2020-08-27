@@ -39,6 +39,43 @@ describe('test mongo uri parser', function (){
         assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
         done();
     });
+    // the /db part of the uri refers to the authdb not the actual database you may want to work on and defaults to admin
+    it('parse connect string, no db defaults to admin', function (done){
+        let mongoUri = require('../routes/mongouri');
+        let connect_string = 'mongodb+srv://user:password@host?option1=1&option2=2';
+        let uriObject = mongoUri.parse(connect_string);
+        assert(uriObject.scheme === 'mongodb+srv://');
+        assert(uriObject.username === 'user');
+        assert(uriObject.password === 'password');
+        assert(uriObject.hosts === 'host');
+        assert(uriObject.database === 'admin');
+        assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
+        done();
+    });
+    it('parse connect string, no just "/" as db defaults to admin', function (done){
+        let mongoUri = require('../routes/mongouri');
+        let connect_string = 'mongodb+srv://user:password@host/?option1=1&option2=2';
+        let uriObject = mongoUri.parse(connect_string);
+        assert(uriObject.scheme === 'mongodb+srv://');
+        assert(uriObject.username === 'user');
+        assert(uriObject.password === 'password');
+        assert(uriObject.hosts === 'host');
+        assert(uriObject.database === 'admin');
+        assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
+        done();
+    });
+    it('parse connect string, authSource param overrides /db', function (done){
+        let mongoUri = require('../routes/mongouri');
+        let connect_string = 'mongodb+srv://user:password@host/rubbish?authSource=db&option2=2';
+        let uriObject = mongoUri.parse(connect_string);
+        assert(uriObject.scheme === 'mongodb+srv://');
+        assert(uriObject.username === 'user');
+        assert(uriObject.password === 'password');
+        assert(uriObject.hosts === 'host');
+        assert(uriObject.database === 'db');
+        assert(uriObject.options.get('authSource') === 'db' && uriObject.options.get('option2') === '2');
+        done();
+    });
 });
 
 describe('Add connection, database and collection', function (){
