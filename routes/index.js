@@ -132,14 +132,13 @@ router.get('/app/:conn', function (req, res, next){
         res.redirect(req.app_context + '/app/' + req.params.conn + '/' + uri.database);
         return;
     }
-    console.log('[DEBUG, index.js, /app/:conn] database: ' + uri.database);
     // Get DB's form pool
     var mongo_db = connection_list[req.params.conn].native;
 
     common.get_db_status(mongo_db, function (err, db_status){
         common.get_backups(function (err, backup_list){
-            common.get_db_stats(mongo_db, uri.authDatabase, function (err, db_stats){
-                common.get_sidebar_list(mongo_db, uri.authDatabase, function (err, sidebar_list){
+            common.get_db_stats(mongo_db, uri.database, function (err, db_stats){
+                common.get_sidebar_list(mongo_db, uri.database, function (err, sidebar_list){
                     common.get_db_list(uri, mongo_db, function (err, db_list){
                         res.render('conn', {
                             conn_list: common.order_object(connection_list),
