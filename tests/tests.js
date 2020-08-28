@@ -23,6 +23,7 @@ describe('test mongo uri parser', function (){
         assert(uriObject.password === 'password');
         assert(uriObject.hosts === 'host:1234');
         assert(uriObject.database === 'db');
+        assert(uriObject.authDatabase === 'db');
         assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
         done();
     });
@@ -36,6 +37,7 @@ describe('test mongo uri parser', function (){
         assert(uriObject.password === 'password');
         assert(uriObject.hosts === 'host');
         assert(uriObject.database === 'db');
+        assert(uriObject.authDatabase === 'db');
         assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
         done();
     });
@@ -48,7 +50,8 @@ describe('test mongo uri parser', function (){
         assert(uriObject.username === 'user');
         assert(uriObject.password === 'password');
         assert(uriObject.hosts === 'host');
-        assert(uriObject.database === 'admin');
+        assert(uriObject.database === null);
+        assert(uriObject.authDatabase === 'admin');
         assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
         done();
     });
@@ -60,7 +63,8 @@ describe('test mongo uri parser', function (){
         assert(uriObject.username === 'user');
         assert(uriObject.password === 'password');
         assert(uriObject.hosts === 'host');
-        assert(uriObject.database === 'admin');
+        assert(uriObject.database === null);
+        assert(uriObject.authDatabase === 'admin');
         assert(uriObject.options.get('option1') === '1' && uriObject.options.get('option2') === '2');
         done();
     });
@@ -72,7 +76,8 @@ describe('test mongo uri parser', function (){
         assert(uriObject.username === 'user');
         assert(uriObject.password === 'password');
         assert(uriObject.hosts === 'host');
-        assert(uriObject.database === 'db');
+        assert(uriObject.database === 'rubbish');
+        assert(uriObject.authDatabase === 'db');
         assert(uriObject.options.get('authSource') === 'db' && uriObject.options.get('option2') === '2');
         done();
     });
