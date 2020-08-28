@@ -12,13 +12,17 @@ exports.parse = function (uri){
     let hosts = MongoUri.pullHosts(auth[3]);
     let database = MongoUri.pullDatabase(hosts[2]);
     let options = MongoUri.pullOptions(database[2]);
+    var authDatabase = database[1];
     // overwrite database if authSource is set
-    if(options.has('authSource')){
-        database[1] = options.get('authSource');
+    if(authDatabase === null || authDatabase === undefined){
+        authDatabase = 'admin';
     }
-    let mongoUri = new MongoUri(scheme[1], decodeURIComponent(auth[1]), '***', hosts[1], database[1], options);
+    if(options.has('authSource')){
+        authDatabase = options.get('authSource');
+    }
+    let mongoUri = new MongoUri(scheme[1], decodeURIComponent(auth[1]), '***', hosts[1], database[1], authDatabase, options);
     console.log('[DEBUG, mongouri.js, .parse] MongoUri: ', mongoUri);
-    return new MongoUri(scheme[1], decodeURIComponent(auth[1]), decodeURIComponent(auth[2]), hosts[1], database[1], options);
+    return new MongoUri(scheme[1], decodeURIComponent(auth[1]), decodeURIComponent(auth[2]), hosts[1], database[1], authDatabase, options);
 };
 
 class MongoUri{
@@ -28,6 +32,7 @@ class MongoUri{
         password = null,
         hosts = null,
         database = null,
+        authDatabase = null,
         options = null
     ){
         this.scheme = scheme;
@@ -35,6 +40,7 @@ class MongoUri{
         this.password = password;
         this.hosts = hosts;
         this.database = database;
+        this.authDatabase = authDatabase;
         this.options = options;
     }
 
@@ -75,12 +81,12 @@ class MongoUri{
             let matches = uri.match(RE_PULL_DATABASE);
             if(matches){
                 if(matches[1] === ''){
-                    matches[1] = 'admin';
+                    matches[1] = null;
                 }
                 return matches;
             }
         }
-        return [uri, 'admin', uri];
+        return [uri, null, uri];
     }
 
     static pullOptions(uri){
