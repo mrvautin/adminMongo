@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require('path');
 
 // checks for the password in the /config/app.json file if it's set
-exports.checkLogin = function(req, res, next){
+exports.checkLogin = function (req, res, next){
     var passwordConf = req.nconf.app.get('app');
 
     // only check for login if a password is specified in the /config/app.json file
@@ -38,7 +38,7 @@ exports.get_db_status = function (mongo_db, cb){
 };
 
 // gets the backup dirs
-exports.get_backups = function(cb){
+exports.get_backups = function (cb){
     var junk = require('junk');
     var backupPath = path.join(__dirname, '../backups');
 
@@ -51,7 +51,7 @@ exports.get_backups = function(cb){
 exports.get_db_stats = function (mongo_db, db_name, cb){
     var async = require('async');
     var db_obj = {};
-
+    console.log('[DEBUG, common.js, .get_db_stats] database: ' + db_name);
     // if at connection level we loop db's and collections
     if(db_name == null){
         var adminDb = mongo_db.admin();
@@ -235,7 +235,7 @@ exports.get_sidebar_list = function (mongo_db, db_name, cb){
 };
 
 // order the object by alpha key
-exports.order_object = function(unordered){
+exports.order_object = function (unordered){
     if(unordered !== undefined){
         var ordered = {};
         var keys = Object.keys(unordered);
@@ -247,21 +247,21 @@ exports.order_object = function(unordered){
     return ordered;
 };
 
-exports.order_array = function(array){
+exports.order_array = function (array){
     if(array){
         array.sort(function (a, b){
             a = a.toLowerCase();
             b = b.toLowerCase();
-            if(a === b)return 0;
-            if(a > b)return 1;
-            return-1;
+            if(a === b) return 0;
+            if(a > b) return 1;
+            return -1;
         });
     }
     return array;
 };
 
 // render the error page
-exports.render_error = function(res, req, err, conn){
+exports.render_error = function (res, req, err, conn){
     var connection_list = req.nconf.connections.get('connections');
 
     var conn_string = '';
@@ -278,7 +278,7 @@ exports.render_error = function(res, req, err, conn){
     });
 };
 
-exports.cleanCollections = function(collection_list){
+exports.cleanCollections = function (collection_list){
     var list = [];
     _.each(collection_list, function (item){
         list.push(item.name);
