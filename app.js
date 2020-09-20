@@ -9,6 +9,7 @@ var session = require('express-session');
 var async = require('async');
 var moment = require('moment');
 var fs = require('fs');
+var lodash = require('lodash');
 
 // Define routes
 var indexRoute = require('./routes/index');
@@ -105,7 +106,12 @@ if(process.env.LOCALE) configApp.app.locale = process.env.LOCALE;
 if(process.env.CONTEXT) configApp.app.context = process.env.CONTEXT;
 if(process.env.MONITORING) configApp.app.monitoring = process.env.MONITORING;
 
-if(!fs.existsSync(config_app)) fs.writeFileSync(config_app, JSON.stringify(configApp));
+if (fs.existsSync(config_app)) {
+    let currentConfigApp = {}
+    try { currentConfigApp = JSON.parse(fs.readFileSync(config_app)) } catch (ex) { }
+    configApp = lodash.merge(currentConfigApp, configApp)
+}
+fs.writeFileSync(config_app, JSON.stringify(configApp));
 
 // Check the env for a connection to initiate
 var configConnection = {
