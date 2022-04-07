@@ -46,7 +46,7 @@
     "adminmongo"
   ],
   "dependencies": {
-    "async": "^2.0.0",
+    "async": "^3.2.2",
     "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
     "config": "^1.21.0",
