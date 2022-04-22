@@ -67,7 +67,7 @@
     "mongodb-extended-json": "^1.7.0",
     "mongodb-restore": "^1.5.4",
     "morgan": "~1.9.0",
-    "nconf": "^0.8.4",
+    "nconf": "^0.12.0",
     "ncp": "^2.0.0",
     "nedb": "^1.8.0",
     "node-delete": "^0.1.2",
